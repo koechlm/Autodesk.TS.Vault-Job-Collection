@@ -1,0 +1,66 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35828.75 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.pdf.create.slddrw", "adsk.ts.pdf.create.slddrw\adsk.ts.pdf.create.slddrw.csproj", "{8BE623D4-CC6E-4F68-ADA6-E307EE73B80F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.nwd.create.any", "adsk.ts.nwd.create.any\adsk.ts.nwd.create.any.csproj", "{A05BF573-229C-4F9A-97F7-60AE257BCAD9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.jt.create.inventor", "adsk.ts.jt.create.inventor\adsk.ts.jt.create.inventor.csproj", "{952D1405-BBD5-452C-9D85-E64CAB7BB48E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.3ddwg.create.inventor", "adsk.ts.3ddwg.create.inventor\adsk.ts.3ddwg.create.inventor.csproj", "{33E84045-AA52-4206-A708-367B7BD5D3B4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.2ddwg.create.inventor", "adsk.ts.2ddwg.create.inventor\adsk.ts.2ddwg.create.inventor.csproj", "{7BFD714E-134B-45DC-94E2-96D0B435C179}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.image.create.inventor", "adsk.ts.image.create.inventor\adsk.ts.image.create.inventor.csproj", "{A0574014-3E9A-4276-8DD8-2D54777A68D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.rvt.create.inventor", "adsk.ts.rvt.create.inventor\adsk.ts.rvt.create.inventor.csproj", "{5F980C92-E275-4D61-A80A-3D733C401818}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "adsk.ts.job.common", "adsk.ts.job.common\adsk.ts.job.common.shproj", "{64D2ED1D-F280-49A3-BBCB-BD8DC83F3333}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8BE623D4-CC6E-4F68-ADA6-E307EE73B80F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BE623D4-CC6E-4F68-ADA6-E307EE73B80F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BE623D4-CC6E-4F68-ADA6-E307EE73B80F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BE623D4-CC6E-4F68-ADA6-E307EE73B80F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A05BF573-229C-4F9A-97F7-60AE257BCAD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A05BF573-229C-4F9A-97F7-60AE257BCAD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A05BF573-229C-4F9A-97F7-60AE257BCAD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A05BF573-229C-4F9A-97F7-60AE257BCAD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{952D1405-BBD5-452C-9D85-E64CAB7BB48E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{952D1405-BBD5-452C-9D85-E64CAB7BB48E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{952D1405-BBD5-452C-9D85-E64CAB7BB48E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{952D1405-BBD5-452C-9D85-E64CAB7BB48E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33E84045-AA52-4206-A708-367B7BD5D3B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33E84045-AA52-4206-A708-367B7BD5D3B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33E84045-AA52-4206-A708-367B7BD5D3B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33E84045-AA52-4206-A708-367B7BD5D3B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BFD714E-134B-45DC-94E2-96D0B435C179}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BFD714E-134B-45DC-94E2-96D0B435C179}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BFD714E-134B-45DC-94E2-96D0B435C179}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BFD714E-134B-45DC-94E2-96D0B435C179}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0574014-3E9A-4276-8DD8-2D54777A68D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0574014-3E9A-4276-8DD8-2D54777A68D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0574014-3E9A-4276-8DD8-2D54777A68D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0574014-3E9A-4276-8DD8-2D54777A68D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F980C92-E275-4D61-A80A-3D733C401818}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F980C92-E275-4D61-A80A-3D733C401818}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F980C92-E275-4D61-A80A-3D733C401818}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F980C92-E275-4D61-A80A-3D733C401818}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F400DA7B-F39B-49C5-BBA6-7DBF82B3BA6E}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		adsk.ts.job.common\adsk.ts.job.common.projitems*{64d2ed1d-f280-49a3-bbcb-bd8dc83f3333}*SharedItemsImports = 13
+	EndGlobalSection
+EndGlobal
