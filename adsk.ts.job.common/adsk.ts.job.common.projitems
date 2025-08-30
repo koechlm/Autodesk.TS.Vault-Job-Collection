@@ -9,5 +9,6 @@
     <Import_RootNamespace>adsk.ts.job.common</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)adsk.ts.job.common.cs" />
   </ItemGroup>
 </Project>

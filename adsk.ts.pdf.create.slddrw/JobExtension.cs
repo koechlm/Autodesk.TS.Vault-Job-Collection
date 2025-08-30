@@ -18,7 +18,7 @@ namespace adsk.ts.pdf.create.slddrw
 {
     public class JobExtension : IJobHandler
     {
-        private static string JOB_TYPE = "MyCompany.JobName";
+        private static string JOB_TYPE = "adsk.ts.pdf.create.slddrw";
 
         #region IJobHandler Implementation
         public bool CanProcess(string jobType)

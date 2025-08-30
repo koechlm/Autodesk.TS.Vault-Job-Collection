@@ -18,7 +18,7 @@ namespace adsk.ts.jt.create.inventor
 {
     public class JobExtension : IJobHandler
     {
-        private static string JOB_TYPE = "MyCompany.JobName";
+        private static string JOB_TYPE = "adsk.ts.jt.create.inventor";
 
         #region IJobHandler Implementation
         public bool CanProcess(string jobType)

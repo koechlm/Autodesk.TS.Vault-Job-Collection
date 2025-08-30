@@ -2,12 +2,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8be623d4-cc6e-4f68-ada6-e307ee73b80f}</ProjectGuid>
+    <ProjectGuid>{a768e387-87a3-4ccd-b33f-8ae7a37a7732}</ProjectGuid>
     <TargetFramework>net8.0-windows</TargetFramework>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>adsk.ts.pdf.create.slddrw</RootNamespace>
-    <AssemblyName>adsk.ts.pdf.create.slddrw</AssemblyName>
+    <RootNamespace>adsk.ts.acad.dwg3d.create.inventor</RootNamespace>
+    <AssemblyName>adsk.ts.acad.dwg3d.create.inventor</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWindowsForms>true</UseWindowsForms>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
@@ -19,7 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>$(ProgramData)\Autodesk\Vault 2026\Extensions\adsk.ts.pdf.create.slddrw\</OutputPath>
+    <OutputPath>$(ProgramData)\Autodesk\Vault 2026\Extensions\adsk.ts.acad.dwg3d.create.inventor\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -28,7 +28,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>$(ProgramData)\Autodesk\Vault 2026\Extensions\adsk.ts.pdf.create.slddrw\</OutputPath>
+    <OutputPath>$(ProgramData)\Autodesk\Vault 2026\Extensions\adsk.ts.acad.dwg3d.create.inventor\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -92,7 +92,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Key.snk" />
-    <None Include="adsk.ts.pdf.create.slddrw.vcet.config">
+    <None Include="adsk.ts.acad.dwg3d.create.inventor.vcet.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

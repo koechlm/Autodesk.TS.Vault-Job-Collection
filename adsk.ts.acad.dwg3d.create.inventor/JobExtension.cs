@@ -11,14 +11,14 @@ using Autodesk.Connectivity.WebServices;
 
 // *ComponentUpgradeEveryRelease-Client*
 [assembly: ApiVersion("19.0")]
-[assembly: ExtensionId("5f980c92-e275-4d61-a80a-3d733c401818")]
+[assembly: ExtensionId("a768e387-87a3-4ccd-b33f-8ae7a37a7732")]
 
 
-namespace adsk.ts.rvt.create.inventor
+namespace adsk.ts.acad.dwg3d.create.inventor
 {
     public class JobExtension : IJobHandler
     {
-        private static string JOB_TYPE = "adsk.ts.rvt.create.inventor";
+        private static string JOB_TYPE = "adsk.ts.acad.dwg3d.create.inventor";
 
         #region IJobHandler Implementation
         public bool CanProcess(string jobType)
