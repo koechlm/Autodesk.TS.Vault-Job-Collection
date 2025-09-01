@@ -11,14 +11,14 @@ using Autodesk.Connectivity.WebServices;
 
 // *ComponentUpgradeEveryRelease-Client*
 [assembly: ApiVersion("19.0")]
-[assembly: ExtensionId("a3c9acd4-cfc0-4834-9043-69e614906ca7")]
+[assembly: ExtensionId("952d1405-bbd5-452c-9d85-e64cab7bb48e")]
 
 
-namespace adsk.ts.acad.dwg.create.inventor
+namespace adsk.ts.export3D.create.inventor
 {
     public class JobExtension : IJobHandler
     {
-        private static string JOB_TYPE = "MyCompany.JobName";
+        private static string JOB_TYPE = "adsk.ts.export3D.create.inventor";
 
         #region IJobHandler Implementation
         public bool CanProcess(string jobType)
@@ -30,12 +30,12 @@ namespace adsk.ts.acad.dwg.create.inventor
         {
             try
             {
-                MessageBox.Show("Hello World", "Job-Template-Messenger", MessageBoxButtons.OK);
+                MessageBox.Show(JOB_TYPE, JOB_TYPE + "-Messenger", MessageBoxButtons.OK);
                 return JobOutcome.Success;
             }
             catch (Exception ex)
             {
-                context.Log(ex, "Job-Template Job failed: " + ex.ToString() + " ");
+                context.Log(ex, "Job " + JOB_TYPE + " failed: " + ex.ToString() + " ");
                 return JobOutcome.Failure;
             }
 

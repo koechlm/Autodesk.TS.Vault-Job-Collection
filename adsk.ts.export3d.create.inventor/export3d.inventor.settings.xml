@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<settings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <!-- Logfile directory; validate for write access -->
+  <LogFileLocation>C:\Temp\</LogFileLocation>
+
+  <!-- Allow the reuse of an existing IPJ file if the download of it fails; accepted values are True/False-->
+  <AcceptLocalIpj>True</AcceptLocalIpj>
+
+  <!-- Export File Format(s)-->
+  <!--  Supported Values/File Formats are: STP, JT, SMDXF, 3DDWG -->
+  <!--  Multiple Outputs per jobs are supported, list all required formats comma separated, e.g., STP, JT, SMDXF -->
+  <!--  To Export Sheet Metal Flatpattern SMDXF - NOTE: distinct category for sheet metal part required, if job handles parts and SM-parts-->
+  <ExportFormats>JT, 3DDWG</ExportFormats>
+
+  <!--Sheet Metal Category Name-->
+  <SmCatDispName>Sheet Metal Part</SmCatDispName>
+
+  <!-- Output Path -->
+  <!--  The job can copy the resulting file(s) to the given output path after check-in-->
+  <OutputPath>C:\Temp\</OutputPath>
+
+</settings>

@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<settings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <!-- Logfile directory; validate for write access -->
+  <LogFileLocation>C:\Temp\</LogFileLocation>
+
+  <!-- Allow the reuse of an existing IPJ file if the download of it fails; accepted values are True/False-->
+  <AcceptLocalIpj>True</AcceptLocalIpj>
+
+  <!-- Export File Format(s)-->
+  <!--  Supported Values/File Formats are: 2DDWG-->
+  <ExportFormats>2DDWG</ExportFormats>
+
+  <!--2D-DWG Export ini path and file name-->
+  <DwgIniFile2D>C:\ProgramData\Autodesk\Vault 2022\Extensions\Autodesk.VltInvSrv.ExportSampleJob\IDW-2-DWG.ini</DwgIniFile2D>
+
+  <!-- Output Path -->
+  <!--  The job can copy the resulting file(s) to the given output path after check-in-->
+  <OutputPath>C:\Temp\</OutputPath>
+
+</settings>

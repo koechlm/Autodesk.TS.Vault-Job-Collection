@@ -2,28 +2,29 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{120bee0d-6c5b-4399-8a20-bb030f69ab4d}</ProjectGuid>
+    <ProjectGuid>{952d1405-bbd5-452c-9d85-e64cab7bb48e}</ProjectGuid>
     <TargetFramework>net8.0-windows</TargetFramework>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Autodesk.TS.Vault_Job_Collection</RootNamespace>
-    <AssemblyName>Autodesk.TS.Vault_Job_Collection</AssemblyName>
+    <RootNamespace>adsk.ts.export3d.create.inventor</RootNamespace>
+    <AssemblyName>adsk.ts.export3d.create.inventor</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWindowsForms>true</UseWindowsForms>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <MSBuildWarningsAsMessages>MSB3277</MSBuildWarningsAsMessages>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <Platforms>x64</Platforms>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>$(ProgramData)\Autodesk\Vault 2026\Extensions\Autodesk.TS.Vault_Job_Collection\</OutputPath>
+    <OutputPath>$(ProgramData)\Autodesk\Vault 2026\Extensions\adsk.ts.job.collection\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -74,12 +75,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Key.snk" />
-    <None Include="Autodesk.TS.Vault_Job_Collection.vcet.config">
+    <None Include="adsk.ts.export3d.create.inventor.vcet.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Settings.xml">
+    <Content Include="export3d.inventor.settings.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

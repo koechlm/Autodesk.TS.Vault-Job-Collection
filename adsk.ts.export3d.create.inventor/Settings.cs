@@ -16,7 +16,7 @@ using System.IO;
 using System.Text;
 using System.Xml.Serialization;
 
-namespace adsk.ts.acad.dwg.create.inventor
+namespace adsk.ts.export3D.create.inventor
 {
 
     [XmlRoot("settings")]
@@ -40,7 +40,7 @@ namespace adsk.ts.acad.dwg.create.inventor
             try
             {
                 string codeFolder = Util.GetAssemblyPath();
-                string xmlPath = Path.Combine(codeFolder, "Settings.xml");
+                string xmlPath = Path.Combine(codeFolder, "export3d.inventor.settings.xml");
 
                 using (System.IO.StreamWriter writer = new System.IO.StreamWriter(xmlPath))
                 {
@@ -58,7 +58,7 @@ namespace adsk.ts.acad.dwg.create.inventor
 
 
             string codeFolder = Util.GetAssemblyPath();
-            string xmlPath = Path.Combine(codeFolder, "Settings.xml");
+            string xmlPath = Path.Combine(codeFolder, "export3d.inventor.settings.xml");
 
             using (System.IO.StreamReader reader = new System.IO.StreamReader(xmlPath))
             {
