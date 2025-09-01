@@ -22,8 +22,14 @@ namespace adsk.ts.pdf.create.slddrw
     [XmlRoot("settings")]
     public class Settings
     {
-        [XmlElement("SettingName")]
-        public string mSettingName;
+        [XmlElement("LogFileLocation")]
+        public string LogFileLocation;
+
+        [XmlElement("ExportFormats")]
+        public string ExportFormats;
+
+        [XmlElement("OutputPath")]
+        public string OutPutPath;
 
         #region for future use
         //[XmlElement("OutputPath")]
@@ -40,7 +46,7 @@ namespace adsk.ts.pdf.create.slddrw
             try
             {
                 string codeFolder = Util.GetAssemblyPath();
-                string xmlPath = Path.Combine(codeFolder, "Settings.xml");
+                string xmlPath = Path.Combine(codeFolder, "pdf.slddrw.settings.xml");
 
                 using (System.IO.StreamWriter writer = new System.IO.StreamWriter(xmlPath))
                 {
@@ -58,7 +64,7 @@ namespace adsk.ts.pdf.create.slddrw
 
 
             string codeFolder = Util.GetAssemblyPath();
-            string xmlPath = Path.Combine(codeFolder, "Settings.xml");
+            string xmlPath = Path.Combine(codeFolder, "pdf.slddrw.settings.xml");
 
             using (System.IO.StreamReader reader = new System.IO.StreamReader(xmlPath))
             {

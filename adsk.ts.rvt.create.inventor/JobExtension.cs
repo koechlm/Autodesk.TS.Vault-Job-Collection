@@ -30,12 +30,12 @@ namespace adsk.ts.rvt.create.inventor
         {
             try
             {
-                MessageBox.Show("Hello World", "Job-Template-Messenger", MessageBoxButtons.OK);
+                MessageBox.Show(JOB_TYPE, JOB_TYPE + "-Messenger", MessageBoxButtons.OK);
                 return JobOutcome.Success;
             }
             catch (Exception ex)
             {
-                context.Log(ex, "Job-Template Job failed: " + ex.ToString() + " ");
+                context.Log(ex, "Job " + JOB_TYPE + " failed: " + ex.ToString() + " ");
                 return JobOutcome.Failure;
             }
 

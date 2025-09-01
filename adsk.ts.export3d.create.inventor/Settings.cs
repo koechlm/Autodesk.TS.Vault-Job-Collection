@@ -16,14 +16,26 @@ using System.IO;
 using System.Text;
 using System.Xml.Serialization;
 
-namespace adsk.ts.acad.dwg.create.inventor
+namespace adsk.ts.export3d.create.inventor
 {
 
     [XmlRoot("settings")]
     public class Settings
     {
-        [XmlElement("SettingName")]
-        public string mSettingName;
+        [XmlElement("LogFileLocation")]
+        public string LogFileLocation;
+
+        [XmlElement("AcceptLocalIpj")]
+        public string AcceptLocalIpj;
+
+        [XmlElement("ExportFormats")]
+        public string ExportFormats;
+
+        [XmlElement("SmCatDispName")]
+        public string SmCatDispName;
+
+        [XmlElement("OutputPath")]
+        public string OutPutPath;
 
         #region for future use
         //[XmlElement("OutputPath")]
@@ -40,7 +52,7 @@ namespace adsk.ts.acad.dwg.create.inventor
             try
             {
                 string codeFolder = Util.GetAssemblyPath();
-                string xmlPath = Path.Combine(codeFolder, "Settings.xml");
+                string xmlPath = Path.Combine(codeFolder, "export3d.inventor.settings.xml");
 
                 using (System.IO.StreamWriter writer = new System.IO.StreamWriter(xmlPath))
                 {
@@ -58,7 +70,7 @@ namespace adsk.ts.acad.dwg.create.inventor
 
 
             string codeFolder = Util.GetAssemblyPath();
-            string xmlPath = Path.Combine(codeFolder, "Settings.xml");
+            string xmlPath = Path.Combine(codeFolder, "export3d.inventor.settings.xml");
 
             using (System.IO.StreamReader reader = new System.IO.StreamReader(xmlPath))
             {

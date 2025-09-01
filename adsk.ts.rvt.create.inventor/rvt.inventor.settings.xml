@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<settings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <!-- Logfile directory; validate for write access -->
+  <LogFileLocation>C:\Temp\</LogFileLocation>
+
+  <!-- Allow the reuse of an existing IPJ file if the download of it fails; accepted values are True/False-->
+  <AcceptLocalIpj>True</AcceptLocalIpj>
+
+  <!-- Export File Format(s)-->
+  <!--  Supported Values/File Formats are: RVT -->
+  <ExportFormats>RVT</ExportFormats>
+
+  <!-- RVT preset: store a Vault path of the Inventor preset file, e.g. $/Templates/Inventor/Presest/SimplifyCmd.preset-->
+  <InventorPreset>$\Templates\Inventor\Presets\SimplifyCmd.preset</InventorPreset>
+
+  <!-- Output Path -->
+  <!--  The job can copy the resulting file(s) to the given output path after check-in-->
+  <OutputPath>C:\Temp\</OutputPath>
+
+</settings>

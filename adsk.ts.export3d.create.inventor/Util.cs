@@ -23,7 +23,7 @@ using Autodesk.DataManagement.Client.Framework.Vault.Settings;
 using Autodesk.DataManagement.Client.Framework.Vault.Results;
 using VDF = Autodesk.DataManagement.Client.Framework;
 
-namespace adsk.ts.nwd.create.any
+namespace adsk.ts.export3d.create.inventor
 {
     public class Util
     {

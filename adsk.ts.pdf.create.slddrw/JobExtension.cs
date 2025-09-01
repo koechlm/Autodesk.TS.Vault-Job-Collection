@@ -30,7 +30,7 @@ namespace adsk.ts.pdf.create.slddrw
         {
             try
             {
-                MessageBox.Show("Hello World", "Job-Template-Messenger", MessageBoxButtons.OK);
+                MessageBox.Show(JOB_TYPE, JOB_TYPE + "-Messenger", MessageBoxButtons.OK);
                 return JobOutcome.Success;
             }
             catch (Exception ex)

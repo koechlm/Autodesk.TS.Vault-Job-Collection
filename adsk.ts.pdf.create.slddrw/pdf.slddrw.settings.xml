@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<settings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <!-- Logfile directory; validate for write access -->
+  <LogFileLocation>C:\Temp\</LogFileLocation>
+
+  <!-- Export File Format(s)-->
+  <!--  Supported Values/File Formats are: SLDDRW.PDF -->
+  <ExportFormats>SLDDRW.PDF</ExportFormats>
+
+  <!-- Output Path -->
+  <!--  The job can copy the resulting file(s) to the given output path after check-in-->
+  <OutputPath>C:\Temp\</OutputPath>
+
+</settings>

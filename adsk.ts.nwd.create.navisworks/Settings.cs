@@ -22,8 +22,20 @@ namespace adsk.ts.nwd.create.navisworks
     [XmlRoot("settings")]
     public class Settings
     {
-        [XmlElement("SettingName")]
-        public string mSettingName;
+        [XmlElement("LogFileLocation")]
+        public string LogFileLocation;
+
+        [XmlElement("AcceptLocalIpj")]
+        public string AcceptLocalIpj;
+
+        [XmlElement("ExportFormats")]
+        public string ExportFormats;
+
+        [XmlElement("NwdTemplate")]
+        public string NwdTemplate;
+
+        [XmlElement("OutputPath")]
+        public string OutPutPath;
 
         #region for future use
         //[XmlElement("OutputPath")]
@@ -40,7 +52,7 @@ namespace adsk.ts.nwd.create.navisworks
             try
             {
                 string codeFolder = Util.GetAssemblyPath();
-                string xmlPath = Path.Combine(codeFolder, "Settings.xml");
+                string xmlPath = Path.Combine(codeFolder, "nwd.navisworks.settings.xml");
 
                 using (System.IO.StreamWriter writer = new System.IO.StreamWriter(xmlPath))
                 {
@@ -58,7 +70,7 @@ namespace adsk.ts.nwd.create.navisworks
 
 
             string codeFolder = Util.GetAssemblyPath();
-            string xmlPath = Path.Combine(codeFolder, "Settings.xml");
+            string xmlPath = Path.Combine(codeFolder, "nwd.navisworks.settings.xml");
 
             using (System.IO.StreamReader reader = new System.IO.StreamReader(xmlPath))
             {

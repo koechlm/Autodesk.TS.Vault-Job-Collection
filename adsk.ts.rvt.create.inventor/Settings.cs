@@ -22,8 +22,20 @@ namespace adsk.ts.rvt.create.inventor
     [XmlRoot("settings")]
     public class Settings
     {
-        [XmlElement("SettingName")]
-        public string mSettingName;
+        [XmlElement("LogFileLocation")]
+        public string LogFileLocation;
+
+        [XmlElement("ExportFormats")]
+        public string ExportFormats;
+
+        [XmlElement("OutputPath")]
+        public string OutPutPath;
+
+        [XmlElement("InventorPreset")]
+        public string InventorPreset;
+
+        [XmlElement("AcceptLocalIpj")]
+        public string AcceptLocalIpj;
 
         #region for future use
         //[XmlElement("OutputPath")]
@@ -40,7 +52,7 @@ namespace adsk.ts.rvt.create.inventor
             try
             {
                 string codeFolder = Util.GetAssemblyPath();
-                string xmlPath = Path.Combine(codeFolder, "Settings.xml");
+                string xmlPath = Path.Combine(codeFolder, "rvt.inventor.settings.xml");
 
                 using (System.IO.StreamWriter writer = new System.IO.StreamWriter(xmlPath))
                 {
@@ -58,7 +70,7 @@ namespace adsk.ts.rvt.create.inventor
 
 
             string codeFolder = Util.GetAssemblyPath();
-            string xmlPath = Path.Combine(codeFolder, "Settings.xml");
+            string xmlPath = Path.Combine(codeFolder, "rvt.inventor.settings.xml");
 
             using (System.IO.StreamReader reader = new System.IO.StreamReader(xmlPath))
             {
