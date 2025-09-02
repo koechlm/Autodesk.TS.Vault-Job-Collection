@@ -31,6 +31,9 @@ namespace adsk.ts.export3d.create.inventor
         [XmlElement("ExportFormats")]
         public string ExportFormats;
 
+        [XmlElement("ExcludeDesignSubstitute")]
+        public string ExcludeDesignSubstitute;
+
         [XmlElement("SmCatDispName")]
         public string SmCatDispName;
 
@@ -52,7 +55,7 @@ namespace adsk.ts.export3d.create.inventor
             try
             {
                 string codeFolder = Util.GetAssemblyPath();
-                string xmlPath = Path.Combine(codeFolder, "export3d.inventor.settings.xml");
+                string xmlPath = Path.Combine(codeFolder, "adsk.ts.export3d.create.inventor.settings.xml");
 
                 using (System.IO.StreamWriter writer = new System.IO.StreamWriter(xmlPath))
                 {
@@ -70,7 +73,7 @@ namespace adsk.ts.export3d.create.inventor
 
 
             string codeFolder = Util.GetAssemblyPath();
-            string xmlPath = Path.Combine(codeFolder, "export3d.inventor.settings.xml");
+            string xmlPath = Path.Combine(codeFolder, "adsk.ts.export3d.create.inventor.settings.xml");
 
             using (System.IO.StreamReader reader = new System.IO.StreamReader(xmlPath))
             {

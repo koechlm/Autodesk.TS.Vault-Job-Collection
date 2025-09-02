@@ -7,15 +7,60 @@
     <MSBuildWarningsAsMessages>MSB3277</MSBuildWarningsAsMessages>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>    
     <Platforms>x64</Platforms>
+    <UseWindowsForms>true</UseWindowsForms>
+    <SignAssembly>True</SignAssembly>    
+    <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>    
+    <RootNamespace>adsktsshared</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>$(ProgramData)\Autodesk\Vault 2026\Extensions\adsk.ts.job.collection\</OutputPath>
+    <OutputPath></OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autodesk.Connectivity.Explorer.Extensibility">
+      <HintPath>..\SDK References\Autodesk.Connectivity.Explorer.Extensibility.dll</HintPath>
+    </Reference>
+    <Reference Include="Autodesk.Connectivity.Explorer.ExtensibilityTools">
+      <HintPath>..\SDK References\Autodesk.Connectivity.Explorer.ExtensibilityTools.dll</HintPath>
+    </Reference>
+    <Reference Include="Autodesk.Connectivity.Extensibility.Framework">
+      <HintPath>..\SDK References\Autodesk.Connectivity.Extensibility.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Autodesk.Connectivity.IDServicesWrapper">
+      <HintPath>..\SDK References\Autodesk.Connectivity.IDServicesWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="Autodesk.Connectivity.JobProcessor.Extensibility">
+      <HintPath>..\SDK References\Autodesk.Connectivity.JobProcessor.Extensibility.dll</HintPath>
+    </Reference>
+    <Reference Include="Autodesk.Connectivity.LicenseWrapper">
+      <HintPath>..\SDK References\Autodesk.Connectivity.LicenseWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="Autodesk.Connectivity.WebServices">
+      <HintPath>..\SDK References\Autodesk.Connectivity.WebServices.dll</HintPath>
+    </Reference>
+    <Reference Include="Autodesk.Connectivity.WebServices.WCF">
+      <HintPath>..\SDK References\Autodesk.Connectivity.WebServices.WCF.dll</HintPath>
+    </Reference>
+    <Reference Include="Autodesk.DataManagement.Client.Framework">
+      <HintPath>..\SDK References\Autodesk.DataManagement.Client.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Autodesk.DataManagement.Client.Framework.Forms">
+      <HintPath>..\SDK References\Autodesk.DataManagement.Client.Framework.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="Autodesk.DataManagement.Client.Framework.Vault">
+      <HintPath>..\SDK References\Autodesk.DataManagement.Client.Framework.Vault.dll</HintPath>
+    </Reference>
+    <Reference Include="Autodesk.DataManagement.Client.Framework.Vault.Forms">
+      <HintPath>..\SDK References\Autodesk.DataManagement.Client.Framework.Vault.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="Autodesk.Inventor.Interop">
+      <HintPath>..\SDK References\Autodesk.Inventor.Interop.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 
 </Project>

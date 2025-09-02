@@ -66,6 +66,10 @@
       <HintPath>$(ProgramW6432)\Autodesk\Autodesk Vault 2026 SDK\bin\x64\Core\Autodesk.DataManagement.Client.Framework.Vault.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Autodesk.Inventor.Interop">
+      <HintPath>..\SDK References\Autodesk.Inventor.Interop.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="JobExtension.cs" />
@@ -80,8 +84,14 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="export3d.inventor.settings.xml">
+    <Content Include="adsk.ts.export3d.create.inventor.settings.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\adsk.ts.job.shared\adsk.ts.job.shared.csproj">
+      <CopyLocalSatelliteAssemblies></CopyLocalSatelliteAssemblies>
+      <ReferenceOutputAssembly>True</ReferenceOutputAssembly>
+    </ProjectReference>
   </ItemGroup>
 </Project>

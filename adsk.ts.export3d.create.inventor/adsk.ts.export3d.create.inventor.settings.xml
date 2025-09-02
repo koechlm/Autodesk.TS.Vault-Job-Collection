@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<settings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <!-- Logfile directory; validate for write access -->
+  <LogFileLocation>C:\Temp\</LogFileLocation>
+
+  <!-- Allow the reuse of an existing IPJ file if the download of it fails; accepted values are True/False-->
+  <AcceptLocalIpj>True</AcceptLocalIpj>
+
+  <!-- Export File Format(s)-->
+  <!--  Supported Values/File Formats are: 3DDWG, CATPart (IPT only), CATProduct (IAM only), glTF, IGES, JT, OBJ, X_B, X_T, ProE_G, ProE_N, QIF (IPT only), SAT, SMT, STEP, STL, USDz -->
+  <!--  Multiple Outputs per jobs are supported, list all required formats comma separated, e.g., STP, JT,  -->  
+  <ExportFormats>JT, 3DDWG</ExportFormats>
+  
+  <!-- Exclude/include export for design substitute classified files; ; accepted values are True/False-->
+  <ExcludeDesignSubstitute>False</ExcludeDesignSubstitute>
+
+  <!-- Output Path -->
+  <!--  The job can copy the resulting file(s) to the given output path after check-in-->
+  <OutputPath>C:\Temp\</OutputPath>
+
+</settings>
