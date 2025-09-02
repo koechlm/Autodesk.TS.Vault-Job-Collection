@@ -80,7 +80,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="pdf.slddrw.settings.xml">
+    <Content Include="adsk.ts.pdf.create.slddrw.settings.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -52,7 +52,7 @@ namespace adsk.ts.rvt.create.inventor
             try
             {
                 string codeFolder = Util.GetAssemblyPath();
-                string xmlPath = Path.Combine(codeFolder, "rvt.inventor.settings.xml");
+                string xmlPath = Path.Combine(codeFolder, "adsk.ts.rvt.create.inventor.settings.xml");
 
                 using (System.IO.StreamWriter writer = new System.IO.StreamWriter(xmlPath))
                 {
@@ -70,7 +70,7 @@ namespace adsk.ts.rvt.create.inventor
 
 
             string codeFolder = Util.GetAssemblyPath();
-            string xmlPath = Path.Combine(codeFolder, "rvt.inventor.settings.xml");
+            string xmlPath = Path.Combine(codeFolder, "adsk.ts.rvt.create.inventor.settings.xml");
 
             using (System.IO.StreamReader reader = new System.IO.StreamReader(xmlPath))
             {

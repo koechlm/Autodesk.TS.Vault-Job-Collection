@@ -80,7 +80,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="acad.dwg2d.inventor.settings.xml">
+    <Content Include="adsk.ts.acad.dwg2d.create.inventor.settings.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

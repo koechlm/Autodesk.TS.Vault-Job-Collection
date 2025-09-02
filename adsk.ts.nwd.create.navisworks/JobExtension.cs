@@ -8,6 +8,8 @@ using Autodesk.Connectivity.Extensibility.Framework;
 using Autodesk.DataManagement.Client.Framework.Vault.Currency.Entities;
 using Autodesk.Connectivity.JobProcessor.Extensibility;
 using Autodesk.Connectivity.WebServices;
+using System.Diagnostics;
+using NavisworksAutomation = Autodesk.Navisworks.Api.Automation;
 
 // *ComponentUpgradeEveryRelease-Client*
 [assembly: ApiVersion("19.0")]
@@ -19,6 +21,12 @@ namespace adsk.ts.nwd.create.navisworks
     public class JobExtension : IJobHandler
     {
         private static string JOB_TYPE = "adsk.ts.nwd.create.navisworks";
+        private static Settings mSettings = Settings.Load();
+        private static string mLogDir = JobExtension.mSettings.LogFileLocation;
+        private static string mLogFile = JOB_TYPE + ".log";
+        private TextWriterTraceListener mTrace = new TextWriterTraceListener(System.IO.Path.Combine(
+            mLogDir, mLogFile), "mJobTrace");
+        private NavisworksAutomation.NavisworksApplication mNavisworksAutomation;
 
         #region IJobHandler Implementation
         public bool CanProcess(string jobType)

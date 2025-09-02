@@ -66,6 +66,18 @@
       <HintPath>$(ProgramW6432)\Autodesk\Autodesk Vault 2026 SDK\bin\x64\Core\Autodesk.DataManagement.Client.Framework.Vault.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Autodesk.Navisworks.Api">
+      <HintPath>..\SDK References\Autodesk.Navisworks.Api.dll</HintPath>
+    </Reference>
+    <Reference Include="Autodesk.Navisworks.Automation">
+      <HintPath>..\SDK References\Autodesk.Navisworks.Automation.dll</HintPath>
+    </Reference>
+    <Reference Include="Autodesk.Navisworks.Controls">
+      <HintPath>..\SDK References\Autodesk.Navisworks.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="Autodesk.Navisworks.Resolver">
+      <HintPath>..\SDK References\Autodesk.Navisworks.Resolver.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="JobExtension.cs" />
@@ -80,8 +92,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="nwd.navisworks.settings.xml">
+    <Content Include="adsk.ts.nwd.create.navisworks.settings.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\adsk.ts.job.shared\adsk.ts.job.shared.csproj" />
   </ItemGroup>
 </Project>

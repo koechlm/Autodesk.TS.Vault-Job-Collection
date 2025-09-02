@@ -52,7 +52,7 @@ namespace adsk.ts.nwd.create.navisworks
             try
             {
                 string codeFolder = Util.GetAssemblyPath();
-                string xmlPath = Path.Combine(codeFolder, "nwd.navisworks.settings.xml");
+                string xmlPath = Path.Combine(codeFolder, "adsk.ts.nwd.create.navisworks.settings.xml");
 
                 using (System.IO.StreamWriter writer = new System.IO.StreamWriter(xmlPath))
                 {
@@ -70,7 +70,7 @@ namespace adsk.ts.nwd.create.navisworks
 
 
             string codeFolder = Util.GetAssemblyPath();
-            string xmlPath = Path.Combine(codeFolder, "nwd.navisworks.settings.xml");
+            string xmlPath = Path.Combine(codeFolder, "adsk.ts.nwd.create.navisworks.settings.xml");
 
             using (System.IO.StreamReader reader = new System.IO.StreamReader(xmlPath))
             {

@@ -52,7 +52,7 @@ namespace adsk.ts.image.create.inventor
             try
             {
                 string codeFolder = Util.GetAssemblyPath();
-                string xmlPath = Path.Combine(codeFolder, "image.inventor.settings.xml");
+                string xmlPath = Path.Combine(codeFolder, "adsk.ts.image.create.inventor.settings.xml");
 
                 using (System.IO.StreamWriter writer = new System.IO.StreamWriter(xmlPath))
                 {
@@ -70,7 +70,7 @@ namespace adsk.ts.image.create.inventor
 
 
             string codeFolder = Util.GetAssemblyPath();
-            string xmlPath = Path.Combine(codeFolder, "image.inventor.settings.xml");
+            string xmlPath = Path.Combine(codeFolder, "adsk.ts.image.create.inventor.settings.xml");
 
             using (System.IO.StreamReader reader = new System.IO.StreamReader(xmlPath))
             {

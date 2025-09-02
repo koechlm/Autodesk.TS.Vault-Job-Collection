@@ -6,16 +6,65 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.pdf.create.slddrw", "adsk.ts.pdf.create.slddrw\adsk.ts.pdf.create.slddrw.csproj", "{8BE623D4-CC6E-4F68-ADA6-E307EE73B80F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.image.create.inventor", "adsk.ts.image.create.inventor\adsk.ts.image.create.inventor.csproj", "{A0574014-3E9A-4276-8DD8-2D54777A68D6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C0CC289B-C400-45D7-9E56-CA1FC935163C} = {C0CC289B-C400-45D7-9E56-CA1FC935163C}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.rvt.create.inventor", "adsk.ts.rvt.create.inventor\adsk.ts.rvt.create.inventor.csproj", "{5F980C92-E275-4D61-A80A-3D733C401818}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C0CC289B-C400-45D7-9E56-CA1FC935163C} = {C0CC289B-C400-45D7-9E56-CA1FC935163C}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.acad.dwg2d.create.inventor", "adsk.ts.acad.dwg2d.create.inventor\adsk.ts.acad.dwg2d.create.inventor.csproj", "{3027EBD7-5776-4E1C-853D-54E0A1587534}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C0CC289B-C400-45D7-9E56-CA1FC935163C} = {C0CC289B-C400-45D7-9E56-CA1FC935163C}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.nwd.create.navisworks", "adsk.ts.nwd.create.navisworks\adsk.ts.nwd.create.navisworks.csproj", "{8A697468-FED8-4719-A575-71225085EFAF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.job.shared", "adsk.ts.job.shared\adsk.ts.job.shared.csproj", "{C0CC289B-C400-45D7-9E56-CA1FC935163C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.export3d.create.inventor", "adsk.ts.export3d.create.inventor\adsk.ts.export3d.create.inventor.csproj", "{952D1405-BBD5-452C-9D85-E64CAB7BB48E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C0CC289B-C400-45D7-9E56-CA1FC935163C} = {C0CC289B-C400-45D7-9E56-CA1FC935163C}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SDK References", "SDK References", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		SDK References\Autodesk.Connectivity.Explorer.Extensibility.dll = SDK References\Autodesk.Connectivity.Explorer.Extensibility.dll
+		SDK References\Autodesk.Connectivity.Explorer.Extensibility.XML = SDK References\Autodesk.Connectivity.Explorer.Extensibility.XML
+		SDK References\Autodesk.Connectivity.Explorer.ExtensibilityTools.dll = SDK References\Autodesk.Connectivity.Explorer.ExtensibilityTools.dll
+		SDK References\Autodesk.Connectivity.Explorer.ExtensibilityTools.XML = SDK References\Autodesk.Connectivity.Explorer.ExtensibilityTools.XML
+		SDK References\Autodesk.Connectivity.Extensibility.Framework.dll = SDK References\Autodesk.Connectivity.Extensibility.Framework.dll
+		SDK References\Autodesk.Connectivity.Extensibility.Framework.XML = SDK References\Autodesk.Connectivity.Extensibility.Framework.XML
+		SDK References\Autodesk.Connectivity.IDServicesWrapper.dll = SDK References\Autodesk.Connectivity.IDServicesWrapper.dll
+		SDK References\Autodesk.Connectivity.JobProcessor.Extensibility.dll = SDK References\Autodesk.Connectivity.JobProcessor.Extensibility.dll
+		SDK References\Autodesk.Connectivity.JobProcessor.Extensibility.XML = SDK References\Autodesk.Connectivity.JobProcessor.Extensibility.XML
+		SDK References\Autodesk.Connectivity.LicenseWrapper.dll = SDK References\Autodesk.Connectivity.LicenseWrapper.dll
+		SDK References\Autodesk.Connectivity.WebServices.dll = SDK References\Autodesk.Connectivity.WebServices.dll
+		SDK References\Autodesk.Connectivity.WebServices.WCF.dll = SDK References\Autodesk.Connectivity.WebServices.WCF.dll
+		SDK References\Autodesk.Connectivity.WebServices.XML = SDK References\Autodesk.Connectivity.WebServices.XML
+		SDK References\Autodesk.DataManagement.Client.Framework.dll = SDK References\Autodesk.DataManagement.Client.Framework.dll
+		SDK References\Autodesk.DataManagement.Client.Framework.Forms.dll = SDK References\Autodesk.DataManagement.Client.Framework.Forms.dll
+		SDK References\Autodesk.DataManagement.Client.Framework.Forms.xml = SDK References\Autodesk.DataManagement.Client.Framework.Forms.xml
+		SDK References\Autodesk.DataManagement.Client.Framework.Vault.dll = SDK References\Autodesk.DataManagement.Client.Framework.Vault.dll
+		SDK References\Autodesk.DataManagement.Client.Framework.Vault.Forms.dll = SDK References\Autodesk.DataManagement.Client.Framework.Vault.Forms.dll
+		SDK References\Autodesk.DataManagement.Client.Framework.Vault.Forms.xml = SDK References\Autodesk.DataManagement.Client.Framework.Vault.Forms.xml
+		SDK References\Autodesk.DataManagement.Client.Framework.Vault.xml = SDK References\Autodesk.DataManagement.Client.Framework.Vault.xml
+		SDK References\Autodesk.DataManagement.Client.Framework.xml = SDK References\Autodesk.DataManagement.Client.Framework.xml
+		SDK References\Autodesk.Inventor.Interop.dll = SDK References\Autodesk.Inventor.Interop.dll
+		SDK References\Autodesk.Inventor.Interop.xml = SDK References\Autodesk.Inventor.Interop.xml
+		SDK References\Autodesk.Navisworks.Api.dll = SDK References\Autodesk.Navisworks.Api.dll
+		SDK References\Autodesk.Navisworks.Api.xml = SDK References\Autodesk.Navisworks.Api.xml
+		SDK References\Autodesk.Navisworks.Automation.dll = SDK References\Autodesk.Navisworks.Automation.dll
+		SDK References\Autodesk.Navisworks.Automation.xml = SDK References\Autodesk.Navisworks.Automation.xml
+		SDK References\Autodesk.Navisworks.Controls.dll = SDK References\Autodesk.Navisworks.Controls.dll
+		SDK References\Autodesk.Navisworks.Controls.xml = SDK References\Autodesk.Navisworks.Controls.xml
+		SDK References\Autodesk.Navisworks.Resolver.dll = SDK References\Autodesk.Navisworks.Resolver.dll
+		SDK References\Autodesk.Navisworks.Resolver.xml = SDK References\Autodesk.Navisworks.Resolver.xml
+		SDK References\SolidWorks.Interop.sldworks.dll = SDK References\SolidWorks.Interop.sldworks.dll
+		SDK References\SolidWorks.Interop.swconst.dll = SDK References\SolidWorks.Interop.swconst.dll
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

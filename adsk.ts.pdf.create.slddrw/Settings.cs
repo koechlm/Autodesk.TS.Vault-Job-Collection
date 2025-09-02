@@ -46,7 +46,7 @@ namespace adsk.ts.pdf.create.slddrw
             try
             {
                 string codeFolder = Util.GetAssemblyPath();
-                string xmlPath = Path.Combine(codeFolder, "pdf.slddrw.settings.xml");
+                string xmlPath = Path.Combine(codeFolder, "adsk.ts.pdf.create.slddrw.settings.xml");
 
                 using (System.IO.StreamWriter writer = new System.IO.StreamWriter(xmlPath))
                 {
@@ -64,7 +64,7 @@ namespace adsk.ts.pdf.create.slddrw
 
 
             string codeFolder = Util.GetAssemblyPath();
-            string xmlPath = Path.Combine(codeFolder, "pdf.slddrw.settings.xml");
+            string xmlPath = Path.Combine(codeFolder, "adsk.ts.pdf.create.slddrw.settings.xml");
 
             using (System.IO.StreamReader reader = new System.IO.StreamReader(xmlPath))
             {
