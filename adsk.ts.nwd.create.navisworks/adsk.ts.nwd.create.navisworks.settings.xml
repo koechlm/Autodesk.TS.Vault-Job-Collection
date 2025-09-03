@@ -4,16 +4,13 @@
   <!-- Logfile directory; validate for write access -->
   <LogFileLocation>C:\Temp\</LogFileLocation>
 
-  <!-- Allow the reuse of an existing IPJ file if the download of it fails; accepted values are True/False-->
-  <AcceptLocalIpj>True</AcceptLocalIpj>
-
   <!-- Export File Format(s); supported Values/File Formats are: NWD, NWD+DWF -->
-  <ExportFormats>NWD+DWF</ExportFormats> 
+  <ExportFormats>NWD</ExportFormats> 
 
   <!-- NWD Template Options: store a Vault path of a NWD file as template, e.g. $/Templates/Navisworks/Standard-Vertical-Z.nwd-->
   <!-- Note - Using a template will add another reference to the resulting file.-->
   <!-- Leave the template blank, if the Navisworks default template should be consumed.-->
-  <NwdTemplate>$\Templates\Navisworks\Standard-Vertical-Z.nwd</NwdTemplate>
+  <NwdTemplate>$/Templates/Navisworks/Standard-Vertical-Z.nwd</NwdTemplate>
 
   <!-- Output Path -->
   <!--  The job can copy the resulting file(s) to the given output path after check-in-->

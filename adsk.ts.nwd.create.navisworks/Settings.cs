@@ -25,9 +25,6 @@ namespace adsk.ts.nwd.create.navisworks
         [XmlElement("LogFileLocation")]
         public string LogFileLocation;
 
-        [XmlElement("AcceptLocalIpj")]
-        public string AcceptLocalIpj;
-
         [XmlElement("ExportFormats")]
         public string ExportFormats;
 

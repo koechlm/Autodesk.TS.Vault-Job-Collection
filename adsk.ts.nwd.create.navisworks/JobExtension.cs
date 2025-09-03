@@ -33,7 +33,7 @@ namespace adsk.ts.nwd.create.navisworks
 {
     public class JobExtension : IJobHandler
     {
-        private static string JOB_TYPE = "adsk.ts.export3d.create.inventor";
+        private static string JOB_TYPE = "adsk.ts.nwd.create.navisworks";
         private static Settings mSettings = Settings.Load();
         private static string mLogDir = JobExtension.mSettings.LogFileLocation;
         private static string mLogFile;
@@ -91,7 +91,24 @@ namespace adsk.ts.nwd.create.navisworks
             catch (Exception ex)
             {
                 context.Log(ex, "Job " + JOB_TYPE + " failed: " + ex.ToString() + " ");
+                mTrace.IndentLevel = 0;
+                mTrace.WriteLine("... ending Job with failure.");
                 return JobOutcome.Failure;
+            }
+            finally
+            {
+                // clean up navisworks instance, if any
+                if (mNavisworksAutomation != null)
+                {
+                    mNavisworksDispose();
+                }
+
+                // close the log file
+                if (mTrace != null)
+                {
+                    mTrace.Flush();
+                    mTrace.Close();
+                }
             }
 
         }
@@ -203,8 +220,8 @@ namespace adsk.ts.nwd.create.navisworks
                         else
                         {
                             // download the template file
-                            ACW.File mNwdTemplateFile = mWsMgr.DocumentService.FindLatestFilesByPaths(new string[] { mSettings.NwdTemplate }).FirstOrDefault();
-                            if (mNwdTemplateFile != null)
+                            ACW.File mNwdTemplateFile = mWsMgr.DocumentService.FindLatestFilesByPaths(new string[] { mSettings.NwdTemplate.Replace("\\", "/") }).FirstOrDefault();
+                            if (mNwdTemplateFile.Id != -1)
                             {
                                 string mNwdTemplate = tsJobCommon.mDownloadFile(mNwdTemplateFile);
 
@@ -243,7 +260,7 @@ namespace adsk.ts.nwd.create.navisworks
                             mTrace.IndentLevel -= 1;
                         }
                         else
-                        {                            
+                        {
                             throw new Exception("Validating the export file " + mNwdName + " before upload failed.");
                         }
                         if (item == "NWD+DWF")
@@ -300,6 +317,14 @@ namespace adsk.ts.nwd.create.navisworks
 
                 }
             }
+
+            // process the upload of the created files
+            adsktsshared.JobCommon mJobCommon = new(connection, mWsMgr, mTrace);
+            mJobCommon.mUploadFiles(mFile, mFilesToUpload, settings.OutPutPath);
+
+            // finalize log output
+            mTrace.IndentLevel = 1;
+            mTrace.WriteLine("Job finished all steps.");
         }
 
         private NavisworksApplication mGetNavisworksAutom()

@@ -90,9 +90,16 @@ namespace adsk.ts.export3d.create.inventor
                 context.Log(ex, "Job " + JOB_TYPE + " failed: " + ex.ToString() + " ");
                 mTrace.IndentLevel = 0;
                 mTrace.WriteLine("... ending Job with failure.");
-                mTrace.Flush();
-                mTrace.Close();
                 return JobOutcome.Failure;
+            }
+            finally
+            {
+                // close the log file
+                if (mTrace != null)
+                {
+                    mTrace.Flush();
+                    mTrace.Close();
+                }
             }
         }
 
@@ -473,8 +480,6 @@ namespace adsk.ts.export3d.create.inventor
             // finalize log output
             mTrace.IndentLevel = 1;
             mTrace.WriteLine("Job finished all steps.");
-            mTrace.Flush();
-            mTrace.Close();
 
         }
 
