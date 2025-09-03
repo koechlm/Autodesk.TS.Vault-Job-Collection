@@ -43,7 +43,7 @@ namespace adsk.ts.nwd.create.navisworks
         public static string GetAssemblyPath()
         {
             string prefix = "file:///";
-            string codebase = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            string codebase = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
             if (codebase.StartsWith(prefix))
                 codebase = codebase.Substring(prefix.Length);
 

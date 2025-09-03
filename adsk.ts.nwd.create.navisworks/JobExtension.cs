@@ -18,7 +18,7 @@ using Autodesk.DataManagement.Client.Framework.Vault.Currency.Connections;
 using Autodesk.DataManagement.Client.Framework.Vault.Currency.Properties;
 using Autodesk.DataManagement.Client.Framework.Vault.Settings;
 
-using adsktsshared = adsk.ts.job.shared;
+using adsktsshared = adsk.ts.job.shared48;
 
 using NavisworksAutomation = Autodesk.Navisworks.Api.Automation;
 using Autodesk.Navisworks.Api.Automation;
@@ -172,7 +172,7 @@ namespace adsk.ts.nwd.create.navisworks
             mTrace.WriteLine("Job downloads source file(s) for translation.");
 
             // use shared code to download the file
-            adsktsshared.JobCommon tsJobCommon = new(connection, mWsMgr, mTrace);
+            adsktsshared.JobCommon tsJobCommon = new adsktsshared.JobCommon(connection, mWsMgr, mTrace);
             string mDocPath = tsJobCommon.mDownloadFile(mFile);
             string mExt = System.IO.Path.GetExtension(mDocPath);
 
@@ -319,7 +319,7 @@ namespace adsk.ts.nwd.create.navisworks
             }
 
             // process the upload of the created files
-            adsktsshared.JobCommon mJobCommon = new(connection, mWsMgr, mTrace);
+            adsktsshared.JobCommon mJobCommon = new adsktsshared.JobCommon(connection, mWsMgr, mTrace);
             mJobCommon.mUploadFiles(mFile, mFilesToUpload, settings.OutPutPath);
 
             // finalize log output

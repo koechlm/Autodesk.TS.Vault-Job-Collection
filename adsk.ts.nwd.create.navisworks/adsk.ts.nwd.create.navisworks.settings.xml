@@ -5,7 +5,7 @@
   <LogFileLocation>C:\Temp\</LogFileLocation>
 
   <!-- Export File Format(s); supported Values/File Formats are: NWD, NWD+DWF -->
-  <ExportFormats>NWD</ExportFormats> 
+  <ExportFormats>NWD</ExportFormats>
 
   <!-- NWD Template Options: store a Vault path of a NWD file as template, e.g. $/Templates/Navisworks/Standard-Vertical-Z.nwd-->
   <!-- Note - Using a template will add another reference to the resulting file.-->

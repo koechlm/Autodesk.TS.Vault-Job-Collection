@@ -20,8 +20,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.acad.dwg2d.create.i
 		{C0CC289B-C400-45D7-9E56-CA1FC935163C} = {C0CC289B-C400-45D7-9E56-CA1FC935163C}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.nwd.create.navisworks", "adsk.ts.nwd.create.navisworks\adsk.ts.nwd.create.navisworks.csproj", "{8A697468-FED8-4719-A575-71225085EFAF}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.job.shared", "adsk.ts.job.shared\adsk.ts.job.shared.csproj", "{C0CC289B-C400-45D7-9E56-CA1FC935163C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.export3d.create.inventor", "adsk.ts.export3d.create.inventor\adsk.ts.export3d.create.inventor.csproj", "{952D1405-BBD5-452C-9D85-E64CAB7BB48E}"
@@ -66,6 +64,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SDK References", "SDK Refer
 		SDK References\SolidWorks.Interop.swconst.dll = SDK References\SolidWorks.Interop.swconst.dll
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.nwd.create.navisworks", "adsk.ts.nwd.create.navisworks\adsk.ts.nwd.create.navisworks.csproj", "{4FFC0DAA-007C-41CB-88AF-794A148600C9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FA2B6AA3-3862-44F1-95C1-9EB499CF3250} = {FA2B6AA3-3862-44F1-95C1-9EB499CF3250}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.job.shared48", "adsk.ts.job.shared48\adsk.ts.job.shared48.csproj", "{FA2B6AA3-3862-44F1-95C1-9EB499CF3250}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -106,14 +111,6 @@ Global
 		{3027EBD7-5776-4E1C-853D-54E0A1587534}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3027EBD7-5776-4E1C-853D-54E0A1587534}.Release|x64.ActiveCfg = Release|x64
 		{3027EBD7-5776-4E1C-853D-54E0A1587534}.Release|x64.Build.0 = Release|x64
-		{8A697468-FED8-4719-A575-71225085EFAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8A697468-FED8-4719-A575-71225085EFAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8A697468-FED8-4719-A575-71225085EFAF}.Debug|x64.ActiveCfg = Debug|x64
-		{8A697468-FED8-4719-A575-71225085EFAF}.Debug|x64.Build.0 = Debug|x64
-		{8A697468-FED8-4719-A575-71225085EFAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8A697468-FED8-4719-A575-71225085EFAF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8A697468-FED8-4719-A575-71225085EFAF}.Release|x64.ActiveCfg = Release|x64
-		{8A697468-FED8-4719-A575-71225085EFAF}.Release|x64.Build.0 = Release|x64
 		{C0CC289B-C400-45D7-9E56-CA1FC935163C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C0CC289B-C400-45D7-9E56-CA1FC935163C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0CC289B-C400-45D7-9E56-CA1FC935163C}.Debug|x64.ActiveCfg = Debug|x64
@@ -130,6 +127,22 @@ Global
 		{952D1405-BBD5-452C-9D85-E64CAB7BB48E}.Release|Any CPU.Build.0 = Release|x64
 		{952D1405-BBD5-452C-9D85-E64CAB7BB48E}.Release|x64.ActiveCfg = Release|x64
 		{952D1405-BBD5-452C-9D85-E64CAB7BB48E}.Release|x64.Build.0 = Release|x64
+		{4FFC0DAA-007C-41CB-88AF-794A148600C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FFC0DAA-007C-41CB-88AF-794A148600C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FFC0DAA-007C-41CB-88AF-794A148600C9}.Debug|x64.ActiveCfg = Debug|x64
+		{4FFC0DAA-007C-41CB-88AF-794A148600C9}.Debug|x64.Build.0 = Debug|x64
+		{4FFC0DAA-007C-41CB-88AF-794A148600C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FFC0DAA-007C-41CB-88AF-794A148600C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FFC0DAA-007C-41CB-88AF-794A148600C9}.Release|x64.ActiveCfg = Release|Any CPU
+		{4FFC0DAA-007C-41CB-88AF-794A148600C9}.Release|x64.Build.0 = Release|Any CPU
+		{FA2B6AA3-3862-44F1-95C1-9EB499CF3250}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA2B6AA3-3862-44F1-95C1-9EB499CF3250}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA2B6AA3-3862-44F1-95C1-9EB499CF3250}.Debug|x64.ActiveCfg = Debug|x64
+		{FA2B6AA3-3862-44F1-95C1-9EB499CF3250}.Debug|x64.Build.0 = Debug|x64
+		{FA2B6AA3-3862-44F1-95C1-9EB499CF3250}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA2B6AA3-3862-44F1-95C1-9EB499CF3250}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA2B6AA3-3862-44F1-95C1-9EB499CF3250}.Release|x64.ActiveCfg = Release|Any CPU
+		{FA2B6AA3-3862-44F1-95C1-9EB499CF3250}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

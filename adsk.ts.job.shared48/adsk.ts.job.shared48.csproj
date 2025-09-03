@@ -4,25 +4,27 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4FFC0DAA-007C-41CB-88AF-794A148600C9}</ProjectGuid>
+    <ProjectGuid>{FA2B6AA3-3862-44F1-95C1-9EB499CF3250}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>adsk.ts.nwd.create.navisworks</RootNamespace>
-    <AssemblyName>adsk.ts.nwd.create.navisworks</AssemblyName>
+    <RootNamespace>adsk.ts.job.shared48</RootNamespace>
+    <AssemblyName>adsk.ts.job.shared48</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>$(ProgramData)\Autodesk\Vault 2024\Extensions\adsk.ts.nwd.create.navisworks\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -36,6 +38,9 @@
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x64\Debug\</OutputPath>
@@ -44,6 +49,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
@@ -55,6 +61,13 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="Key.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="adsk.ts.job.shared48, Version=2026.1.0.0, Culture=neutral, PublicKeyToken=b22d7b6c14b79ec9, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\x64\Debug\adsk.ts.job.shared48.dll</HintPath>
+    </Reference>
     <Reference Include="Autodesk.Connectivity.Explorer.Extensibility">
       <HintPath>..\..\..\..\..\..\Program Files\Autodesk\Autodesk Vault 2026 SDK\bin\x64\Autodesk.Connectivity.Explorer.Extensibility.dll</HintPath>
       <Private>False</Private>
@@ -103,47 +116,11 @@
       <HintPath>..\..\..\..\..\..\Program Files\Autodesk\Autodesk Vault 2026 SDK\bin\x64\Autodesk.DataManagement.Client.Framework.Vault.Forms.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Autodesk.Navisworks.Api">
-      <HintPath>..\SDK References\Autodesk.Navisworks.Api.dll</HintPath>
-    </Reference>
-    <Reference Include="Autodesk.Navisworks.Automation">
-      <HintPath>..\SDK References\Autodesk.Navisworks.Automation.dll</HintPath>
-    </Reference>
-    <Reference Include="Autodesk.Navisworks.Resolver">
-      <HintPath>..\SDK References\Autodesk.Navisworks.Resolver.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="JobExtension.cs" />
+    <Compile Include="adsk.ts.job.common.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Settings.cs" />
-    <Compile Include="Util.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Key.snk" />
-    <None Include="adsk.ts.nwd.create.navisworks.vcet.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="adsk.ts.nwd.create.navisworks.settings.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\adsk.ts.job.shared48\adsk.ts.job.shared48.csproj">
-      <Project>{fa2b6aa3-3862-44f1-95c1-9eb499cf3250}</Project>
-      <Name>adsk.ts.job.shared48</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Autodesk")]
 [assembly: AssemblyProduct("Autodesk Vault Professional - API Sample")]
-[assembly: AssemblyCopyright("Copyright © Autodesk 2025")]
+[assembly: AssemblyCopyright("Copyright © Autodesk 2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("8a697468-fed8-4719-a575-71225085efaf")]
+[assembly: Guid("4ffc0daa-007c-41cb-88af-794a148600c9")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -32,8 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("31.0.84.0")]
-[assembly: AssemblyFileVersion("31.0.84.0")]
-#if NET6_0_OR_GREATER
-[assembly: System.Runtime.Versioning.SupportedOSPlatform("windows7.0")]
-#endif
+[assembly: AssemblyVersion("29.0.68.0")]
+[assembly: AssemblyFileVersion("29.0.68.0")]
