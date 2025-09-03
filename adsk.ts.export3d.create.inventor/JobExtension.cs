@@ -10,6 +10,7 @@ using System.IO;
 using Autodesk.Connectivity.Extensibility.Framework;
 using Autodesk.Connectivity.JobProcessor.Extensibility;
 using ACW = Autodesk.Connectivity.WebServices;
+using Autodesk.Connectivity.WebServicesTools;
 using ACET = Autodesk.Connectivity.Explorer.ExtensibilityTools;
 using VDF = Autodesk.DataManagement.Client.Framework;
 using Autodesk.DataManagement.Client.Framework.Currency;
@@ -20,7 +21,6 @@ using Autodesk.DataManagement.Client.Framework.Vault.Settings;
 using adsktsshared = adsk.ts.job.shared;
 
 using Inventor;
-using Autodesk.Connectivity.WebServicesTools;
 
 // *ComponentUpgradeEveryRelease-Client*
 [assembly: ApiVersion("19.0")]
@@ -76,7 +76,7 @@ namespace adsk.ts.export3d.create.inventor
                 mTrace.WriteLine("Starting Job...");
 
                 //start the export task
-                mCreateExport(context, job);
+                mCreateInventor3dExport(context, job);
 
                 mTrace.IndentLevel = 0;
                 mTrace.WriteLine("... successfully ending Job.");
@@ -96,7 +96,7 @@ namespace adsk.ts.export3d.create.inventor
             }
         }
 
-        private void mCreateExport(IJobProcessorServices context, IJob job)
+        private void mCreateInventor3dExport(IJobProcessorServices context, IJob job)
         {
 
             List<string> mExpFrmts = new List<string>();
@@ -136,6 +136,8 @@ namespace adsk.ts.export3d.create.inventor
             //only run the job for implemented/available combinations of source file and export file formats
             List<string> mIptExpFrmts = new List<string> { "3DDWG", "CATPart", "glTF", "IGES", "JT", "OBJ", "X_B", "X_T", "ProE_G", "ProE_N", "QIF", "SAT", "SMT", "STEP", "STL", "USDz" };
             List<string> mIamExpFrmts = new List<string> { "3DDWG", "CATProduct", "glTF", "IGES", "JT", "OBJ", "X_B", "X_T", "ProE_G", "ProE_N", "SAT", "SMT", "STEP", "STL", "USDz" };
+
+            // read configured export format(s)
             if (settings.ExportFormats == null)
                 throw new Exception("Settings expect to list at least one export format!");
             if (settings.ExportFormats.Contains(","))

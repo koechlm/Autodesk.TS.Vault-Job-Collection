@@ -37,10 +37,18 @@ namespace adsk.ts.nwd.create.navisworks
         [XmlElement("OutputPath")]
         public string OutPutPath;
 
-        #region for future use
-        //[XmlElement("OutputPath")]
-        //public string mOutPutPath;
-        #endregion for future use
+        // added for future enhancement using Navisworks Plugins to export, instead of Automation
+        //[XmlElement("NWDExcludeHiddenItems")]
+        //public string NWDExcludeHiddenItems;
+
+        //[XmlElement("NWDEmbedXrefs")]
+        //public string NWDEmbedXrefs;
+
+        //[XmlElement("NWDPreventObjectPropertyExport")]
+        //public string NWDPreventObjectPropertyExport;
+
+        //[XmlElement("NWDFileVersion")]
+        //public string NWDFileVersion;
 
         private Settings()
         {

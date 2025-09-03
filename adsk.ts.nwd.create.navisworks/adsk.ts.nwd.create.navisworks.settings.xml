@@ -7,9 +7,8 @@
   <!-- Allow the reuse of an existing IPJ file if the download of it fails; accepted values are True/False-->
   <AcceptLocalIpj>True</AcceptLocalIpj>
 
-  <!-- Export File Format(s)-->
-  <!--  Supported Values/File Formats are: NWD, NWD+DWF -->
-  <ExportFormats>NWD+DWF</ExportFormats>
+  <!-- Export File Format(s); supported Values/File Formats are: NWD, NWD+DWF -->
+  <ExportFormats>NWD+DWF</ExportFormats> 
 
   <!-- NWD Template Options: store a Vault path of a NWD file as template, e.g. $/Templates/Navisworks/Standard-Vertical-Z.nwd-->
   <!-- Note - Using a template will add another reference to the resulting file.-->
