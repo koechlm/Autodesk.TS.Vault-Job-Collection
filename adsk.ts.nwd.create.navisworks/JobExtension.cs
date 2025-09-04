@@ -244,8 +244,6 @@ namespace adsk.ts.nwd.create.navisworks
                         //export DWF
                         if (item == "NWD+DWF")
                         {
-                            //zoom to fit extents before exporting
-                            mNavisworksAutomation.ExecuteAddInPlugin("NativeViewerPluginAdaptor_LcViewFitPlugin_FitView.Navisworks", "");
                             //export the DWF file
                             mNavisworksAutomation.ExecuteAddInPlugin("NativeExportPluginAdaptor_LcDwfExporterPlugin_Export.Navisworks", @mNWDWFName);
                         }
