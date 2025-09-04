@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.13.35828.75
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.pdf.create.slddrw", "adsk.ts.pdf.create.slddrw\adsk.ts.pdf.create.slddrw.csproj", "{8BE623D4-CC6E-4F68-ADA6-E307EE73B80F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C0CC289B-C400-45D7-9E56-CA1FC935163C} = {C0CC289B-C400-45D7-9E56-CA1FC935163C}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.image.create.inventor", "adsk.ts.image.create.inventor\adsk.ts.image.create.inventor.csproj", "{A0574014-3E9A-4276-8DD8-2D54777A68D6}"
 	ProjectSection(ProjectDependencies) = postProject

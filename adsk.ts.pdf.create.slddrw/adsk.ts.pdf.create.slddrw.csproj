@@ -66,6 +66,12 @@
       <HintPath>$(ProgramW6432)\Autodesk\Autodesk Vault 2026 SDK\bin\x64\Core\Autodesk.DataManagement.Client.Framework.Vault.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="SolidWorks.Interop.sldworks">
+      <HintPath>..\SDK References\SolidWorks.Interop.sldworks.dll</HintPath>
+    </Reference>
+    <Reference Include="SolidWorks.Interop.swconst">
+      <HintPath>..\SDK References\SolidWorks.Interop.swconst.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="JobExtension.cs" />
@@ -83,5 +89,8 @@
     <Content Include="adsk.ts.pdf.create.slddrw.settings.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\adsk.ts.job.shared\adsk.ts.job.shared.csproj" />
   </ItemGroup>
 </Project>
