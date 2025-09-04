@@ -54,9 +54,29 @@ namespace adsk.ts.pdf.create.slddrw
         {
             try
             {
+                //pick up this job's context
+                connection = context.Connection;
+                mWsMgr = connection.WebServiceManager;
+                long mEntId = Convert.ToInt64(job.Params["EntityId"]);
+                string mEntClsId = job.Params["EntityClassId"];
+
+                // only run the job for files
+                if (mEntClsId != "FILE")
+                    return JobOutcome.Success;
+
+                // get the file object for this job
+                mFile = mWsMgr.DocumentService.GetFileById(mEntId);
+                if (mFile == null)
+                {
+                    throw new Exception("The file version is no longer available!");
+                }
+
+                // prepare log file and initiate logging
+                mLogFile = JOB_TYPE + "_" + mFile.Name + ".log";
                 FileInfo mLogFileInfo = new FileInfo(System.IO.Path.Combine(
-                                    mLogDir, mLogFile));
+                    mLogDir, mLogFile));
                 if (mLogFileInfo.Exists) mLogFileInfo.Delete();
+                mTrace = new TextWriterTraceListener(System.IO.Path.Combine(mLogDir, mLogFile), "mJobTrace");
                 mTrace.WriteLine("Starting Job...");
 
                 //start step export
