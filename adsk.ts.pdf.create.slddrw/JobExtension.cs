@@ -259,6 +259,14 @@ namespace adsk.ts.pdf.create.slddrw
                 }
             }
 
+            // process the upload of the created files
+            adsktsshared.JobCommon mJobCommon = new(connection, mWsMgr, mTrace);
+            mJobCommon.mUploadFiles(mFile, mFilesToUpload, settings.OutPutPath);
+
+            // finalize log output
+            mTrace.IndentLevel = 1;
+            mTrace.WriteLine("Job finished all steps.");
+
         }
 
         private SldWorks mGetSldworks()
