@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/adsk.ts.job.shared48
+/adsk.ts.pdf.create.slddrw.NET48
