@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /adsk.ts.job.shared48
 /adsk.ts.pdf.create.slddrw.NET48
+/adsk.ts.jobcollection.user/adsk.ts.jobcollection.user.csproj

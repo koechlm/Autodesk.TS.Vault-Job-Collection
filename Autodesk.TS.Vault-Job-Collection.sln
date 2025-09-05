@@ -69,6 +69,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SDK References", "SDK Refer
 		SDK References\SolidWorks.Interop.swconst.dll = SDK References\SolidWorks.Interop.swconst.dll
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.job.collection.admin", "adsk.ts.job.collection.admin\adsk.ts.job.collection.admin.csproj", "{F16A1E33-5EA8-43B5-B7BE-89957A78F2E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.job.collection.user", "adsk.ts.job.collection.user\adsk.ts.job.collection.user.csproj", "{9FB8444A-8C42-4E63-A0E7-C77CA4E902E4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -133,6 +137,30 @@ Global
 		{952D1405-BBD5-452C-9D85-E64CAB7BB48E}.Release|Any CPU.Build.0 = Release|x64
 		{952D1405-BBD5-452C-9D85-E64CAB7BB48E}.Release|x64.ActiveCfg = Release|x64
 		{952D1405-BBD5-452C-9D85-E64CAB7BB48E}.Release|x64.Build.0 = Release|x64
+		{DDBE8546-0C17-46D4-BD91-943EF0BDF2FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDBE8546-0C17-46D4-BD91-943EF0BDF2FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDBE8546-0C17-46D4-BD91-943EF0BDF2FF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DDBE8546-0C17-46D4-BD91-943EF0BDF2FF}.Debug|x64.Build.0 = Debug|Any CPU
+		{DDBE8546-0C17-46D4-BD91-943EF0BDF2FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDBE8546-0C17-46D4-BD91-943EF0BDF2FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDBE8546-0C17-46D4-BD91-943EF0BDF2FF}.Release|x64.ActiveCfg = Release|Any CPU
+		{DDBE8546-0C17-46D4-BD91-943EF0BDF2FF}.Release|x64.Build.0 = Release|Any CPU
+		{F16A1E33-5EA8-43B5-B7BE-89957A78F2E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F16A1E33-5EA8-43B5-B7BE-89957A78F2E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F16A1E33-5EA8-43B5-B7BE-89957A78F2E3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F16A1E33-5EA8-43B5-B7BE-89957A78F2E3}.Debug|x64.Build.0 = Debug|Any CPU
+		{F16A1E33-5EA8-43B5-B7BE-89957A78F2E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F16A1E33-5EA8-43B5-B7BE-89957A78F2E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F16A1E33-5EA8-43B5-B7BE-89957A78F2E3}.Release|x64.ActiveCfg = Release|Any CPU
+		{F16A1E33-5EA8-43B5-B7BE-89957A78F2E3}.Release|x64.Build.0 = Release|Any CPU
+		{9FB8444A-8C42-4E63-A0E7-C77CA4E902E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FB8444A-8C42-4E63-A0E7-C77CA4E902E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FB8444A-8C42-4E63-A0E7-C77CA4E902E4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9FB8444A-8C42-4E63-A0E7-C77CA4E902E4}.Debug|x64.Build.0 = Debug|Any CPU
+		{9FB8444A-8C42-4E63-A0E7-C77CA4E902E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FB8444A-8C42-4E63-A0E7-C77CA4E902E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FB8444A-8C42-4E63-A0E7-C77CA4E902E4}.Release|x64.ActiveCfg = Release|Any CPU
+		{9FB8444A-8C42-4E63-A0E7-C77CA4E902E4}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
