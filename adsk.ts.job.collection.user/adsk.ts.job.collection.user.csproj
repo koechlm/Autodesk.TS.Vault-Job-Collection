@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
     <ProjectGuid>{9fb8444a-8c42-4e63-a0e7-c77ca4e902e4}</ProjectGuid>
     <TargetFramework>net8.0-windows</TargetFramework>
     <OutputType>Library</OutputType>
@@ -13,8 +13,9 @@
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <MSBuildWarningsAsMessages>MSB3277</MSBuildWarningsAsMessages>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,7 +24,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -43,6 +44,7 @@
   <ItemGroup>
     <Reference Include="Autodesk.Connectivity.Explorer.Extensibility">
       <HintPath>..\SDK References\Autodesk.Connectivity.Explorer.Extensibility.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Autodesk.Connectivity.Explorer.ExtensibilityTools">
       <HintPath>$(ProgramW6432)\Autodesk\Autodesk Vault 2026 SDK\bin\x64\Core\Autodesk.Connectivity.Explorer.ExtensibilityTools.dll</HintPath>
@@ -54,12 +56,15 @@
     </Reference>
     <Reference Include="Autodesk.Connectivity.IDServicesWrapper">
       <HintPath>..\SDK References\Autodesk.Connectivity.IDServicesWrapper.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Autodesk.Connectivity.JobProcessor.Extensibility">
       <HintPath>..\SDK References\Autodesk.Connectivity.JobProcessor.Extensibility.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Autodesk.Connectivity.LicenseWrapper">
       <HintPath>..\SDK References\Autodesk.Connectivity.LicenseWrapper.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Autodesk.Connectivity.WebServices">
       <HintPath>$(ProgramW6432)\Autodesk\Autodesk Vault 2026 SDK\bin\x64\Core\Autodesk.Connectivity.WebServices.dll</HintPath>
@@ -67,6 +72,7 @@
     </Reference>
     <Reference Include="Autodesk.Connectivity.WebServices.WCF">
       <HintPath>..\SDK References\Autodesk.Connectivity.WebServices.WCF.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Autodesk.DataManagement.Client.Framework">
       <HintPath>$(ProgramW6432)\Autodesk\Autodesk Vault 2026 SDK\bin\x64\Core\Autodesk.DataManagement.Client.Framework.dll</HintPath>
@@ -74,6 +80,7 @@
     </Reference>
     <Reference Include="Autodesk.DataManagement.Client.Framework.Forms">
       <HintPath>..\SDK References\Autodesk.DataManagement.Client.Framework.Forms.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Autodesk.DataManagement.Client.Framework.Vault">
       <HintPath>$(ProgramW6432)\Autodesk\Autodesk Vault 2026 SDK\bin\x64\Core\Autodesk.DataManagement.Client.Framework.Vault.dll</HintPath>
@@ -81,14 +88,22 @@
     </Reference>
     <Reference Include="Autodesk.DataManagement.Client.Framework.Vault.Forms">
       <HintPath>..\SDK References\Autodesk.DataManagement.Client.Framework.Vault.Forms.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="User.ExplorerExtension.cs" />
     <Compile Include="EventHandlers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Util.cs" />
+    <Compile Include="XtraForm_JobUser.cs" />
+    <Compile Include="XtraForm_JobUser.Designer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Key.snk" />
@@ -97,8 +112,26 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Settings.xml">
+    <Content Include="adsk.ts.job.collection.user.settings.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\AddToList_16.png" />
+    <Content Include="Resources\Add_16.png" />
+    <Content Include="Resources\Add_Generic_16.png" />
+    <Content Include="Resources\AdminOptionsImage_16.png" />
+    <Content Include="Resources\Admin_16.png" />
+    <Content Include="Resources\ArrowDown_16.png" />
+    <Content Include="Resources\ArrowUp_16.png" />
+    <Content Include="Resources\Remove Generic_16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="XtraForm_JobUser.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="DevExpress.Win.Design" Version="24.1.6" />
   </ItemGroup>
 </Project>
