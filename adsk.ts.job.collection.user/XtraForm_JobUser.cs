@@ -132,7 +132,8 @@ namespace adsk.ts.job.collection.user
                 {
                     gridView1.SetRowCellValue(i, "jobname", cmbJobGlobal.SelectedItem.ToString());
                 }
-            }
+            }     
+            
             gridView1.RefreshData();
         }
 
@@ -146,6 +147,7 @@ namespace adsk.ts.job.collection.user
                     gridView1.SetRowCellValue(i, "priority", Convert.ToInt32(cmbPriorityGlobal.SelectedItem.ToString()));
                 }
             }
+
             gridView1.RefreshData();
         }
 

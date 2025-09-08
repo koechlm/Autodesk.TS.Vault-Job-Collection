@@ -162,6 +162,8 @@
             gridView1.GridControl = grdFiles;
             gridView1.Name = "gridView1";
             gridView1.OptionsBehavior.AutoExpandAllGroups = true;
+            gridView1.OptionsLayout.Columns.RemoveOldColumns = false;
+            gridView1.OptionsMenu.EnableColumnMenu = false;
             gridView1.OptionsSelection.MultiSelect = true;
             gridView1.SortInfo.AddRange(new DevExpress.XtraGrid.Columns.GridColumnSortInfo[] { new DevExpress.XtraGrid.Columns.GridColumnSortInfo(Order, DevExpress.Data.ColumnSortOrder.Ascending) });
             // 
@@ -200,27 +202,35 @@
             FileName.Name = "FileName";
             FileName.OptionsColumn.AllowEdit = false;
             FileName.OptionsColumn.AllowGroup = DevExpress.Utils.DefaultBoolean.False;
+            FileName.OptionsColumn.AllowMove = false;
+            FileName.OptionsColumn.AllowShowHide = false;
             FileName.OptionsColumn.ReadOnly = true;
             FileName.Visible = true;
             FileName.VisibleIndex = 1;
-            FileName.Width = 308;
+            FileName.Width = 159;
             // 
             // Extension
             // 
             Extension.Caption = "File Type";
             Extension.FieldName = "extension";
             Extension.Name = "Extension";
+            Extension.OptionsColumn.AllowEdit = false;
+            Extension.OptionsColumn.AllowGroup = DevExpress.Utils.DefaultBoolean.True;
+            Extension.OptionsColumn.AllowShowHide = false;
             Extension.Visible = true;
             Extension.VisibleIndex = 2;
+            Extension.Width = 62;
             // 
             // JobName
             // 
             JobName.Caption = "Job Name";
             JobName.FieldName = "jobname";
             JobName.Name = "JobName";
+            JobName.OptionsColumn.AllowGroup = DevExpress.Utils.DefaultBoolean.True;
+            JobName.OptionsColumn.AllowShowHide = false;
             JobName.Visible = true;
             JobName.VisibleIndex = 3;
-            JobName.Width = 197;
+            JobName.Width = 220;
             // 
             // JobPriority
             // 
@@ -232,11 +242,12 @@
             JobPriority.FieldName = "priority";
             JobPriority.Name = "JobPriority";
             JobPriority.OptionsColumn.AllowGroup = DevExpress.Utils.DefaultBoolean.True;
+            JobPriority.OptionsColumn.AllowShowHide = false;
             JobPriority.ToolTip = "Job execution priority, 1 = highest priority, 100 = default priority. Overrules submission order.";
             JobPriority.UnboundDataType = typeof(int);
             JobPriority.Visible = true;
             JobPriority.VisibleIndex = 4;
-            JobPriority.Width = 193;
+            JobPriority.Width = 106;
             // 
             // btnMoveDown
             // 
