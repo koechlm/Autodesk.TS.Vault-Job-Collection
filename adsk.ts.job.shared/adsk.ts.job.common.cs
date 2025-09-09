@@ -31,20 +31,31 @@ namespace adsk.ts.job.shared
             _trace = mTrace;
         }
 
-        public string mDownloadFile(ACW.File mFile)
+        public string mDownloadFile(ACW.File mFile, bool checkout = false)
         {
             //download the source file iteration, enforcing overwrite if local files exist
             VDF.Vault.Settings.AcquireFilesSettings mDownloadSettings = new VDF.Vault.Settings.AcquireFilesSettings(_connection);
             VDF.Vault.Currency.Entities.FileIteration mFileIteration = new VDF.Vault.Currency.Entities.FileIteration(_connection, mFile);
+            if (checkout)
+            {   // download and checkout
+                mDownloadSettings.DefaultAcquisitionOption = VDF.Vault.Settings.AcquireFilesSettings.AcquisitionOption.Checkout | AcquireFilesSettings.AcquisitionOption.Download;
+            }
+            else
+            {  // download only
+                mDownloadSettings.DefaultAcquisitionOption = VDF.Vault.Settings.AcquireFilesSettings.AcquisitionOption.Download;
+            }
             mDownloadSettings.AddFileToAcquire(mFileIteration, VDF.Vault.Settings.AcquireFilesSettings.AcquisitionOption.Download);
             mDownloadSettings.OrganizeFilesRelativeToCommonVaultRoot = true;
             mDownloadSettings.OptionsRelationshipGathering.FileRelationshipSettings.IncludeChildren = true;
             mDownloadSettings.OptionsRelationshipGathering.FileRelationshipSettings.RecurseChildren = true;
             mDownloadSettings.OptionsRelationshipGathering.FileRelationshipSettings.IncludeLibraryContents = true;
             mDownloadSettings.OptionsRelationshipGathering.FileRelationshipSettings.ReleaseBiased = true;
+            // set overwrite options
             VDF.Vault.Settings.AcquireFilesSettings.AcquireFileResolutionOptions mResOpt = new VDF.Vault.Settings.AcquireFilesSettings.AcquireFileResolutionOptions();
             mResOpt.OverwriteOption = VDF.Vault.Settings.AcquireFilesSettings.AcquireFileResolutionOptions.OverwriteOptions.ForceOverwriteAll;
             mResOpt.SyncWithRemoteSiteSetting = VDF.Vault.Settings.AcquireFilesSettings.SyncWithRemoteSite.Always;
+            mDownloadSettings.OptionsResolution.OverwriteOption = mResOpt.OverwriteOption;
+            mDownloadSettings.OptionsResolution.SyncWithRemoteSiteSetting = mResOpt.SyncWithRemoteSiteSetting;
 
             //execute download
             VDF.Vault.Results.AcquireFilesResults? mDownLoadResult = _connection.FileManager.AcquireFiles(mDownloadSettings);
@@ -59,7 +70,7 @@ namespace adsk.ts.job.shared
             {
                 throw new Exception("Job stopped execution as the file " + mFile.Name + " did not download.");
             }
-            
+
             return fileAcquisitionResult.LocalPath.FullPath;
         }
 
@@ -98,7 +109,7 @@ namespace adsk.ts.job.shared
                     if (wsFile == null || wsFile.Id < 0)
                     {
                         // add new file to Vault
-                        _trace.WriteLine("Job adds " + mExportFileInfo.Name + " as new file.");                        
+                        _trace.WriteLine("Job adds " + mExportFileInfo.Name + " as new file.");
 
                         var folderEntity = new Autodesk.DataManagement.Client.Framework.Vault.Currency.Entities.Folder(_connection, mFolder);
                         try

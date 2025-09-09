@@ -98,7 +98,7 @@ namespace adsk.ts.pdf.create.slddrw
             }
             finally
             {
-                // clean up navisworks instance, if any
+                // clean up Solidworks instance, if any
                 if (sldWorks != null)
                 {
                     mSldworksDispose();
@@ -160,22 +160,11 @@ namespace adsk.ts.pdf.create.slddrw
 
             #region validate SolidWorks availability
             //validate Solidworks instance for SLDDRW.PDF format
-            if (mExpFrmts.Contains("SLDDRW.PDF"))
+            sldWorks = mGetSldworks();
+            if (sldWorks == null)
             {
-                sldWorks = mGetSldworks();
-                if (sldWorks == null)
-                {
-                    //the job might continue successful for other formats than SLDDRW.PDF; terminate only if SLDDRW.PDF is the only target format
-                    if (mExpFrmts.Count == 1 && mExpFrmts.FirstOrDefault().Contains("SLDDRW.PDF"))
-                    {
-                        mTrace.WriteLine("Translator job required Solidworks but failed to establish an application instance of Solidworks; exit job with failure.");
-                        throw new Exception("Translator job's single task creating a Solidworks PDF file failed: could not find or start Solidworks application.");
-                    }
-                    else
-                    {
-                        mTrace.WriteLine("Translator job required Solidworks, but failed to get an instance of the application; job continues to export other formats.");
-                    }
-                }
+                mTrace.WriteLine("Translator job required Solidworks but failed to establish an application instance of Solidworks; exit job with failure.");
+                throw new Exception("Translator job's single task creating a Solidworks PDF file failed: could not find or start Solidworks application.");
             }
             #endregion validate SolidWorks availability
 

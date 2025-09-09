@@ -20,17 +20,16 @@ namespace adsk.ts.job.shared
 {
     public class InventorJob
     {
-        readonly InventorServer _inventorServer;
         readonly WebServiceManager _WebSrvMgr;
         readonly Connection _connection;
 
-        public InventorJob(InventorServer inventorServer, Connection connection, WebServiceManager webServiceManager)
+        public InventorJob(Connection connection, WebServiceManager webServiceManager)
         {
             // Constructor
-            _inventorServer = inventorServer;
             _WebSrvMgr = webServiceManager;
             _connection = connection;
         }
+
 
         public string mGetIpj(bool acceptLocalIpj = true)
         {
