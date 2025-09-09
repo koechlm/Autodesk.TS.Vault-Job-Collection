@@ -81,7 +81,7 @@
   <ItemGroup>
     <None Include="Key.snk" />
     <None Include="adsk.ts.rvt.create.inventor.vcet.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>

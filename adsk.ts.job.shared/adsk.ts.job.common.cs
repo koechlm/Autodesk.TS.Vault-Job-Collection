@@ -14,6 +14,7 @@ using Autodesk.DataManagement.Client.Framework.Vault.Currency.Properties;
 using Autodesk.DataManagement.Client.Framework.Vault.Settings;
 using static System.Net.Mime.MediaTypeNames;
 using System.Diagnostics;
+using Inventor;
 
 namespace adsk.ts.job.shared
 {
@@ -34,43 +35,62 @@ namespace adsk.ts.job.shared
         public string mDownloadFile(ACW.File mFile, bool checkout = false)
         {
             //download the source file iteration, enforcing overwrite if local files exist
-            VDF.Vault.Settings.AcquireFilesSettings mDownloadSettings = new VDF.Vault.Settings.AcquireFilesSettings(_connection);
             VDF.Vault.Currency.Entities.FileIteration mFileIteration = new VDF.Vault.Currency.Entities.FileIteration(_connection, mFile);
+
+            AcquireFilesSettings mDownloadSettings = new AcquireFilesSettings(_connection);
+            // set the default acquisition option to download only; this will apply to all files added to the settings unless specified otherwise
+            mDownloadSettings.DefaultAcquisitionOption = AcquireFilesSettings.AcquisitionOption.Download;
+
+            // set the acquisition option for this specific file according the parameter checkout
             if (checkout)
             {   // download and checkout
-                mDownloadSettings.DefaultAcquisitionOption = VDF.Vault.Settings.AcquireFilesSettings.AcquisitionOption.Checkout | AcquireFilesSettings.AcquisitionOption.Download;
+                mDownloadSettings.AddFileToAcquire(mFileIteration, AcquireFilesSettings.AcquisitionOption.Checkout | AcquireFilesSettings.AcquisitionOption.Download);
             }
             else
             {  // download only
-                mDownloadSettings.DefaultAcquisitionOption = VDF.Vault.Settings.AcquireFilesSettings.AcquisitionOption.Download;
+                mDownloadSettings.AddFileToAcquire(mFileIteration, AcquireFilesSettings.AcquisitionOption.Download);
             }
-            mDownloadSettings.AddFileToAcquire(mFileIteration, VDF.Vault.Settings.AcquireFilesSettings.AcquisitionOption.Download);
+
             mDownloadSettings.OrganizeFilesRelativeToCommonVaultRoot = true;
             mDownloadSettings.OptionsRelationshipGathering.FileRelationshipSettings.IncludeChildren = true;
             mDownloadSettings.OptionsRelationshipGathering.FileRelationshipSettings.RecurseChildren = true;
             mDownloadSettings.OptionsRelationshipGathering.FileRelationshipSettings.IncludeLibraryContents = true;
             mDownloadSettings.OptionsRelationshipGathering.FileRelationshipSettings.ReleaseBiased = true;
             // set overwrite options
-            VDF.Vault.Settings.AcquireFilesSettings.AcquireFileResolutionOptions mResOpt = new VDF.Vault.Settings.AcquireFilesSettings.AcquireFileResolutionOptions();
-            mResOpt.OverwriteOption = VDF.Vault.Settings.AcquireFilesSettings.AcquireFileResolutionOptions.OverwriteOptions.ForceOverwriteAll;
-            mResOpt.SyncWithRemoteSiteSetting = VDF.Vault.Settings.AcquireFilesSettings.SyncWithRemoteSite.Always;
+            AcquireFilesSettings.AcquireFileResolutionOptions mResOpt = new AcquireFilesSettings.AcquireFileResolutionOptions();
+            mResOpt.OverwriteOption = AcquireFilesSettings.AcquireFileResolutionOptions.OverwriteOptions.ForceOverwriteAll;
+            mResOpt.SyncWithRemoteSiteSetting = AcquireFilesSettings.SyncWithRemoteSite.Always;
             mDownloadSettings.OptionsResolution.OverwriteOption = mResOpt.OverwriteOption;
             mDownloadSettings.OptionsResolution.SyncWithRemoteSiteSetting = mResOpt.SyncWithRemoteSiteSetting;
 
             //execute download
             VDF.Vault.Results.AcquireFilesResults? mDownLoadResult = _connection.FileManager.AcquireFiles(mDownloadSettings);
-            //pickup result details
-            VDF.Vault.Results.FileAcquisitionResult? fileAcquisitionResult = null;
+            
+            // find the result for the requested file iteration
+            VDF.Vault.Results.FileAcquisitionResult? fileAcquisitionResult = null;            
             if (mDownLoadResult != null)
             {
                 fileAcquisitionResult = mDownLoadResult.FileResults.FirstOrDefault(n => n.File.EntityName == mFileIteration.EntityName);
             }
-
-            if (fileAcquisitionResult == null)
+            // the download cancelled if the file already existed locally
+            if (mDownLoadResult?.IsCancelled == true)
             {
-                throw new Exception("Job stopped execution as the file " + mFile.Name + " did not download.");
+                // check that the file is consumable for the job user
+                PropertyDefinitionDictionary mProps = _connection.PropertyManager.GetPropertyDefinitions(VDF.Vault.Currency.Entities.EntityClassIds.Files, null, PropertyDefinitionFilter.IncludeAll);
+
+                PropertyDefinition mVaultStatus = mProps[PropertyDefinitionIds.Client.VaultStatus];
+
+                EntityStatusImageInfo? mStatus = _connection.PropertyManager.GetPropertyValue(mFileIteration, mVaultStatus, null) as EntityStatusImageInfo;
+                if (mStatus?.Status.ConsumableState == EntityStatus.ConsumableStateEnum.LatestConsumable)
+                {
+                    return (_connection.WorkingFoldersManager.GetPathOfFileInWorkingFolder(mFileIteration).FullPath.ToString());
+                }
             }
 
+            if (fileAcquisitionResult == null || fileAcquisitionResult.LocalPath == null)
+            {
+                throw new Exception("Job could not download file " + mFile.Name + " from Vault.");
+            }
             return fileAcquisitionResult.LocalPath.FullPath;
         }
 

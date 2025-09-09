@@ -12,7 +12,7 @@
   <ExportFormats>RVT</ExportFormats>
 
   <!-- RVT preset: store a Vault path of the Inventor preset file, e.g. $/Templates/Inventor/Presest/SimplifyCmd.preset-->
-  <InventorPreset>$/Templates/InventorPresets/SimplifyCmd.preset</InventorPreset>
+  <InventorPreset>$/Templates/Inventor/Presets/SimplifyCmd.preset</InventorPreset>
 
   <!-- RVT preset name: store a name of the preset; supporte values are: RVT_Level_0, RVT_Level_1, RVT_Level_2, RVT_Level_3 -->
   <InventorPresetName>RVT_Level_2</InventorPresetName>

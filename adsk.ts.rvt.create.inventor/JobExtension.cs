@@ -22,12 +22,13 @@ using adsktsshared = adsk.ts.job.shared;
 
 using Inventor;
 using static System.Windows.Forms.DataFormats;
-using adsk.ts.job.shared;
 using System.Xml;
 using System.Linq.Expressions;
 using System.Data.Common;
 using Autodesk.DataManagement.Client.Framework.Vault.Currency.Entities;
 using Autodesk.Connectivity.WebServices;
+
+using Microsoft.Win32;
 
 // *ComponentUpgradeEveryRelease-Client*
 [assembly: ApiVersion("19.0")]
@@ -36,6 +37,7 @@ using Autodesk.Connectivity.WebServices;
 
 namespace adsk.ts.rvt.create.inventor
 {
+
     public class JobExtension : IJobHandler
     {
         private static string JOB_TYPE = "adsk.ts.rvt.create.inventor";
@@ -50,7 +52,11 @@ namespace adsk.ts.rvt.create.inventor
         VDF.Vault.Currency.Entities.FileIteration mFileIteration, mNewFileIteration;
         private Inventor.Application mInv = null;
 
+        // list active Inventor addins disabled and reenabled during the job
+        private List<Inventor.ApplicationAddIn> mDisabledAddins = new();
+
         #region IJobHandler Implementation
+
         public bool CanProcess(string jobType)
         {
             return jobType == JOB_TYPE;
@@ -76,7 +82,7 @@ namespace adsk.ts.rvt.create.inventor
                 {
                     throw new Exception("The file version is no longer available!");
                 }
-                mFileIteration = new VDF.Vault.Currency.Entities.FileIteration(connection, mFile);                
+                mFileIteration = new VDF.Vault.Currency.Entities.FileIteration(connection, mFile);
 
                 // prepare log file and initiate logging
                 mLogFile = JOB_TYPE + "_" + mFile.Name + ".log";
@@ -118,6 +124,28 @@ namespace adsk.ts.rvt.create.inventor
             }
         }
 
+        public void OnJobProcessorShutdown(IJobProcessorServices context)
+        {
+            //throw new NotImplementedException();
+        }
+
+        public void OnJobProcessorSleep(IJobProcessorServices context)
+        {
+            //throw new NotImplementedException();
+        }
+
+        public void OnJobProcessorStartup(IJobProcessorServices context)
+        {
+            //throw new NotImplementedException();
+        }
+
+        public void OnJobProcessorWake(IJobProcessorServices context)
+        {
+            //throw new NotImplementedException();
+        }
+
+        #endregion IJobHandler Implementation
+
         private void mCreateRevitSimplification(IJobProcessorServices context, IJob job)
         {
             List<string> mExpFrmts = new List<string>();
@@ -150,9 +178,25 @@ namespace adsk.ts.rvt.create.inventor
                 mTrace.WriteLine("Translator job exits: file classification 'ConfigurationFactory' is not supported.");
                 return;
             }
+            #endregion validate execution rules
+
+            // check Revit application availability
+            if (IsRevitInstalled() == false)
+            {
+                mTrace.WriteLine("Translator job required Revit Application but failed to find it installed; exit job with failure.");
+                throw new Exception("Translator job's single task creating an RVT export from Inventor file failed: could not find Revit Application.");
+            }
+
+            // check Inventor application availability
+            Type invType = Type.GetTypeFromProgID("Inventor.Application");
+            if (invType == null)
+            {
+                mTrace.WriteLine("Translator job required Inventor Application but failed to find it installed; exit job with failure.");
+                throw new Exception("Translator job's single task creating an RVT export from Inventor file failed: could not find Inventor Application.");
+            }
 
             #region validate Inventor availability
-            //validate Inventor instance for RVT Export format
+            // validate Inventor instance for RVT Export format
             mInv = mGetInventor();
             if (mInv == null)
             {
@@ -178,6 +222,39 @@ namespace adsk.ts.rvt.create.inventor
                     throw new Exception("Translator job's single task creating an RVT export from Inventor file failed: could not activate Inventor BIM Simplify addin.");
                 }
             }
+
+            // disable iLogic if active
+            try
+            {
+                Inventor.ApplicationAddIn addIniLogic = null;
+                addIniLogic = mInv.ApplicationAddIns.ItemById["{3BDD8D79-2179-4B11-8A5A-257B1C0263AC}"]; // iLogic
+                if (addIniLogic != null && addIniLogic.Activated == true)
+                {
+                    addIniLogic.Deactivate();
+                    mDisabledAddins.Add(addIniLogic);
+                }
+            }
+            catch (Exception)
+            {
+                //ignore, iLogic not installed
+            }
+
+            // disable Vault Addin if active
+            try
+            {
+                Inventor.ApplicationAddIn addInVault = null;
+                addInVault = mInv.ApplicationAddIns.ItemById["{48B682BC-42E6-4953-84C5-3D253B52E77B}"]; // Vault
+                if (addInVault != null && addInVault.Activated == true)
+                {
+                    addInVault.Deactivate();
+                    mDisabledAddins.Add(addInVault);
+                }
+            }
+            catch (Exception)
+            {
+                //ignore, Vault Addin not installed
+            }
+
             #endregion validate Inventor availability
 
             // Inventor must have a project file activated; we enforce using the Vault stored IPJ
@@ -228,9 +305,10 @@ namespace adsk.ts.rvt.create.inventor
             tsJobCommon = new(connection, mWsMgr, mTrace);
             // adding or updating a Revit export feature creates a new file iteration: download and check out
             string mDocPath = tsJobCommon.mDownloadFile(mFile, true);
-            if (mDocPath != null) {
+            if (mDocPath != null)
+            {
                 string mExt = System.IO.Path.GetExtension(mDocPath);
-                
+
             }
             ACW.File mDownloadedFile = mWsMgr.DocumentService.GetLatestFileByMasterId(mFile.MasterId);
             mNewFileIteration = new VDF.Vault.Currency.Entities.FileIteration(connection, mDownloadedFile);
@@ -337,37 +415,37 @@ namespace adsk.ts.rvt.create.inventor
                                 revitExportDef.RemovePartsBySize = Convert.ToBoolean(preset.Value);
                                 break;
                             case "MAXIMUM_DIAGONAL_RVEC":
-                                revitExportDef.RemovePartsSize = Convert.ToDouble(preset.Value);
+                                revitExportDef.RemovePartsSize = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
                                 break;
                             case "REMOVE_HOLE_SELECTOR":
                                 revitExportDef.RemoveHolesStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
                                 break;
-                            case "MAX_DIAMETER_RVEC";
-                                revitExportDef.RemoveHolesDiameterRange = Convert.ToDouble(preset.Value);
+                            case "MAX_DIAMETER_RVEC":
+                                revitExportDef.RemoveHolesDiameterRange = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
                                 break;
                             case "REMOVE_FILLET_SELECTOR":
                                 revitExportDef.RemoveFilletsStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
                                 break;
                             case "MAX_RADIUS_RVEC":
-                                revitExportDef.RemoveFilletsRadiusRange = Convert.ToDouble(preset.Value);
+                                revitExportDef.RemoveFilletsRadiusRange = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
                                 break;
                             case "REMOVE_CHAMFER_SELECTOR":
                                 revitExportDef.RemoveChamfersStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
                                 break;
                             case "MAX_DISTANCE_RVEC":
-                                revitExportDef.RemoveChamfersDistanceRange = Convert.ToDouble(preset.Value);
+                                revitExportDef.RemoveChamfersDistanceRange = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
                                 break;
                             case "REMOVE_POCKET_SELECTOR":
                                 revitExportDef.RemovePocketsStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
                                 break;
                             case "MAX_LOOP_RVEC":
-                                revitExportDef.RemovePocketsMaxDepthRange = Convert.ToDouble(preset.Value);
+                                revitExportDef.RemovePocketsMaxDepthRange = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
                                 break;
                             case "REMOVE_EMBOSS_SELECTOR":
                                 revitExportDef.RemoveEmbossesStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
                                 break;
                             case "MAX_HEIGHT_RVEC":
-                                revitExportDef.RemoveEmbossMaxHeightRange = Convert.ToDouble(preset.Value);
+                                revitExportDef.RemoveEmbossMaxHeightRange = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
                                 break;
                             case "REMOVE_TUNNEL_SELECTOR":
                                 revitExportDef.RemoveTunnelsStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
@@ -399,6 +477,8 @@ namespace adsk.ts.rvt.create.inventor
                     revitExportDef.RemovePartsBySize = true;
                     revitExportDef.RemovePartsSize = 1.0; // 1 cm
                     // Feature removal
+                    ObjectCollection mPreservedFeatures = null ;
+                    revitExportDef.PreservedFeatures = mPreservedFeatures; //118789 Do not preserve any features
                     revitExportDef.RemoveHolesStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveByRange; //118787 Remove in range
                     revitExportDef.RemoveHolesDiameterRange = 1.0; // 1 cm
                     revitExportDef.RemoveFilletsStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll; //118786 Remove all
@@ -421,7 +501,7 @@ namespace adsk.ts.rvt.create.inventor
 
             // create or update the export feature
             if (mNewExportDef == true)
-            {
+            {                
                 revitExport = mAsmDoc.ComponentDefinition.RevitExports.Add(revitExportDef);
                 mTrace.WriteLine("Job created new RVT export definition and feature.");
             }
@@ -437,13 +517,13 @@ namespace adsk.ts.rvt.create.inventor
                 revitExport.Update();
                 mTrace.WriteLine("Job updated existing RVT export definition and feature.");
             }
-            // save the document to make sure the export feature is stored
-            mDoc.Save2(true);
-            // close the document
+            // save the document to make sure the export feature is stored; we did not check-out dependent files
+            mDoc.Save2(false);
+            // close the document and skip save
             mDoc.Close(true);
 
-            // add the created file to the upload list            
-            System.IO.FileInfo mExportFileInfo = new System.IO.FileInfo(mFilesToUpload.LastOrDefault());
+            // add the created file to the upload list if its there
+            System.IO.FileInfo mExportFileInfo = new System.IO.FileInfo(mExpFileName);
             if (mExportFileInfo.Exists)
             {
                 mFilesToUpload.Add(mExpFileName);
@@ -460,19 +540,39 @@ namespace adsk.ts.rvt.create.inventor
 
             // check in the source file, to add/update the Revit Export feature
             #region check in source file
-            VDF.Currency.FilePathAbsolute vdfPath = new VDF.Currency.FilePathAbsolute(mDocPath);            
+            VDF.Currency.FilePathAbsolute vdfPath = new VDF.Currency.FilePathAbsolute(mDocPath);
             FileIteration mUploadedFile = null;
             try
             {
                 if (mFileAssocParams.Count > 0)
                 {
-                    mUploadedFile = connection.FileManager.CheckinFile(mNewFileIteration, "Created by job " + JOB_TYPE,
-                                            false, mFileAssocParams.ToArray(), null, true, null, mFileIteration.FileClassification, false, vdfPath);
+                    mUploadedFile = connection.FileManager.CheckinFile(
+                        file: mNewFileIteration,
+                        comment: "Created by job " + JOB_TYPE,
+                        keepCheckedOut: false,
+                        associations: mFileAssocParams.ToArray(),
+                        bom: null,
+                        copyBom: true,
+                        newFileName: null,
+                        classification: mFileIteration.FileClassification,
+                        hidden: false,
+                        filePath: vdfPath
+                    );
                 }
                 else
                 {
-                    mUploadedFile = connection.FileManager.CheckinFile(mNewFileIteration, "Created by job " + JOB_TYPE,
-                                            false, null, null, true, null, mFileIteration.FileClassification, false, vdfPath);
+                    mUploadedFile = connection.FileManager.CheckinFile(
+                        file: mNewFileIteration,
+                        comment: "Created by job " + JOB_TYPE,
+                        keepCheckedOut: false,
+                        associations: null,
+                        bom: null,
+                        copyBom: true,
+                        newFileName: null,
+                        classification: mFileIteration.FileClassification,
+                        hidden: false,
+                        filePath: vdfPath
+                    );
                 }
             }
             catch
@@ -484,6 +584,8 @@ namespace adsk.ts.rvt.create.inventor
 
             // process the upload of the created files
             adsktsshared.JobCommon mJobCommon = new(connection, mWsMgr, mTrace);
+            // the original file iteration mFile is no longer valid, the export created a new version
+            mFile = connection.WebServiceManager.DocumentService.GetLatestFileByMasterId(mUploadedFile.EntityMasterId);
             mJobCommon.mUploadFiles(mFile, mFilesToUpload, settings.OutPutPath);
 
             // finalize log output
@@ -568,44 +670,59 @@ namespace adsk.ts.rvt.create.inventor
             // Try to get an active instance of Inventor
             try
             {
-                mInv = MarshalCore.GetActiveObject("Inventor.Application") as Inventor.Application;
-                if (mInv != null)
+                try
                 {
-                    mInv.Visible = true;
-                    mTrace.WriteLine("Reusing running Inventor application object.");
-                    return mInv;
+                    mInv = MarshalCore.GetActiveObject("Inventor.Application") as Inventor.Application;
+                    if (mInv != null)
+                    {
+                        mInv.Visible = true;
+                        // run Inventor silently
+                        mInv.SilentOperation = true;
+                        mTrace.WriteLine("Reusing running Inventor application object.");
+                        return mInv;
+                    }
                 }
-                else
+                catch (Exception)
                 {
                     Type inventorAppType = System.Type.GetTypeFromProgID("Inventor.Application");
                     mInv = System.Activator.CreateInstance(inventorAppType) as Inventor.Application;
                     if (mInv != null)
                     {
                         mInv.Visible = false;
+                        // run Inventor silently
+                        mInv.SilentOperation = true;
                         mTrace.WriteLine("Started new Inventor application object.");
-                        return mInv;
                     }
                 }
-
-                if (mInv == null)
-                {
-                    mTrace.WriteLine("Failed to get or create Inventor application object.");
-                    throw new Exception("Job failed reuse or create Inventor instance.");
-                }
+                return mInv;
             }
             catch
             {
                 mTrace.WriteLine("Failed to get or create Inventor application object.");
                 throw new Exception("Job run into unhandled exception trying to reuse or create an Inventor instance.");
             }
-
-            return null;
         }
 
         private void mCloseInventor()
         {
             if (mInv != null)
             {
+                try
+                {
+                    //reenable disabled addins
+                    foreach (var addin in mDisabledAddins)
+                    {
+                        if (addin != null && addin.Activated == false)
+                        {
+                            addin.Activate();
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    // not a reason to throw an exception
+                }
+
                 try
                 {
                     mInv.Quit();
@@ -620,26 +737,12 @@ namespace adsk.ts.rvt.create.inventor
         }
 
 
-
-        public void OnJobProcessorShutdown(IJobProcessorServices context)
+        public static bool IsRevitInstalled()
         {
-            //throw new NotImplementedException();
+            using (var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Autodesk\Revit"))
+            {
+                return key != null && key.GetSubKeyNames().Length > 0;
+            }
         }
-
-        public void OnJobProcessorSleep(IJobProcessorServices context)
-        {
-            //throw new NotImplementedException();
-        }
-
-        public void OnJobProcessorStartup(IJobProcessorServices context)
-        {
-            //throw new NotImplementedException();
-        }
-
-        public void OnJobProcessorWake(IJobProcessorServices context)
-        {
-            //throw new NotImplementedException();
-        }
-        #endregion IJobHandler Implementation
     }
 }
