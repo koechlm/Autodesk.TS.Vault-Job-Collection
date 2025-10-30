@@ -25,16 +25,18 @@ namespace adsk.ts.pdf.create.slddrw
         [XmlElement("LogFileLocation")]
         public string LogFileLocation;
 
-        [XmlElement("ExportFormats")]
-        public string ExportFormats;
-
         [XmlElement("OutputPath")]
         public string OutPutPath;
 
-        #region for future use
-        //[XmlElement("OutputPath")]
-        //public string mOutPutPath;
-        #endregion for future use
+        [XmlElement("ExportFormats")]
+        public string ExportFormats;
+
+        [XmlElement("DxfSheetName")] 
+        public string DxfSheetName;
+
+        [XmlElement("PdfVizAttmt")]
+        public string PdfVizAttmt;
+
 
         private Settings()
         {

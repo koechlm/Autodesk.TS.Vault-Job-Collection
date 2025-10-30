@@ -68,9 +68,11 @@
     </Reference>
     <Reference Include="SolidWorks.Interop.sldworks">
       <HintPath>..\SDK References\SolidWorks.Interop.sldworks.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="SolidWorks.Interop.swconst">
       <HintPath>..\SDK References\SolidWorks.Interop.swconst.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>

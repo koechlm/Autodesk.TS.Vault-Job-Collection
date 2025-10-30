@@ -261,7 +261,7 @@ namespace adsk.ts.pdf.create.slddrw
 
             // process the upload of the created files
             adsktsshared.JobCommon mJobCommon = new(connection, mWsMgr, mTrace);
-            mJobCommon.mUploadFiles(mFile, mFilesToUpload, settings.OutPutPath);
+            mJobCommon.mUploadFiles(mFile, mFilesToUpload, settings.OutPutPath, settings.PdfVizAttmt);
 
             // finalize log output
             mTrace.IndentLevel = 1;

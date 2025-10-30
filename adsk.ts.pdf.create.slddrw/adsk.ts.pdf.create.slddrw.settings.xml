@@ -4,12 +4,20 @@
   <!-- Logfile directory; validate for write access -->
   <LogFileLocation>C:\Temp\</LogFileLocation>
 
+  <!-- Output Path -->
+  <!--  The job can copy the resulting file(s) to the given output path after check-in-->
+  <OutputPath>C:\Temp\</OutputPath>
+
   <!-- Export File Format(s)-->
   <!--  Supported Values/File Formats are: SLDDRW.PDF -->
   <ExportFormats>SLDDRW.PDF</ExportFormats>
 
-  <!-- Output Path -->
-  <!--  The job can copy the resulting file(s) to the given output path after check-in-->
-  <OutputPath>C:\Temp\</OutputPath>
+  <!-- PDF|DXF Export Option: skip sheet for PDF and export DXF, for DxfSheetName = ?-->
+  <DxfSheetName>"DXF"</DxfSheetName>
+  
+  <!-- Attach the PDF as Visualization attachment; 
+    true: the PDF will uploaded as visible file, and be used as viewing file; 
+    false: the file will attach and behave as Design Representation-->
+  <PdfVizAttmt>"True"</PdfVizAttmt>
 
 </settings>

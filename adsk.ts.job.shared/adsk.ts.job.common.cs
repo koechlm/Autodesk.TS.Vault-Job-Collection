@@ -63,7 +63,7 @@ namespace adsk.ts.job.shared
             return fileAcquisitionResult.LocalPath.FullPath;
         }
 
-        public void mUploadFiles(ACW.File mFile, List<string> filesToUpload, string outPutPath)
+        public void mUploadFiles(ACW.File mFile, List<string> filesToUpload, string outPutPath, string PdfVizAttmt = "True")
         {
             foreach (string file in filesToUpload)
             {
@@ -111,6 +111,12 @@ namespace adsk.ts.job.shared
                             }
                             else
                             {
+                                // for PDF only: upload as visualization, but not hidden, or as a design representation file
+                                if (mExportFileInfo.Extension.ToLower() == ".pdf" && PdfVizAttmt.ToLower() == "true")
+                                {
+                                    addedFile = _connection.FileManager.AddFile(folderEntity, "Created by ExportSampleJob", null, null, ACW.FileClassification.DesignVisualization, false, vdfPath);
+                                    mExpFile = addedFile;
+                                }
                                 addedFile = _connection.FileManager.AddFile(folderEntity, "Created by ExportSampleJob", null, null, ACW.FileClassification.DesignRepresentation, false, vdfPath);
                                 mExpFile = addedFile;
                             }
@@ -143,6 +149,12 @@ namespace adsk.ts.job.shared
                             }
                             else
                             {
+                                // for PDF only: upload as visualization, but not hidden, or as a design representation file
+                                if (mExportFileInfo.Extension.ToLower() == ".pdf" && PdfVizAttmt.ToLower() == "true")
+                                {
+                                    addedFile = _connection.FileManager.CheckinFile(results.FileResults.First().File, "Created by ExportSampleJob", false, null, null, false, null, ACW.FileClassification.DesignVisualization, false, vdfPath);
+                                    mExpFile = addedFile;
+                                }
                                 mUploadedFile = _connection.FileManager.CheckinFile(results.FileResults.First().File, "Created by ExportSampleJob", false, null, null, false, null, ACW.FileClassification.DesignRepresentation, false, vdfPath);
                                 mExpFile = mUploadedFile;
                             }
