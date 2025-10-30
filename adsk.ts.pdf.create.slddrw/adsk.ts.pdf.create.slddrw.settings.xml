@@ -7,6 +7,15 @@
   <!-- Export File Format(s)-->
   <!--  Supported Values/File Formats are: SLDDRW.PDF -->
   <ExportFormats>SLDDRW.PDF</ExportFormats>
+  
+  <!-- Include source file's extension in export file name, e.g. true: drawing.slddrw.pdf, false: drawing.pdf-->
+  <IncludeSourceFileExtension>false</IncludeSourceFileExtension>
+  
+  <!-- Sheet Name for DXF Export; see option below, to include this sheet or exclude for PDF  -->
+  <DxfSheetName>DXF</DxfSheetName>
+  <!-- Include DXF Sheet for PDF Export; set to true or false -->
+  <!--  If true, the sheet defined above will be included in the PDF export -->
+  <PdfIncludeDxfSheet>false</PdfIncludeDxfSheet>
 
   <!-- Output Path -->
   <!--  The job can copy the resulting file(s) to the given output path after check-in-->

@@ -98,10 +98,11 @@ namespace adsk.ts.pdf.create.slddrw
             }
             finally
             {
-                // clean up navisworks instance, if any
+                // clean up solidworks instance, if any
                 if (sldWorks != null)
                 {
-                    mSldworksDispose();
+                    sldWorks.CloseAllDocuments(true);
+                    mSldworksDispose();                    
                 }
 
                 // close the log file
@@ -195,12 +196,31 @@ namespace adsk.ts.pdf.create.slddrw
             // export the file into the requested format(s)
             foreach (string item in mExpFrmts)
             {
+                string mPDFName = string.Empty;
+                string mDXFName = string.Empty;
+
                 if (item == "SLDDRW.PDF")
                 {
-                    string mPDFName = mDocPath + ".pdf";
+                    // build the target PDF file name according the settings to include or exclude the source file extension
+                    if (settings.IncludeSourceFileExtension.ToLower() == "true")
+                    {
+                        mPDFName = mDocPath + ".pdf";
+                        mDXFName = mDocPath + ".dxf";
+                    }
+                    else
+                    {
+                        mPDFName = mDocPath.ToLower().Replace(".slddrw", ".pdf");
+                        mDXFName = mDocPath.ToLower().Replace(".slddrw", ".dxf");
+                    }
                     if (System.IO.File.Exists(mPDFName))
                     {
                         System.IO.FileInfo fileInfo = new FileInfo(mPDFName);
+                        fileInfo.IsReadOnly = false;
+                        fileInfo.Delete();
+                    }
+                    if (System.IO.File.Exists(mDXFName))
+                    {
+                        System.IO.FileInfo fileInfo = new FileInfo(mDXFName);
                         fileInfo.IsReadOnly = false;
                         fileInfo.Delete();
                     }
@@ -208,20 +228,62 @@ namespace adsk.ts.pdf.create.slddrw
                     mTrace.IndentLevel += 1;
                     mTrace.WriteLine("SLDDRW -> PDF Export starts...");
 
+                    int errors = 0;
+                    int warnings = 0;
+
                     try
                     {
+                        ModelDoc2 swModel = default(ModelDoc2);                        
+
                         //open the file with Solidworks
-                        sldWorks.OpenDoc6(mDocPath, (int)swDocumentTypes_e.swDocDRAWING, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", 0, 0);
-                        //sldWorks.OpenDoc(mDocPath, (int)swDocumentTypes_e.swDocDRAWING);
+                        swModel = sldWorks.OpenDoc6(mDocPath, (int)swDocumentTypes_e.swDocDRAWING, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
+                        if (errors != 0 && swModel == null)
+                        {
+                            throw new Exception("Solidworks failed to open the drawing file " + mDocPath + " with error code " + errors.ToString());
+                        }
 
-                        //export the file as PDF
-                        ModelDoc2 swModel = (ModelDoc2)sldWorks.ActiveDoc;
+                        // prepare the PDF export                        
                         DrawingDoc swDraw = (DrawingDoc)swModel;
+                        ExportPdfData swPdfData = (ExportPdfData)sldWorks.GetExportFileData((int)swExportDataFileType_e.swExportPdfData);                        
 
-                        // Save as PDF                        
-                        int errors = 0;
-                        int warnings = 0;
-                        bool status = swModel.Extension.SaveAs(mPDFName, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_Silent, null, ref errors, ref warnings);
+                        // get all sheets in the drawing
+                        object[] sheetNames = (object[])swDraw.GetSheetNames();
+                        Sheet swSheet = default(Sheet);
+                        List<Sheet> swPdfSheets = new List<Sheet>();
+                        List<Sheet> swDxfSheets = new List<Sheet>();
+
+                        //loop through all sheets and activate them (to ensure they are included in the PDF export)
+                        foreach (string sheetName in sheetNames)
+                        {
+                            swDraw.ActivateSheet(sheetName);
+                            swSheet = (Sheet)swDraw.GetCurrentSheet();
+
+                            // check if this sheet is the DXF sheet and if it should be excluded from the PDF export
+                            if (settings.PdfIncludeDxfSheet.ToLower() == "false" &&
+                                sheetName.ToLower() == settings.DxfSheetName.ToLower())
+                            {
+                                mTrace.WriteLine("SLDDRW -> PDF Export: Excluding DXF sheet '" + sheetName + "' from PDF export as per settings.");
+                                swDxfSheets.Add(swSheet);
+                            }
+                            else
+                            {
+                                swPdfSheets.Add(swSheet);
+                            }
+                        }
+
+                        // register the sheets to be saved to the PDF file
+                        bool status = swPdfData.SetSheets((int)swExportDataSheetsToExport_e.swExportData_ExportSpecifiedSheets, swPdfSheets.ToArray());
+                        if (!status)
+                        {
+                            throw new Exception("Solidworks failed to register the sheets for PDF export.");
+                        }
+
+                        // avoid showing the PDF after saving
+                        swPdfData.ViewPdfAfterSaving = false;
+
+                        //execute the PDF export
+                        status = swModel.Extension.SaveAs(mPDFName, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_Silent, swPdfData, ref errors, ref warnings);
+                        //bool status = swModel.Extension.SaveAs(mPDFName, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_Silent, null, ref errors, ref warnings);
 
                         if (status)
                         {
@@ -244,6 +306,39 @@ namespace adsk.ts.pdf.create.slddrw
                         {
                             throw new Exception("Validating the export file " + mPDFName + " before upload failed.");
                         }
+
+                        // register and export the DXF sheet if it exists
+                        if (swDxfSheets.Count > 0)
+                        {
+                            mTrace.WriteLine("SLDDRW -> PDF Export: Exporting DXF sheet '" + settings.DxfSheetName + "' as separate DXF file as per settings.");
+
+                            // Activate the DXF sheet
+                            swDraw.ActivateSheet(settings.DxfSheetName);
+
+                            status = swModel.Extension.SaveAs(mDXFName, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_Silent, null, ref errors, ref warnings);
+                            if (status)
+                            {
+                                Console.WriteLine("File saved successfully as DXF.");
+                            }
+                            else
+                            {
+                                Console.WriteLine($"Failed to save file as DXF. Errors: {errors}, Warnings: {warnings}");
+                            }
+                            
+                            //collect all export files for later upload
+                            mExportFileInfo = new System.IO.FileInfo(mDXFName);
+                            if (mExportFileInfo.Exists)
+                            {
+                                mFilesToUpload.Add(mDXFName);
+                                mTrace.WriteLine("Solidworks created file: " + mFilesToUpload.LastOrDefault());
+                                mTrace.IndentLevel -= 1;
+                            }
+                            else
+                            {
+                                throw new Exception("Validating the export file " + mDXFName + " before upload failed.");
+                            }
+                        }
+
                     }
                     catch (Exception ex)
                     {

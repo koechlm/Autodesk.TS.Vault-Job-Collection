@@ -28,6 +28,15 @@ namespace adsk.ts.pdf.create.slddrw
         [XmlElement("ExportFormats")]
         public string ExportFormats;
 
+        [XmlElement("IncludeSourceFileExtension")]
+        public string IncludeSourceFileExtension;
+
+        [XmlElement("DxfSheetName")]
+        public string DxfSheetName;
+
+        [XmlElement("PdfIncludeDxfSheet")]
+        public string PdfIncludeDxfSheet;
+
         [XmlElement("OutputPath")]
         public string OutPutPath;
 
