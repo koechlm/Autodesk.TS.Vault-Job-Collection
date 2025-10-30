@@ -24,42 +24,55 @@
   <ItemGroup>
     <Reference Include="Autodesk.Connectivity.Explorer.Extensibility">
       <HintPath>..\SDK References\Autodesk.Connectivity.Explorer.Extensibility.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Autodesk.Connectivity.Explorer.ExtensibilityTools">
       <HintPath>..\SDK References\Autodesk.Connectivity.Explorer.ExtensibilityTools.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Autodesk.Connectivity.Extensibility.Framework">
       <HintPath>..\SDK References\Autodesk.Connectivity.Extensibility.Framework.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Autodesk.Connectivity.IDServicesWrapper">
       <HintPath>..\SDK References\Autodesk.Connectivity.IDServicesWrapper.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Autodesk.Connectivity.JobProcessor.Extensibility">
       <HintPath>..\SDK References\Autodesk.Connectivity.JobProcessor.Extensibility.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Autodesk.Connectivity.LicenseWrapper">
       <HintPath>..\SDK References\Autodesk.Connectivity.LicenseWrapper.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Autodesk.Connectivity.WebServices">
       <HintPath>..\SDK References\Autodesk.Connectivity.WebServices.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Autodesk.Connectivity.WebServices.WCF">
       <HintPath>..\SDK References\Autodesk.Connectivity.WebServices.WCF.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Autodesk.DataManagement.Client.Framework">
       <HintPath>..\SDK References\Autodesk.DataManagement.Client.Framework.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Autodesk.DataManagement.Client.Framework.Forms">
       <HintPath>..\SDK References\Autodesk.DataManagement.Client.Framework.Forms.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Autodesk.DataManagement.Client.Framework.Vault">
       <HintPath>..\SDK References\Autodesk.DataManagement.Client.Framework.Vault.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Autodesk.DataManagement.Client.Framework.Vault.Forms">
       <HintPath>..\SDK References\Autodesk.DataManagement.Client.Framework.Vault.Forms.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Autodesk.Inventor.Interop">
       <HintPath>..\SDK References\Autodesk.Inventor.Interop.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
 
