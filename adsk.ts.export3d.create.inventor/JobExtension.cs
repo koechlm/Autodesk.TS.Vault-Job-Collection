@@ -208,7 +208,7 @@ namespace adsk.ts.export3d.create.inventor
             mTrace.IndentLevel += 1;
             mTrace.WriteLine("Job tries activating Inventor project file as enforced in Vault behavior configurations.");
 
-            adsktsshared.InventorJob mJobInventor = new(mInv, connection, mWsMgr);
+            adsktsshared.InventorJob mJobInventor = new(connection, mWsMgr);
             bool settingsAcceptLocalIpj = false;
             if (settings.AcceptLocalIpj.ToLower() == "true") settingsAcceptLocalIpj = true;
             mIpjLocalPath = mJobInventor.mGetIpj(settingsAcceptLocalIpj);
@@ -318,11 +318,11 @@ namespace adsk.ts.export3d.create.inventor
                             mJobInventor.mResetIpj(mSaveProject);
                             throw new Exception("DWG Translator Add-In failed to export DWG file (TransAddIn.SaveCopyAs()): " + ex.Message);
                         }
-                        //collect all export files for later upload
-                        mFilesToUpload.Add(mExpFileName);
+                        //collect all export files for later upload                        
                         System.IO.FileInfo mExportFileInfo = new System.IO.FileInfo(mFilesToUpload.LastOrDefault());
                         if (mExportFileInfo.Exists)
                         {
+                            mFilesToUpload.Add(mExpFileName);
                             mTrace.WriteLine("DWG Translator created file: " + mFilesToUpload.LastOrDefault());
                             mTrace.IndentLevel -= 1;
                         }
