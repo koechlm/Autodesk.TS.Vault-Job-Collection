@@ -18,12 +18,21 @@ using Inventor;
 
 namespace adsk.ts.job.shared
 {
+    /// <summary>
+    /// Common functionality for jobs
+    /// </summary>
     public class JobCommon
     {
         readonly WebServiceManager _WebSrvMgr;
         readonly Connection _connection;
         readonly TextWriterTraceListener _trace;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="connection"></param>
+        /// <param name="webServiceManager"></param>
+        /// <param name="mTrace"></param>
         public JobCommon(Connection connection, WebServiceManager webServiceManager, TextWriterTraceListener mTrace)
         {
             // Constructor
@@ -32,6 +41,13 @@ namespace adsk.ts.job.shared
             _trace = mTrace;
         }
 
+        /// <summary>
+        /// Download a file from Vault to the local working folder, optionally checking it out
+        /// </summary>
+        /// <param name="mFile"></param>
+        /// <param name="checkout"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public string mDownloadFile(ACW.File mFile, bool checkout = false)
         {
             //download the source file iteration, enforcing overwrite if local files exist
@@ -55,6 +71,7 @@ namespace adsk.ts.job.shared
             mDownloadSettings.OptionsRelationshipGathering.FileRelationshipSettings.IncludeChildren = true;
             mDownloadSettings.OptionsRelationshipGathering.FileRelationshipSettings.RecurseChildren = true;
             mDownloadSettings.OptionsRelationshipGathering.FileRelationshipSettings.IncludeLibraryContents = true;
+            mDownloadSettings.OptionsRelationshipGathering.FileRelationshipSettings.VersionGatheringOption = VDF.Vault.Currency.VersionGatheringOption.Revision;
             mDownloadSettings.OptionsRelationshipGathering.FileRelationshipSettings.ReleaseBiased = true;
             // set overwrite options
             AcquireFilesSettings.AcquireFileResolutionOptions mResOpt = new AcquireFilesSettings.AcquireFileResolutionOptions();
@@ -94,7 +111,14 @@ namespace adsk.ts.job.shared
             return fileAcquisitionResult.LocalPath.FullPath;
         }
 
-        public void mUploadFiles(ACW.File mFile, List<string> filesToUpload, string outPutPath)
+        /// <summary>
+        /// Upload files to Vault, optionally copying them to a local output folder; the files are added as new files or new versions of existing files
+        /// </summary>
+        /// <param name="mFile"></param>
+        /// <param name="filesToUpload"></param>
+        /// <param name="outPutPath"></param>
+        /// <exception cref="Exception"></exception>
+        public void mUploadFiles(ACW.File mFile, List<string> filesToUpload, string? outPutPath = null)
         {
             foreach (string file in filesToUpload)
             {
@@ -103,7 +127,7 @@ namespace adsk.ts.job.shared
                 if (mExportFileInfo.Exists)
                 {
                     //copy file to output location
-                    if (outPutPath != "")
+                    if (outPutPath != null)
                     {
                         System.IO.FileInfo fileInfo = new FileInfo(outPutPath + "\\" + mExportFileInfo.Name);
                         if (fileInfo.Exists)

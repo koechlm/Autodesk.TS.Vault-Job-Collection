@@ -18,11 +18,19 @@ using Inventor;
 
 namespace adsk.ts.job.shared
 {
+    /// <summary>
+    /// Class to handle Inventor project file operations
+    /// </summary>
     public class InventorJob
     {
         readonly WebServiceManager _WebSrvMgr;
         readonly Connection _connection;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="connection"></param>
+        /// <param name="webServiceManager"></param>
         public InventorJob(Connection connection, WebServiceManager webServiceManager)
         {
             // Constructor
@@ -30,7 +38,12 @@ namespace adsk.ts.job.shared
             _connection = connection;
         }
 
-
+        /// <summary>
+        /// Get the enforced ipj file from Vault and download it to the enforced working folder
+        /// </summary>
+        /// <param name="acceptLocalIpj"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public string mGetIpj(bool acceptLocalIpj = true)
         {
             String mIpjPath = "";
@@ -122,6 +135,10 @@ namespace adsk.ts.job.shared
             }
         }
 
+        /// <summary>
+        /// Reset the previous active ipj
+        /// </summary>
+        /// <param name="previousIpj"></param>
         public void mResetIpj(DesignProject previousIpj)
         {
             if (previousIpj != null)
