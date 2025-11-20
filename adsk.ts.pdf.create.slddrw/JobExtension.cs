@@ -71,6 +71,12 @@ namespace adsk.ts.pdf.create.slddrw
                     throw new Exception("The file version is no longer available!");
                 }
 
+                //get the latest file version, if not already
+                if (mFile.FileRev.MaxFileId != mEntId)
+                {
+                    mFile = mWsMgr.DocumentService.GetFileById(mFile.FileRev.MaxFileId);
+                }
+
                 // prepare log file and initiate logging
                 mLogFile = JOB_TYPE + "_" + mFile.Name + ".log";
                 FileInfo mLogFileInfo = new FileInfo(System.IO.Path.Combine(

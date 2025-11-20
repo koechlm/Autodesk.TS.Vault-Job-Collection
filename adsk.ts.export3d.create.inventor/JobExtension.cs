@@ -63,8 +63,12 @@ namespace adsk.ts.export3d.create.inventor
                 // get the file object for this job
                 mFile = mWsMgr.DocumentService.GetFileById(mEntId);
                 if (mFile == null)
+                    throw new Exception("Job could not retrieve the file object for id " + mEntId.ToString());
+
+                //get the latest file version, if not already
+                if (mFile.FileRev.MaxFileId != mEntId)
                 {
-                    throw new Exception("The file version is no longer available!");               
+                    mFile = mWsMgr.DocumentService.GetFileById(mFile.FileRev.MaxFileId);
                 }
 
                 // prepare log file and initiate logging
