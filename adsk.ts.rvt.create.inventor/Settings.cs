@@ -34,6 +34,9 @@ namespace adsk.ts.rvt.create.inventor
         [XmlElement("InventorPreset")]
         public string InventorPreset;
 
+        [XmlElement("InventorPresetName")]
+        public string InventorPresetName;
+
         [XmlElement("AcceptLocalIpj")]
         public string AcceptLocalIpj;
 
