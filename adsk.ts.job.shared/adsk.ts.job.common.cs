@@ -14,6 +14,7 @@ using Autodesk.DataManagement.Client.Framework.Vault.Currency.Properties;
 using Autodesk.DataManagement.Client.Framework.Vault.Settings;
 using static System.Net.Mime.MediaTypeNames;
 using System.Diagnostics;
+using Autodesk.Connectivity.WebServices;
 
 namespace adsk.ts.job.shared
 {
@@ -59,7 +60,7 @@ namespace adsk.ts.job.shared
             {
                 throw new Exception("Job stopped execution as the file " + mFile.Name + " did not download.");
             }
-            
+
             return fileAcquisitionResult.LocalPath.FullPath;
         }
 
@@ -98,7 +99,7 @@ namespace adsk.ts.job.shared
                     if (wsFile == null || wsFile.Id < 0)
                     {
                         // add new file to Vault
-                        _trace.WriteLine("Job adds " + mExportFileInfo.Name + " as new file.");                        
+                        _trace.WriteLine("Job adds " + mExportFileInfo.Name + " as new file.");
 
                         var folderEntity = new Autodesk.DataManagement.Client.Framework.Vault.Currency.Entities.Folder(_connection, mFolder);
                         try
@@ -270,12 +271,26 @@ namespace adsk.ts.job.shared
                     }
                     else
                     {
+                        //before attaching the design representation, remove any existing attachment with the same MasterId
+                        FileAssocArray[] fileAssocArray = _WebSrvMgr.DocumentService.GetFileAssociationsByIds(new long[] { mFile.Id }, FileAssociationTypeEnum.None, false, FileAssociationTypeEnum.Attachment, false, false, false);
+                        foreach (var fileAssoc in fileAssocArray)
+                        {
+                            foreach (FileAssoc assoc in fileAssoc.FileAssocs)
+                            {
+                                ACW.File assocFile = assoc.CldFile;
+                                if (assocFile.MasterId == mExpFile.MasterId)
+                                {
+                                    _WebSrvMgr.DocumentService.RemoveDesignRepresentationFileAttachment(mFile.Id, assoc.CldFile.Id);
+                                }
+                            }
+                        }
                         _WebSrvMgr.DocumentService.AddDesignRepresentationFileAttachment(mFile.Id, mAssocParam);
                     }
                 }
                 catch (Exception ex)
                 {
                     _trace.WriteLine("Job failed attaching the exported file " + mExpFile.Name + " to the source file: " + mFile.Name + " . Exception details: " + ex);
+                    
                 }
 
                 _trace.IndentLevel -= 1;
