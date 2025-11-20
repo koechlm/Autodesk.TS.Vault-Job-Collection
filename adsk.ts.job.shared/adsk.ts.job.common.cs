@@ -1,20 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-using ACET = Autodesk.Connectivity.Explorer.ExtensibilityTools;
-using Autodesk.Connectivity.Extensibility.Framework;
+﻿using Autodesk.Connectivity.Extensibility.Framework;
 using Autodesk.Connectivity.JobProcessor.Extensibility;
-using ACW = Autodesk.Connectivity.WebServices;
+using Autodesk.Connectivity.WebServices;
 using Autodesk.Connectivity.WebServicesTools;
-using VDF = Autodesk.DataManagement.Client.Framework;
 using Autodesk.DataManagement.Client.Framework.Currency;
 using Autodesk.DataManagement.Client.Framework.Vault.Currency.Connections;
 using Autodesk.DataManagement.Client.Framework.Vault.Currency.Properties;
 using Autodesk.DataManagement.Client.Framework.Vault.Settings;
-using static System.Net.Mime.MediaTypeNames;
-using System.Diagnostics;
 using Inventor;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
+using static System.Net.Mime.MediaTypeNames;
+using ACET = Autodesk.Connectivity.Explorer.ExtensibilityTools;
+using ACW = Autodesk.Connectivity.WebServices;
+using VDF = Autodesk.DataManagement.Client.Framework;
 
 namespace adsk.ts.job.shared
 {
@@ -325,6 +325,19 @@ namespace adsk.ts.job.shared
                     }
                     else
                     {
+                        //before attaching the design representation, remove any existing attachment with the same MasterId
+                        FileAssocArray[] fileAssocArray = _WebSrvMgr.DocumentService.GetFileAssociationsByIds(new long[] { mFile.Id }, FileAssociationTypeEnum.None, false, FileAssociationTypeEnum.Attachment, false, false, false);
+                        foreach (var fileAssoc in fileAssocArray)
+                        {
+                            foreach (FileAssoc assoc in fileAssoc.FileAssocs)
+                            {
+                                ACW.File assocFile = assoc.CldFile;
+                                if (assocFile.MasterId == mExpFile.MasterId)
+                                {
+                                    _WebSrvMgr.DocumentService.RemoveDesignRepresentationFileAttachment(mFile.Id, assoc.CldFile.Id);
+                                }
+                            }
+                        }
                         _WebSrvMgr.DocumentService.AddDesignRepresentationFileAttachment(mFile.Id, mAssocParam);
                     }
                 }
