@@ -10,7 +10,7 @@
   <!-- Export File Format(s)-->
   <!--  Supported Values/File Formats are: 3DDWG, CATPart (IPT only), CATProduct (IAM only), glTF, IGES, JT, OBJ, X_B, X_T, ProE_G, ProE_N, QIF (IPT only), SAT, SMT, STEP, STL, USDz -->
   <!--  Multiple Outputs per jobs are supported, list all required formats comma separated, e.g., STP, JT,  -->  
-  <ExportFormats>JT, 3DDWG</ExportFormats>
+  <ExportFormats>3DDWG</ExportFormats>
   
   <!-- Exclude/include export for design substitute classified files; ; accepted values are True/False-->
   <ExcludeDesignSubstitute>False</ExcludeDesignSubstitute>

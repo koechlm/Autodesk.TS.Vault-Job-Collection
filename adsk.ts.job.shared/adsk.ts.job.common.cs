@@ -82,9 +82,9 @@ namespace adsk.ts.job.shared
 
             //execute download
             VDF.Vault.Results.AcquireFilesResults? mDownLoadResult = _connection.FileManager.AcquireFiles(mDownloadSettings);
-            
+
             // find the result for the requested file iteration
-            VDF.Vault.Results.FileAcquisitionResult? fileAcquisitionResult = null;            
+            VDF.Vault.Results.FileAcquisitionResult? fileAcquisitionResult = null;
             if (mDownLoadResult != null)
             {
                 fileAcquisitionResult = mDownLoadResult.FileResults.FirstOrDefault(n => n.File.EntityName == mFileIteration.EntityName);
@@ -327,8 +327,10 @@ namespace adsk.ts.job.shared
                     {
                         //before attaching the design representation, remove any existing attachment with the same MasterId
                         FileAssocArray[] fileAssocArray = _WebSrvMgr.DocumentService.GetFileAssociationsByIds(new long[] { mFile.Id }, FileAssociationTypeEnum.None, false, FileAssociationTypeEnum.Attachment, false, false, false);
-                        foreach (var fileAssoc in fileAssocArray)
+                        foreach (FileAssocArray fileAssoc in fileAssocArray)
                         {
+                            if (fileAssoc.FileAssocs == null || fileAssoc.FileAssocs.Length == 0)
+                                continue;
                             foreach (FileAssoc assoc in fileAssoc.FileAssocs)
                             {
                                 ACW.File assocFile = assoc.CldFile;
@@ -338,6 +340,7 @@ namespace adsk.ts.job.shared
                                 }
                             }
                         }
+
                         _WebSrvMgr.DocumentService.AddDesignRepresentationFileAttachment(mFile.Id, mAssocParam);
                     }
                 }
