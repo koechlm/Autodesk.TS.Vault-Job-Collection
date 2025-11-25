@@ -68,13 +68,22 @@ namespace adsk.ts.pdf.create.slddrw
                 mFile = mWsMgr.DocumentService.GetFileById(mEntId);
                 if (mFile == null)
                 {
-                    throw new Exception("The file version is no longer available!");
+                    context.Log("Job " + JOB_TYPE + " did not start: " + "Job could not retrieve the file object for id " + mEntId.ToString(), MessageType.eError);
+                    return JobOutcome.Failure;
                 }
 
-                //get the latest file version, if not already
+                //get the latest file version, if allowed to execute on tip version
                 if (mFile.FileRev.MaxFileId != mEntId)
                 {
-                    mFile = mWsMgr.DocumentService.GetFileById(mFile.FileRev.MaxFileId);
+                    if (mSettings.EnforceSubmittedFileVersion.ToLower() == "false")
+                    {
+                        mFile = mWsMgr.DocumentService.GetFileById(mFile.FileRev.MaxFileId);
+                    }
+                    else
+                    {
+                        context.Log("Job " + JOB_TYPE + " did not start: " + "Job execution is restricted to submitted file version; the submitted version (" + mEntId.ToString() + ") is no longer the tip(latest) version (" + mFile.FileRev.MaxFileId.ToString() + ")", MessageType.eError);
+                        return JobOutcome.Failure;
+                    }
                 }
 
                 // prepare log file and initiate logging

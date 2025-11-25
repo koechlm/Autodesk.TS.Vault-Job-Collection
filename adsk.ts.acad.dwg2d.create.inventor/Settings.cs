@@ -25,6 +25,9 @@ namespace adsk.ts.acad.dwg2d.create.inventor
         [XmlElement("LogFileLocation")]
         public string LogFileLocation;
 
+        [XmlElement("EnforceSubmittedFileVersion")]
+        public string EnforceSubmittedFileVersion;
+
         [XmlElement("ExportFormats")]
         public string ExportFormats;
 

@@ -25,6 +25,9 @@ namespace adsk.ts.pdf.create.slddrw
         [XmlElement("LogFileLocation")]
         public string LogFileLocation;
 
+        [XmlElement("EnforceSubmittedFileVersion")]
+        public string EnforceSubmittedFileVersion;
+
         [XmlElement("ExportFormats")]
         public string ExportFormats;
 

@@ -329,7 +329,7 @@ namespace adsk.ts.job.shared
                         FileAssocArray[] fileAssocArray = _WebSrvMgr.DocumentService.GetFileAssociationsByIds(new long[] { mFile.Id }, FileAssociationTypeEnum.None, false, FileAssociationTypeEnum.Attachment, false, false, false);
                         foreach (FileAssocArray fileAssoc in fileAssocArray)
                         {
-                            if (fileAssoc.FileAssocs == null || fileAssoc.FileAssocs.Length == 0)
+                            if (fileAssoc.FileAssocs == null)
                                 continue;
                             foreach (FileAssoc assoc in fileAssoc.FileAssocs)
                             {

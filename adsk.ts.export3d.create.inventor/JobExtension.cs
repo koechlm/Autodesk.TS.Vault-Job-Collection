@@ -1,26 +1,25 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Diagnostics;
-using System.IO;
-
 using Autodesk.Connectivity.Extensibility.Framework;
 using Autodesk.Connectivity.JobProcessor.Extensibility;
-using ACW = Autodesk.Connectivity.WebServices;
+using Autodesk.Connectivity.WebServices;
 using Autodesk.Connectivity.WebServicesTools;
-using ACET = Autodesk.Connectivity.Explorer.ExtensibilityTools;
-using VDF = Autodesk.DataManagement.Client.Framework;
 using Autodesk.DataManagement.Client.Framework.Currency;
 using Autodesk.DataManagement.Client.Framework.Vault.Currency.Connections;
 using Autodesk.DataManagement.Client.Framework.Vault.Currency.Properties;
 using Autodesk.DataManagement.Client.Framework.Vault.Settings;
-
-using adsktsshared = adsk.ts.job.shared;
-
 using Inventor;
+using System;
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using ACET = Autodesk.Connectivity.Explorer.ExtensibilityTools;
+using ACW = Autodesk.Connectivity.WebServices;
+using adsktsshared = adsk.ts.job.shared;
+using VDF = Autodesk.DataManagement.Client.Framework;
 
 // *ComponentUpgradeEveryRelease-Client*
 [assembly: ApiVersion("19.0")]
@@ -63,21 +62,32 @@ namespace adsk.ts.export3d.create.inventor
                 // get the file object for this job
                 mFile = mWsMgr.DocumentService.GetFileById(mEntId);
                 if (mFile == null)
-                    throw new Exception("Job could not retrieve the file object for id " + mEntId.ToString());
+                {
+                    context.Log("Job " + JOB_TYPE + " did not start: " + "Job could not retrieve the file object for id " + mEntId.ToString(), MessageType.eError);
+                    return JobOutcome.Failure;
+                }
 
-                //get the latest file version, if not already
+                //get the latest file version, if allowed to execute on tip version
                 if (mFile.FileRev.MaxFileId != mEntId)
                 {
-                    mFile = mWsMgr.DocumentService.GetFileById(mFile.FileRev.MaxFileId);
+                    if (mSettings.EnforceSubmittedFileVersion.ToLower() == "false")
+                    {
+                        mFile = mWsMgr.DocumentService.GetFileById(mFile.FileRev.MaxFileId);
+                    }
+                    else
+                    {
+                        context.Log("Job " + JOB_TYPE + " did not start: " + "Job execution is restricted to submitted file version; the submitted version (" + mEntId.ToString() + ") is no longer the tip(latest) version (" + mFile.FileRev.MaxFileId.ToString() + ")", MessageType.eError);
+                        return JobOutcome.Failure;
+                    }
                 }
 
                 // prepare log file and initiate logging
-                mLogFile = JOB_TYPE + "_" + mFile.Name + ".log";                
+                mLogFile = JOB_TYPE + "_" + mFile.Name + ".log";
                 FileInfo mLogFileInfo = new FileInfo(System.IO.Path.Combine(
                     mLogDir, mLogFile));
                 if (mLogFileInfo.Exists) mLogFileInfo.Delete();
                 mTrace = new TextWriterTraceListener(System.IO.Path.Combine(mLogDir, mLogFile), "mJobTrace");
-                mTrace.WriteLine("Starting Job...");
+                mTrace.WriteLine("Starting Job execution...");
 
                 //start the export task
                 mCreateInventor3dExport(context, job);

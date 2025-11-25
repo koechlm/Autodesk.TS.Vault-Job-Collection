@@ -28,6 +28,9 @@ namespace adsk.ts.image.create.inventor
         [XmlElement("AcceptLocalIpj")]
         public string AcceptLocalIpj;
 
+        [XmlElement("EnforceSubmittedFileVersion")]
+        public string EnforceSubmittedFileVersion;
+
         [XmlElement("ExportFormats")]
         public string ExportFormats;
 
