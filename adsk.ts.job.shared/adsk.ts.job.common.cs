@@ -234,7 +234,7 @@ namespace adsk.ts.job.shared
                     {
                         _trace.WriteLine(mExpFile.Name + ": Job tries synchronizing properties in Vault.");
                         //get the design rep category's user properties
-                        ACET.IExplorerUtil mExplUtil = Autodesk.Connectivity.Explorer.ExtensibilityTools.ExplorerLoader.LoadExplorerUtil(
+                        ACET.IExplorerUtil? mExplUtil = Autodesk.Connectivity.Explorer.ExtensibilityTools.ExplorerLoader.LoadExplorerUtil(
                                     _connection.Server, _connection.Vault, _connection.UserID, _connection.Ticket);
                         Dictionary<ACW.PropDef, object> mPropDictonary = new Dictionary<ACW.PropDef, object>();
 
@@ -270,6 +270,7 @@ namespace adsk.ts.job.shared
                             //update export file using the property dictionary; note this the IExplorerUtil method bumps file iteration and requires no check out
                             mExplUtil.UpdateFileProperties(mExpFile, mPropDictonary);
                             mExpFile = (_WebSrvMgr.DocumentService.GetLatestFileByMasterId(mExpFile.MasterId));
+                            mExplUtil = null;
                         }
                     }
 
