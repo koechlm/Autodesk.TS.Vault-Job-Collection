@@ -233,9 +233,17 @@ namespace adsk.ts.job.shared
                     try
                     {
                         _trace.WriteLine(mExpFile.Name + ": Job tries synchronizing properties in Vault.");
-                        //get the design rep category's user properties
-                        ACET.IExplorerUtil? mExplUtil = Autodesk.Connectivity.Explorer.ExtensibilityTools.ExplorerLoader.LoadExplorerUtil(
-                                    _connection.Server, _connection.Vault, _connection.UserID, _connection.Ticket);
+
+                        // initialize helper class
+                        // Read date and bool conversion options from Vault settings
+                        bool dateOnly = _connection.WebServiceManager.KnowledgeVaultService
+                            .GetVaultOption("Autodesk.EDM.UpdateProperties.DateMappingOption") == "1";
+                        bool boolAsInt = _connection.WebServiceManager.KnowledgeVaultService
+                            .GetVaultOption("Autodesk.EDM.UpdateProperties.WriteBoolPropertyAsN") == "1";
+
+                        // Initialize ManageProperties helper
+                        ManageProperties? manageProps = new ManageProperties(_connection, dateOnly, boolAsInt);
+                        // initialize dictionary for properties to be updated 
                         Dictionary<ACW.PropDef, object> mPropDictonary = new Dictionary<ACW.PropDef, object>();
 
                         //get property definitions filtered to UDPs
@@ -268,9 +276,14 @@ namespace adsk.ts.job.shared
                             }
 
                             //update export file using the property dictionary; note this the IExplorerUtil method bumps file iteration and requires no check out
-                            mExplUtil.UpdateFileProperties(mExpFile, mPropDictonary);
+                            PropWriteResults propWriteResults = new PropWriteResults();
+                            string[] cloakedEntityClasses;
+                            manageProps.UpdateFileProperties(
+                                mExpFile, comment: "Property Update", allowSync: true, 
+                                mPropDictonary, 
+                                out propWriteResults, out cloakedEntityClasses);
                             mExpFile = (_WebSrvMgr.DocumentService.GetLatestFileByMasterId(mExpFile.MasterId));
-                            mExplUtil = null;
+                            manageProps = null; // release manageProps to avoid keeping reference to potentially large property objects in memory
                         }
                     }
 
