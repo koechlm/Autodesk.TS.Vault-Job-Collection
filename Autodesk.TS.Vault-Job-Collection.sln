@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.13.35828.75
+# Visual Studio Version 18
+VisualStudioVersion = 18.3.11505.172 d18.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.pdf.create.slddrw", "adsk.ts.pdf.create.slddrw\adsk.ts.pdf.create.slddrw.csproj", "{8BE623D4-CC6E-4F68-ADA6-E307EE73B80F}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -69,6 +69,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SDK References", "SDK Refer
 		SDK References\SolidWorks.Interop.swconst.dll = SDK References\SolidWorks.Interop.swconst.dll
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.assignupdateitem", "adsk.ts.AssignUpdateFmItem\adsk.ts.assignupdateitem.csproj", "{94809153-64B3-4EBB-A3ED-98FD1D38940C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -133,6 +135,14 @@ Global
 		{952D1405-BBD5-452C-9D85-E64CAB7BB48E}.Release|Any CPU.Build.0 = Release|x64
 		{952D1405-BBD5-452C-9D85-E64CAB7BB48E}.Release|x64.ActiveCfg = Release|x64
 		{952D1405-BBD5-452C-9D85-E64CAB7BB48E}.Release|x64.Build.0 = Release|x64
+		{94809153-64B3-4EBB-A3ED-98FD1D38940C}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{94809153-64B3-4EBB-A3ED-98FD1D38940C}.Debug|Any CPU.Build.0 = Debug|x64
+		{94809153-64B3-4EBB-A3ED-98FD1D38940C}.Debug|x64.ActiveCfg = Debug|x64
+		{94809153-64B3-4EBB-A3ED-98FD1D38940C}.Debug|x64.Build.0 = Debug|x64
+		{94809153-64B3-4EBB-A3ED-98FD1D38940C}.Release|Any CPU.ActiveCfg = Release|x64
+		{94809153-64B3-4EBB-A3ED-98FD1D38940C}.Release|Any CPU.Build.0 = Release|x64
+		{94809153-64B3-4EBB-A3ED-98FD1D38940C}.Release|x64.ActiveCfg = Release|x64
+		{94809153-64B3-4EBB-A3ED-98FD1D38940C}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

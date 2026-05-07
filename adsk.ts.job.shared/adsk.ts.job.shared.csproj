@@ -23,6 +23,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="ManageProperties.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Vault.ManageProperties.Core" Version="1.0.0" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="Autodesk.Connectivity.Explorer.Extensibility">
       <HintPath>..\SDK References\Autodesk.Connectivity.Explorer.Extensibility.dll</HintPath>
       <Private>False</Private>

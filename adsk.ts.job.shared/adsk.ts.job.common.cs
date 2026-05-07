@@ -15,6 +15,7 @@ using static System.Net.Mime.MediaTypeNames;
 using ACET = Autodesk.Connectivity.Explorer.ExtensibilityTools;
 using ACW = Autodesk.Connectivity.WebServices;
 using VDF = Autodesk.DataManagement.Client.Framework;
+using ManagePropsHelper = Vault_API_Sample_ManageProperties.ManageProperties;
 
 namespace adsk.ts.job.shared
 {
@@ -242,7 +243,7 @@ namespace adsk.ts.job.shared
                             .GetVaultOption("Autodesk.EDM.UpdateProperties.WriteBoolPropertyAsN") == "1";
 
                         // Initialize ManageProperties helper
-                        ManageProperties? manageProps = new ManageProperties(_connection, dateOnly, boolAsInt);
+                        ManagePropsHelper? manageProps = new ManagePropsHelper(_connection, dateOnly, boolAsInt);
                         // initialize dictionary for properties to be updated 
                         Dictionary<ACW.PropDef, object> mPropDictonary = new Dictionary<ACW.PropDef, object>();
 
