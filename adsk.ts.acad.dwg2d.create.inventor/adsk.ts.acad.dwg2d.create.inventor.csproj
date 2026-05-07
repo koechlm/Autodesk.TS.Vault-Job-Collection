@@ -10,6 +10,7 @@
     <AssemblyName>adsk.ts.acad.dwg2d.create.inventor</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWindowsForms>true</UseWindowsForms>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <MSBuildWarningsAsMessages>MSB3277</MSBuildWarningsAsMessages>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -66,6 +67,9 @@
       <HintPath>$(ProgramW6432)\Autodesk\Autodesk Vault 2026 SDK\bin\x64\Core\Autodesk.DataManagement.Client.Framework.Vault.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Autodesk.Inventor.Interop">
+      <HintPath>..\SDK References\Autodesk.Inventor.Interop.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="JobExtension.cs" />
@@ -74,6 +78,9 @@
     <Compile Include="Util.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="IDW-2-DWG.ini">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Key.snk" />
     <None Include="adsk.ts.acad.dwg2d.create.inventor.vcet.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -83,5 +90,8 @@
     <Content Include="adsk.ts.acad.dwg2d.create.inventor.settings.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\adsk.ts.job.shared\adsk.ts.job.shared.csproj" />
   </ItemGroup>
 </Project>

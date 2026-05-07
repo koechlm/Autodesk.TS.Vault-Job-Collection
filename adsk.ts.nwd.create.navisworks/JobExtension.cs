@@ -264,7 +264,7 @@ namespace adsk.ts.nwd.create.navisworks
                         }
                         //Navisworks.EnableProgress();
 
-                        //collect all export files for later upload
+                        //collect all export files for later upload                        
                         System.IO.FileInfo mExportFileInfo = new System.IO.FileInfo(mNwdName);
                         if (mExportFileInfo.Exists)
                         {

@@ -10,6 +10,7 @@
     <AssemblyName>adsk.ts.pdf.create.slddrw</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWindowsForms>true</UseWindowsForms>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <MSBuildWarningsAsMessages>MSB3277</MSBuildWarningsAsMessages>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>

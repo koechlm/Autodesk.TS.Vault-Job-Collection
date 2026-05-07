@@ -3,6 +3,7 @@
     <TargetFramework>net8.0-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <MSBuildWarningsAsMessages>MSB3277</MSBuildWarningsAsMessages>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>    
@@ -26,7 +27,9 @@
     <Compile Remove="ManageProperties.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Vault.ManageProperties.Core" Version="1.0.0" />
+    <PackageReference Include="Vault.ManageProperties.Core" Version="1.0.0">
+      <PrivateAssets>none</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Autodesk.Connectivity.Explorer.Extensibility">

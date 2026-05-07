@@ -333,7 +333,8 @@ namespace adsk.ts.export3d.create.inventor
                             throw new Exception("DWG Translator Add-In failed to export DWG file (TransAddIn.SaveCopyAs()): " + ex.Message);
                         }
                         //collect all export files for later upload                        
-                        System.IO.FileInfo mExportFileInfo = new System.IO.FileInfo(mFilesToUpload.LastOrDefault());
+                        
+                        System.IO.FileInfo mExportFileInfo = new System.IO.FileInfo(mExpFileName);
                         if (mExportFileInfo.Exists)
                         {
                             mFilesToUpload.Add(mExpFileName);
@@ -475,7 +476,6 @@ namespace adsk.ts.export3d.create.inventor
                     mDoc.Close(true);
                     mTrace.WriteLine("Source file closed");
                 }
-
             }
 
             //switch temporarily used project file back to original one
