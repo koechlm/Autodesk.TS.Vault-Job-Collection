@@ -16,7 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 
-namespace adsk.ts.job.assignupdateitem
+namespace adsk.ts.assignupdateitem
 {
     [XmlRoot("settings")]
     public class Settings
@@ -42,7 +42,7 @@ namespace adsk.ts.job.assignupdateitem
             try
             {
                 string codeFolder = Util.GetAssemblyPath();
-                string xmlPath = Path.Combine(codeFolder, "adsk.ts.job.assignupdateitem.xml");
+                string xmlPath = Path.Combine(codeFolder, "adsk.ts.assignupdateitem.xml");
 
                 using (System.IO.StreamWriter writer = new System.IO.StreamWriter(xmlPath))
                 {
@@ -60,7 +60,7 @@ namespace adsk.ts.job.assignupdateitem
 
 
             string codeFolder = Util.GetAssemblyPath();
-            string xmlPath = Path.Combine(codeFolder, "adsk.ts.job.assignupdateitem.xml");
+            string xmlPath = Path.Combine(codeFolder, "adsk.ts.assignupdateitem.xml");
 
             using (System.IO.StreamReader reader = new System.IO.StreamReader(xmlPath))
             {

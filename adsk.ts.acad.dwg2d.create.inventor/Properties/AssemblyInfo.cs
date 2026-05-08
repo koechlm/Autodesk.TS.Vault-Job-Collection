@@ -32,8 +32,8 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("31.0.84.0")]
-[assembly: AssemblyFileVersion("31.0.84.0")]
+[assembly: AssemblyVersion("32.0.71.0")]
+[assembly: AssemblyFileVersion("32.0.71.0")]
 #if NET6_0_OR_GREATER
 [assembly: System.Runtime.Versioning.SupportedOSPlatform("windows7.0")]
 #endif

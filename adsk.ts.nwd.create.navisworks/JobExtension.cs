@@ -25,7 +25,7 @@ using Autodesk.Navisworks.Api.Automation;
 using Autodesk.Navisworks.Api;
 
 // *ComponentUpgradeEveryRelease-Client*
-[assembly: ApiVersion("19.0")]
+[assembly: ApiVersion("20.0")]
 [assembly: ExtensionId("8a697468-fed8-4719-a575-71225085efaf")]
 
 

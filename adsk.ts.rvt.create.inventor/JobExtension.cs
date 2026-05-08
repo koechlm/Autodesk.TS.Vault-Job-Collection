@@ -31,7 +31,7 @@ using Autodesk.Connectivity.WebServices;
 using Microsoft.Win32;
 
 // *ComponentUpgradeEveryRelease-Client*
-[assembly: ApiVersion("19.0")]
+[assembly: ApiVersion("20.0")]
 [assembly: ExtensionId("5f980c92-e275-4d61-a80a-3d733c401818")]
 
 

@@ -22,7 +22,7 @@ using System.Linq;
 using System.Text;
 using VDF = Autodesk.DataManagement.Client.Framework;
 
-namespace adsk.ts.job.assignupdateitem
+namespace adsk.ts.assignupdateitem
 {
     public class Util
     {

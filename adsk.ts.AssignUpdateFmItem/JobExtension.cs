@@ -14,18 +14,18 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 // *ComponentUpgradeEveryRelease-Client*
-[assembly: ApiVersion("19.0")]
+[assembly: ApiVersion("20.0")]
 [assembly: ExtensionId("e47f92ba-e2c2-4c6c-91c3-9482b732d738")]
 
 
-namespace adsk.ts.job.assignupdateitem
+namespace adsk.ts.assignupdateitem
 {
     /// <summary>
     /// Job handler to assign/update Vault and Fusion Manage items
     /// </summary>
     public class JobExtension : IJobHandler
     {
-        private static string JOB_TYPE = "adsk.ts.job.assignupdateitem";
+        private static string JOB_TYPE = "adsk.ts.assignupdateitem";
 
         #region custom variables
         private static readonly List<string> mExcludedCategories = new List<string>()
@@ -256,7 +256,10 @@ namespace adsk.ts.job.assignupdateitem
                                     {
                                         // submit the task to FM for the created/modified item                                       
                                         long mRevId = serviceManager.ItemService.GetLatestItemByItemMasterId(m_CurrentItem.MasterId).Id;
-                                        mExternalSyncService.AddExtSyncTask(mRevId, "ITEM", mFMConfigName, null);
+                                        NameValuePair[] taskParamArray = new NameValuePair[] { };
+                                        string workflowType = "";
+                                        string description = "Assign/Update Item for file " + mFile.Name;
+                                        mExternalSyncService.AddExtSyncTask(mRevId, "ITEM", mFMConfigName,workflowType, description, taskParamArray);
                                     }
                                 }
                             }
@@ -286,7 +289,7 @@ namespace adsk.ts.job.assignupdateitem
                     else
                     {
                         mPromoteFailed = true;
-                        context.Log("Job failed likely due to missing Item Data; Check the property 'Item Assignable'", MessageType.eError);
+                        context.Log("Job failed likely due to missing Item Data; Check the property 'Item Assignable'. Details: " + ex.Message, MessageType.eError);
                     }
                 }
                 finally

@@ -22,7 +22,7 @@ using adsktsshared = adsk.ts.job.shared;
 using VDF = Autodesk.DataManagement.Client.Framework;
 
 // *ComponentUpgradeEveryRelease-Client*
-[assembly: ApiVersion("19.0")]
+[assembly: ApiVersion("20.0")]
 [assembly: ExtensionId("952d1405-bbd5-452c-9d85-e64cab7bb48e")]
 
 

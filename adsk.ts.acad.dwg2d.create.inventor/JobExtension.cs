@@ -16,7 +16,7 @@ using Inventor;
 using adsktsshared = adsk.ts.job.shared;
 
 // *ComponentUpgradeEveryRelease-Client*
-[assembly: ApiVersion("19.0")]
+[assembly: ApiVersion("20.0")]
 [assembly: ExtensionId("3027ebd7-5776-4e1c-853d-54e0a1587534")]
 
 

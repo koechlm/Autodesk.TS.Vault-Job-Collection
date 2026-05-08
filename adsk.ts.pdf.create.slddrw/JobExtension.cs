@@ -26,7 +26,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 using static System.Net.WebRequestMethods;
 
 // *ComponentUpgradeEveryRelease-Client*
-[assembly: ApiVersion("19.0")]
+[assembly: ApiVersion("20.0")]
 [assembly: ExtensionId("8be623d4-cc6e-4f68-ada6-e307ee73b80f")]
 
 

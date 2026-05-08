@@ -17,7 +17,7 @@ using ACW = Autodesk.Connectivity.WebServices;
 using adsktsshared = adsk.ts.job.shared;
 
 // *ComponentUpgradeEveryRelease-Client*
-[assembly: ApiVersion("19.0")]
+[assembly: ApiVersion("20.0")]
 [assembly: ExtensionId("a0574014-3e9a-4276-8dd8-2d54777a68d6")]
 
 
