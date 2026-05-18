@@ -7,7 +7,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>adsk.ts.job.assignupdateitem</RootNamespace>
-    <AssemblyName>adsk.ts.job.assignupdateitem</AssemblyName>
+    <AssemblyName>adsk.ts.assignupdateitem</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWindowsForms>true</UseWindowsForms>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
@@ -19,7 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>$(ProgramData)\Autodesk\Vault 2026\Extensions\adsk.ts.job.assignupdateitem\</OutputPath>
+    <OutputPath>$(ProgramData)\Autodesk\Vault 2027\Extensions\adsk.ts.job.collection\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -27,7 +27,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>$(ProgramData)\Autodesk\Vault 2026\Extensions\adsk.ts.job.assignupdateitem\</OutputPath>
+    <OutputPath>$(ProgramData)\Autodesk\Vault 2027\Extensions\adsk.ts.job.collection\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>

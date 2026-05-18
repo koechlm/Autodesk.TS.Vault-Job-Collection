@@ -257,7 +257,7 @@ namespace adsk.ts.assignupdateitem
                                         // submit the task to FM for the created/modified item                                       
                                         long mRevId = serviceManager.ItemService.GetLatestItemByItemMasterId(m_CurrentItem.MasterId).Id;
                                         NameValuePair[] taskParamArray = new NameValuePair[] { };
-                                        string workflowType = "";
+                                        string workflowType = "Adsk.UploadItem";
                                         string description = "Assign/Update Item for file " + mFile.Name;
                                         mExternalSyncService.AddExtSyncTask(mRevId, "ITEM", mFMConfigName,workflowType, description, taskParamArray);
                                     }
