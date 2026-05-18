@@ -1717,6 +1717,9 @@
         <member name="F:Inventor.CommandIDEnum.kCreateSketchMirrorCommand">
             <summary>Mirror a sketch.</summary>
         </member>
+        <member name="F:Inventor.CommandIDEnum.kCreateSlotCommand">
+            <summary>Create a slot.</summary>
+        </member>
         <member name="F:Inventor.CommandIDEnum.kCreateSplitCommand">
             <summary>Create a split.</summary>
         </member>
@@ -2779,6 +2782,24 @@
         <member name="F:Inventor.CustomSettingsTypeEnum.kUserCustomizationSettings">
             <summary>User Customization Settings.</summary>
         </member>
+        <member name="T:Inventor.DarkSiteLevelEnum">
+            <summary>Dark Site Level.</summary>
+        </member>
+        <member name="F:Inventor.DarkSiteLevelEnum.kDarkSiteADPDisabled">
+            <summary>Product usage data collection is disabled.</summary>
+        </member>
+        <member name="F:Inventor.DarkSiteLevelEnum.kDarkSiteNetworkDisabled">
+            <summary>Network connection disabled.</summary>
+        </member>
+        <member name="F:Inventor.DarkSiteLevelEnum.kDarkSiteNetworkReadonly">
+            <summary>Network data read only.</summary>
+        </member>
+        <member name="F:Inventor.DarkSiteLevelEnum.kDarkSiteNone">
+            <summary>No dark site restrictions.</summary>
+        </member>
+        <member name="F:Inventor.DarkSiteLevelEnum.kDarkSiteSysServiceDisabled">
+            <summary>System services disabled.</summary>
+        </member>
         <member name="T:Inventor.DebugWatchType">
             <summary>Constants identifying which object event types to watch.</summary>
         </member>
@@ -2799,6 +2820,9 @@
         </member>
         <member name="F:Inventor.DecimalMarkerTypeEnum.kCommaDecimalMarker">
             <summary>Comma as the Decimal Marker.</summary>
+        </member>
+        <member name="F:Inventor.DecimalMarkerTypeEnum.kDefaultDecimalMarker">
+            <summary>Decimal Marker used by operating system.</summary>
         </member>
         <member name="F:Inventor.DecimalMarkerTypeEnum.kPeriodDecimalMarker">
             <summary>Period as the Decimal Marker.</summary>
@@ -3211,6 +3235,9 @@
         <member name="F:Inventor.DimensionTypeEnum.kAngularForeshortenedDimensionType">
             <summary>Dimension type is angular foreshortened.</summary>
         </member>
+        <member name="F:Inventor.DimensionTypeEnum.kAngularSumDimensionType">
+            <summary>Dimension type is angular sum.</summary>
+        </member>
         <member name="F:Inventor.DimensionTypeEnum.kArcLengthDimensionType">
             <summary>Dimension type is arc length.</summary>
         </member>
@@ -3225,6 +3252,9 @@
         </member>
         <member name="F:Inventor.DimensionTypeEnum.kLinearForeshortenedDimensionType">
             <summary>Dimension type is linear foreshortened.</summary>
+        </member>
+        <member name="F:Inventor.DimensionTypeEnum.kLinearSumDimensionType">
+            <summary>Dimension type is linear sum.</summary>
         </member>
         <member name="F:Inventor.DimensionTypeEnum.kNormalToCurveDimensionType">
             <summary>Dimension type is normal to curve.</summary>
@@ -3285,6 +3315,18 @@
         </member>
         <member name="F:Inventor.DirectionEnum.kOutwardDirection">
             <summary>Outward (positive normal) direction.</summary>
+        </member>
+        <member name="T:Inventor.DirectionTypeEnum">
+            <summary>Constants identifying the direction types.</summary>
+        </member>
+        <member name="F:Inventor.DirectionTypeEnum.kCustomDirection">
+            <summary>Custom direction.</summary>
+        </member>
+        <member name="F:Inventor.DirectionTypeEnum.kHorizontalDirection">
+            <summary>Horizontal direction.</summary>
+        </member>
+        <member name="F:Inventor.DirectionTypeEnum.kVerticalDirection">
+            <summary>Vertical direction.</summary>
         </member>
         <member name="T:Inventor.DisplayFormatEnum">
             <summary>Enum indicating the type of display format.</summary>
@@ -4900,8 +4942,17 @@
         <member name="F:Inventor.GraphicsDriverTypeEnum.kDirect3D11GraphicsDriver">
             <summary>Direct3D 11 option.</summary>
         </member>
+        <member name="F:Inventor.GraphicsDriverTypeEnum.kDirect3D12GraphicsDriver">
+            <summary>Direct3D 12 option.</summary>
+        </member>
         <member name="F:Inventor.GraphicsDriverTypeEnum.kDirect3DGraphicsDriver">
             <summary>Equal to comparison.</summary>
+        </member>
+        <member name="F:Inventor.GraphicsDriverTypeEnum.kDirectX11GraphicsDriver">
+            <summary>DirectX 11.</summary>
+        </member>
+        <member name="F:Inventor.GraphicsDriverTypeEnum.kDirectX12GraphicsDriver">
+            <summary>DirectX 12.</summary>
         </member>
         <member name="F:Inventor.GraphicsDriverTypeEnum.kOpenGLGraphicsDriver">
             <summary>Not equal to comparison.</summary>
@@ -6481,6 +6532,9 @@
         <member name="F:Inventor.MemberManagerErrorsEnum.kMemberManagerFeatureSuppressFail">
             <summary>Feature can't be suppressed/unsuppressedd.</summary>
         </member>
+        <member name="F:Inventor.MemberManagerErrorsEnum.kMemberManagerInactiveModelState">
+            <summary>The model state is not activated.</summary>
+        </member>
         <member name="F:Inventor.MemberManagerErrorsEnum.kMemberManagerInvalidMemberValue">
             <summary>Invalid member value for column.</summary>
         </member>
@@ -6681,6 +6735,30 @@
         </member>
         <member name="F:Inventor.ModelDiameterFromThreadEnum.kThreadTapDrillDiameter">
             <summary>Diameter of cylindrical face in the model is picked as the Tap Drill diameter of the Thread.</summary>
+        </member>
+        <member name="T:Inventor.ModelStateMemberDocumentStatusEnum">
+            <summary>Defines the model state member generation status.</summary>
+        </member>
+        <member name="F:Inventor.ModelStateMemberDocumentStatusEnum.kMemberDocumentNotGeneratedStatus">
+            <summary>Model state member document is not generated status.</summary>
+        </member>
+        <member name="F:Inventor.ModelStateMemberDocumentStatusEnum.kMemberDocumentOutOfDateStatus">
+            <summary>Model state member document was generated and is out of date status.</summary>
+        </member>
+        <member name="F:Inventor.ModelStateMemberDocumentStatusEnum.kMemberDocumentUpToDateStatus">
+            <summary>Model state member document was generated and up-to-date status.</summary>
+        </member>
+        <member name="T:Inventor.ModelStateMemberGenerationStatusEnum">
+            <summary>Defines the model state member document status for model state.</summary>
+        </member>
+        <member name="F:Inventor.ModelStateMemberGenerationStatusEnum.kAlwaysGenerateOnSaveStatus">
+            <summary>Always generate on save status.</summary>
+        </member>
+        <member name="F:Inventor.ModelStateMemberGenerationStatusEnum.kLegacyGenerateOnSaveStatus">
+            <summary>Legacy generate on save status.</summary>
+        </member>
+        <member name="F:Inventor.ModelStateMemberGenerationStatusEnum.kMixedGenerateOnSaveStatus">
+            <summary>Mixed generate on save status.</summary>
         </member>
         <member name="T:Inventor.ModelStateTypeEnum">
             <summary>Model state types.</summary>
@@ -8971,6 +9049,9 @@
         <member name="F:Inventor.ObjectTypeEnum.kFilenameAssetValueObject">
             <summary>Filename Asset Value Object.</summary>
         </member>
+        <member name="F:Inventor.ObjectTypeEnum.kFileNamingDefaultsOptionsObject">
+            <summary>FileNamingDefaultsOptions object.</summary>
+        </member>
         <member name="F:Inventor.ObjectTypeEnum.kFileObject">
             <summary>File Object.</summary>
         </member>
@@ -9129,6 +9210,9 @@
         </member>
         <member name="F:Inventor.ObjectTypeEnum.kFoldFeaturesObject">
             <summary>Fold Features Object.</summary>
+        </member>
+        <member name="F:Inventor.ObjectTypeEnum.kFrameGeneratorFileNamingOptionsObject">
+            <summary>FrameGeneratorFileNamingOptions object.</summary>
         </member>
         <member name="F:Inventor.ObjectTypeEnum.kFreeDragMoveOperationObject">
             <summary>FreeDragMoveOperation Object.</summary>
@@ -9339,6 +9423,9 @@
         </member>
         <member name="F:Inventor.ObjectTypeEnum.kHolePlacementDefinitionObject">
             <summary>HolePlacementDefinition Object.</summary>
+        </member>
+        <member name="F:Inventor.ObjectTypeEnum.kHoleSlotPlacementDefinitionObject">
+            <summary>Hole Slot Placement Definition Object.</summary>
         </member>
         <member name="F:Inventor.ObjectTypeEnum.kHoleTableCellObject">
             <summary>HoleTableCell Object.</summary>
@@ -9642,6 +9729,12 @@
         </member>
         <member name="F:Inventor.ObjectTypeEnum.kiPartTableRowsObject">
             <summary>iPart Table Rows Object.</summary>
+        </member>
+        <member name="F:Inventor.ObjectTypeEnum.kIrregularDistributionItemObject">
+            <summary>IrregularDistributionItem Object.</summary>
+        </member>
+        <member name="F:Inventor.ObjectTypeEnum.kIrregularDistributionSetObject">
+            <summary>IrregularDistributionSet Object.</summary>
         </member>
         <member name="F:Inventor.ObjectTypeEnum.kJointOriginDWGObject">
             <summary>JointOriginDWG Object.</summary>
@@ -11809,6 +11902,9 @@
         <member name="F:Inventor.ObjectTypeEnum.kSketchSettingsObject">
             <summary>Provides access to various sketch related document settings.</summary>
         </member>
+        <member name="F:Inventor.ObjectTypeEnum.kSketchSlotPlacementDefinitionObject">
+            <summary>Sketch Slot Placement Definition Object.</summary>
+        </member>
         <member name="F:Inventor.ObjectTypeEnum.kSketchSpline3DObject">
             <summary>SketchSpline3D Object.</summary>
         </member>
@@ -11838,6 +11934,21 @@
         </member>
         <member name="F:Inventor.ObjectTypeEnum.kSketchSplinesObject">
             <summary>SketchSplines Collection Object.</summary>
+        </member>
+        <member name="F:Inventor.ObjectTypeEnum.kSlotDefinitionObject">
+            <summary>Slot Features Definition Object.</summary>
+        </member>
+        <member name="F:Inventor.ObjectTypeEnum.kSlotFeatureObject">
+            <summary>Slot Feature Object.</summary>
+        </member>
+        <member name="F:Inventor.ObjectTypeEnum.kSlotFeatureProxyObject">
+            <summary>Slot Feature Proxy Object.</summary>
+        </member>
+        <member name="F:Inventor.ObjectTypeEnum.kSlotFeaturesObject">
+            <summary>Slot Features Collection Object.</summary>
+        </member>
+        <member name="F:Inventor.ObjectTypeEnum.kSlotPlacementDefinitionObject">
+            <summary>Slot Placement Definition Object.</summary>
         </member>
         <member name="F:Inventor.ObjectTypeEnum.kSmoothConstraint3DObject">
             <summary>SmoothConstraint3D Object.</summary>
@@ -12537,6 +12648,9 @@
         </member>
         <member name="F:Inventor.ObjectTypeEnum.kWorkPointProxyObject">
             <summary>WorkPointProxy Object.</summary>
+        </member>
+        <member name="F:Inventor.ObjectTypeEnum.kWorkPointsEnumeratorObject">
+            <summary>Readonly WorkPoints Collection Object.</summary>
         </member>
         <member name="F:Inventor.ObjectTypeEnum.kWorkPointsObject">
             <summary>WorkPoints Collection Object.</summary>
@@ -14314,6 +14428,21 @@
         <member name="F:Inventor.SearchBoxFilterEnum.kUnresolvedFiles">
             <summary>The unresolved files filter.</summary>
         </member>
+        <member name="T:Inventor.SeatTypeEnum">
+            <summary>Constants identifying the seat types.</summary>
+        </member>
+        <member name="F:Inventor.SeatTypeEnum.kCounterboreSeat">
+            <summary>Counterbore seat type.</summary>
+        </member>
+        <member name="F:Inventor.SeatTypeEnum.kCountersinkSeat">
+            <summary>Countersink seat type.</summary>
+        </member>
+        <member name="F:Inventor.SeatTypeEnum.kNoneSeat">
+            <summary>None seat type.</summary>
+        </member>
+        <member name="F:Inventor.SeatTypeEnum.kSpotfaceSeat">
+            <summary>Spotface seat type.</summary>
+        </member>
         <member name="T:Inventor.SectionViewTypeEnum">
             <summary>Defines the types of the section views in part or assembly.</summary>
         </member>
@@ -14949,6 +15078,39 @@
         </member>
         <member name="F:Inventor.SketchGeometricConstraintTypeEnum.kVertical">
             <summary>Vertical constraint.</summary>
+        </member>
+        <member name="T:Inventor.SlotCenterMarksTypeEnum">
+            <summary>Constants identifying the slot center marks types.</summary>
+        </member>
+        <member name="F:Inventor.SlotCenterMarksTypeEnum.kArcCentersMarkType">
+            <summary>Arc centers mark type.</summary>
+        </member>
+        <member name="F:Inventor.SlotCenterMarksTypeEnum.kCenterMarkType">
+            <summary>Center mark type.</summary>
+        </member>
+        <member name="F:Inventor.SlotCenterMarksTypeEnum.kLengthMarkType">
+            <summary>Length mark type.</summary>
+        </member>
+        <member name="F:Inventor.SlotCenterMarksTypeEnum.kNoMarkType">
+            <summary>No mark type.</summary>
+        </member>
+        <member name="T:Inventor.SlotEndMillTypeEnum">
+            <summary>Constants identifying the slot end mill types.</summary>
+        </member>
+        <member name="F:Inventor.SlotEndMillTypeEnum.kAngledEndMillType">
+            <summary>Angled end mill type.</summary>
+        </member>
+        <member name="F:Inventor.SlotEndMillTypeEnum.kFlatEndMillType">
+            <summary>Flat end mill type.</summary>
+        </member>
+        <member name="T:Inventor.SlotFilletTypeEnum">
+            <summary>Constants identifying the slot fillet types.</summary>
+        </member>
+        <member name="F:Inventor.SlotFilletTypeEnum.kFilletsSlotFilletType">
+            <summary>Fillets slot fillet type.</summary>
+        </member>
+        <member name="F:Inventor.SlotFilletTypeEnum.kSharpCornersSlotFilletType">
+            <summary>Sharp corners slot fillet type.</summary>
         </member>
         <member name="T:Inventor.SolutionNatureEnum">
             <summary>Type that characterizes the result of a solution search.</summary>
@@ -18197,6 +18359,9 @@ context of the active assembly/part/sketch.</summary>
         <member name="P:Inventor.AngularGeneralDimension.ShowLeader">
             <summary>Gets and sets whether to display a leader line for the dimension text.</summary>
         </member>
+        <member name="P:Inventor.AngularGeneralDimension.SpacingDimension">
+            <summary>Gets and sets spacing dimension for the angular sum dimension.</summary>
+        </member>
         <member name="P:Inventor.AngularGeneralDimension.Style">
             <summary>Gets and sets the DimensionStyle associated with the dimension.</summary>
         </member>
@@ -18806,10 +18971,10 @@ Two planes (planar face or work plane)</summary>
             <summary>Returns the top-level parent application object.  When used the context of Inventor, an Application object is returned.  When used in the context of Apprentice, an ApprenticeServer object is returned.</summary>
         </member>
         <member name="P:Inventor.Application.ActiveAppearanceLibrary">
-            <summary>Read-write property that gets and sets the library whose contents is listed in the appearances drop-down list in the QAT (Quick Access Toolbar)_at the top of the Inventor window.&amp;nbsp;The initial active appearance is defined by the active project.&amp;nbsp;Using this property you can override the project appearance.&amp;nbsp;When a new project is activated the active appearance will be determined by the activated project.</summary>
+            <summary>Gets and sets the library whose contents is listed in the appearances drop-down list in the QAT(Quick Access Toolbar) at the top of the Inventor window.</summary>
         </member>
         <member name="P:Inventor.Application.ActiveColorScheme">
-            <summary>Property that returns the ColorScheme that is currently active.</summary>
+            <summary>Gets the active ColorScheme object.</summary>
         </member>
         <member name="P:Inventor.Application.ActiveDocument">
             <summary>Gets the active Document.</summary>
@@ -18866,7 +19031,7 @@ Two planes (planar face or work plane)</summary>
             <summary>Read-only property that returns ClientResourceMaps object.</summary>
         </member>
         <member name="P:Inventor.Application.ColorSchemes">
-            <summary>Property that returns the ColorSchemes object. The ColorSchemes object provides access to the color schemes. This is somewhat equivalent to the Colors tab of the Application Options dialog.</summary>
+            <summary>Gets the ColorSchemes object.</summary>
         </member>
         <member name="P:Inventor.Application.CommandManager">
             <summary>Property that returns the CommandManager object.</summary>
@@ -18928,6 +19093,9 @@ Two planes (planar face or work plane)</summary>
                 <summary>Optional input Long that specifies the hwnd of the parent dialog that is launching the progress bar. If not specified, the active Inventor application's hwnd is used. This argument is not applicable if the DisplayInStatusBar argument is set to True.</summary>
             </param>
             <returns />
+        </member>
+        <member name="P:Inventor.Application.DarkSiteLevel">
+            <summary>Read-only property that returns the dark site level.</summary>
         </member>
         <member name="P:Inventor.Application.DesignProjectManager">
             <summary>Gets the design project manager object.</summary>
@@ -19233,7 +19401,7 @@ Traditional Chinese: zh-TW </summary>
             <summary>Gets the UserInterfaceManager object. The UserInterfaceManager object is the starting point for UI and environment control, providing access to available environments, command bars, browsers, panel bars, toolbars etc.</summary>
         </member>
         <member name="P:Inventor.Application.UserName">
-            <summary>Gets/sets the string that identifies the current user. Autodesk Inventor saves its own copy of this name per user and can thus be manipulated without affecting the rest of the OS.</summary>
+            <summary>Gets/Sets the string that identifies the current user. Inventor saves its own copy of this name per user and can thus be manipulated without effecting the rest of the OS.</summary>
         </member>
         <member name="P:Inventor.Application.VBAProjects">
             <summary>Property that returns Autodesk Inventor's VBA projects collection.</summary>
@@ -19382,6 +19550,9 @@ Traditional Chinese: zh-TW </summary>
         <member name="P:Inventor.ApplicationAddInSite.Application">
             <summary>Returns the top-level parent application object.  When used the context of Inventor, an Application object is returned.  When used in the context of Apprentice, an ApprenticeServer object is returned.</summary>
         </member>
+        <member name="P:Inventor.ApplicationAddInSite.InventorServer">
+            <summary>Gets the InventorServer object.</summary>
+        </member>
         <member name="P:Inventor.ApplicationAddInSite.Parent">
             <summary>Property that returns the parent ApplicationAddIn object.</summary>
         </member>
@@ -19403,7 +19574,9 @@ Traditional Chinese: zh-TW </summary>
                 <summary>Input indicating if the event is being fired before (kBefore) or after (kAfter) the document is activated. Notification is sent before and after the document is activated.</summary>
             </param>
             <param name="Context">
-                <summary>Input object that can be used to determine the context of why the event fired. No context information is provided for this event.</summary>
+                <summary>Input object that can be used to determine the context of why the event fired. Below context information is provided for this event: 
+
+Name = EnterSubstitute. Value = String value that returns the full filename of the document when the substitute model state is just being activated.</summary>
             </param>
             <param name="HandlingCode">
                 <summary>Output that indicates how you are handling the event. The value of this argument is currently ignored for this event.</summary>
@@ -19774,19 +19947,6 @@ Name=”WindowState”, Value= WindowsSizeEnum. This indicates the current view 
             </param>
             <param name="HandlingCode">
                 <summary>Output HandlingCodeEnum that indicates how you are handling the event.  The value of this argument is currently ignored for this event.</summary>
-            </param>
-            <returns />
-        </member>
-        <member name="M:Inventor.ApplicationEvents.OnRestart32BitHost(Inventor.EventTimingEnum,Inventor.NameValueMap,Inventor.HandlingCodeEnum@)">
-            <summary>This event is fired when the 32BitHost process is restarted. This process is used to host 32-bit processes when running 64-bit Inventor.&amp;nbsp;The primary use of this is to host VBA, which is currently only a 32-bit process.</summary>
-            <param name="BeforeOrAfter">
-                <summary />
-            </param>
-            <param name="Context">
-                <summary />
-            </param>
-            <param name="HandlingCode">
-                <summary />
             </param>
             <returns />
         </member>
@@ -22003,8 +22163,8 @@ If entity one is a linear entity this can be either kNoInference or kInferredPoi
         <member name="P:Inventor.AssemblyDocument.DisabledCommandTypes">
             <summary>Bit mask indicating the disabled command types.</summary>
         </member>
-        <member name="P:Inventor.AssemblyDocument.DisplayName">
-            <summary>Gets/Sets the user-displayable name of this Document. Defaults to file-name.</summary>
+        <member name="P:Inventor.AssemblyDocument.DisplayNameBasis">
+            <summary>Gets and sets the display name basis of this document. This defaults to file name.</summary>
         </member>
         <member name="P:Inventor.AssemblyDocument.DisplayNameOverridden">
             <summary>Read-write property that gets and sets whether the display name of the document has been overridden.</summary>
@@ -22045,6 +22205,9 @@ If entity one is a linear entity this can be either kNoInference or kInferredPoi
                 <summary>Input String that specifies the full file name of the file to search for references to.</summary>
             </param>
             <returns />
+        </member>
+        <member name="P:Inventor.AssemblyDocument.FullDisplayName">
+            <summary>Read-only property that returns the full display name of this document.</summary>
         </member>
         <member name="P:Inventor.AssemblyDocument.FullDocumentName">
             <summary>Property that returns the fully qualified name of the document. The string is the full file name concatenated with the document name and is a unique identifier for the document. The document name is returned by the Name property on the Document object.</summary>
@@ -23897,6 +24060,9 @@ The String “Favorites” - Copies it to the Favorites list of assets.</summary
             <summary>Method that deletes this asset from the library.&amp;nbsp;An asset can only be deleted if it is not currently being used, which you can determine using the IsUsed property.</summary>
             <returns />
         </member>
+        <member name="P:Inventor.Asset.Description">
+            <summary>Read-write property that gets and sets the description of this asset.</summary>
+        </member>
         <member name="P:Inventor.Asset.DisplayName">
             <summary>Gets and sets the name of this asset as seen in the Material or Appearance Browser.</summary>
         </member>
@@ -24844,6 +25010,22 @@ The valid types of assets that can be created are: “Ceramic”, “Concrete”
         <member name="P:Inventor.Balloon.Position">
             <summary>Gets and sets the position of the balloon on the Sheet.</summary>
         </member>
+        <member name="M:Inventor.Balloon.ReplaceBOMView(Inventor.PartsListLevelEnum,System.Object,System.Object,System.Object)">
+            <summary>Method that replaces the BOM View that is associated with this balloon.</summary>
+            <param name="Level">
+                <summary>Input PartsListLevelEnum that specifies the BOM view to switch to.</summary>
+            </param>
+            <param name="NumberingScheme">
+                <summary>Optional input NumberingSchemeEnum that specifies numbering scheme. When Level is specified as kPartsOnly, this can be specified as kNumericNumbering, kLowercaseAlphaNumbering or kUppercaseAlphaNumbering. When Level is specified as kStructured or kStructuredAllLevels this is ignored. This defaults to kNumericNumbering if not specified.</summary>
+            </param>
+            <param name="MinimumDigitsOrDelimiter">
+                <summary>Optional input Long that specifies the minimum digits(from 1 to 6), or String that specifies the delimiter. When Level is specified as kPartsOnly, and NumberingScheme is specified as kNumericNumbering this can be used to specify the minimum digits. When Level is specified as kStructured this can be used to specify the minimum digits. When Level is specified as  kStructuredAllLevels this can be used to specify delimiter. This defaults to 1 indicating the minimum digits for when Level is specified as kPartsOnly and NumberingScheme is specified as kNumericNumbering.</summary>
+            </param>
+            <param name="IgnoreOverrides">
+                <summary>Optional input Boolean that specifies whether ignore the overrides to the local BOM or not. This defaults to True if not specified, which means the parts lists and balloons associated with this reference will be replaced and any overrides will be discarded. If set this to False and there are any overrides to the local BOM then this method raises an error.</summary>
+            </param>
+            <returns />
+        </member>
         <member name="M:Inventor.Balloon.SaveItemOverridesToBOM">
             <summary>Method that saves any overrides to the item values in the balloon to the model BOM. Only the overrides applies to the BallonValueSet.Value property are saved. The value of the OverrideValue property is ignored.</summary>
             <returns />
@@ -24851,7 +25033,7 @@ The valid types of assets that can be created are: “Ceramic”, “Concrete”
         <member name="M:Inventor.Balloon.SetBalloonType(Inventor.BalloonTypeEnum,System.Object)">
             <summary>Method that sets the balloon type.</summary>
             <param name="BalloonType">
-                <summary>Constant that indicates the balloon type. Valid types are kCircularWithOneEntryBalloonType, kCircularWithTwoEntriesBalloonType, kHexagonBalloonType, kLinearBalloonType, kNoneBalloonType and kSketchedSymbolBalloonType. Setting the type to kNoneBalloonType specifies that all the properties chosen in the style will be displayed.</summary>
+                <summary>Constant that indicates the balloon type. Valid types are kCircularWithOneEntryBalloonType, kCircularWithTwoEntriesBalloonType, kHexagonBalloonType, kLinearBalloonType, kNoneBalloonType, kRectangleBalloonType and kSketchedSymbolBalloonType. Setting the type to kNoneBalloonType specifies that all the properties chosen in the style will be displayed.</summary>
             </param>
             <param name="BalloonTypeData">
                 <summary>Optional input data associated with certain balloon types. If the balloon type is kSketchedSymbolBalloonType, this argument requires a SketchedSymbolDefinition object. Else, this argument is ignored.</summary>
@@ -26471,6 +26653,24 @@ To change the width of an existing connector you can either edit the geometry th
             <summary>Method that exports the BIM component as an adsk, ifc or rfa file.</summary>
             <param name="FullFileName">
                 <summary>Input String that defines the full filename to write the building component to.  The filename should have an adsk, ifc or rfa extension.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="M:Inventor.BIMComponent.ExportBuildingComponentWithOptions(System.String,Inventor.NameValueMap)">
+            <summary>Method that exports the BIM component as an adsk, ifc or rfa file.</summary>
+            <param name="FullFileName">
+                <summary>Input String that defines the full filename to write the building component to.  The filename should have an adsk, ifc or rfa extension.</summary>
+            </param>
+            <param name="pOptions">
+                <summary>Input NameValueMap object to specify additional options for export. 
+
+For IFC format, you can specify below options:
+
+Name = “IFCFileVersion”. Value = String value that indicates the IFC file version. Below are valid IFC file versions: IFC2x3, IFC4x3.:
+
+For RFA format, you can specify below options:
+
+Name = “RevitVersion”. Value = String value that indicates the Revit version(for example "Revit 2025"). Use FileManager.GetRevitEngineInstallationStatus to query the installation status of supported Revit versions, if a supported Revit version is not installed you need to install it before you can specify it here, the FileManager.InstallRevitEngineVersion can be used to install a specified Revit version.</summary>
             </param>
             <returns />
         </member>
@@ -28697,6 +28897,9 @@ An ObjectCollection that can contain any combination of SketchEntity, SketchEnti
         <member name="T:Inventor.BreakOperation">
             <summary>A BreakOperation object represents a break applied to a drawing view. Editing or deleting this BreakOperation object will modify all affected views.</summary>
         </member>
+        <member name="P:Inventor.BreakOperation.AlignedCurve">
+            <summary>Read-only property that gets the DrawingCurve that specifies the curve the break orientation aligns to.</summary>
+        </member>
         <member name="P:Inventor.BreakOperation.AllAffectedViews">
             <summary>Property that returns all the DrawingView objects affected by this break operation. Multiple drawing views can be affected by a break operation if children views inherit breaks or if the break is propagated up to the parent view.</summary>
         </member>
@@ -28765,34 +28968,6 @@ An ObjectCollection that can contain any combination of SketchEntity, SketchEnti
         <member name="T:Inventor.BreakOperations">
             <summary>The BreakOperations collection object contains information about all the break operations applied to a drawing view as well as methods to add breaks to the view.</summary>
         </member>
-        <member name="M:Inventor.BreakOperations.Add(Inventor.BreakOrientationEnum,Inventor.Point2d,Inventor.Point2d,Inventor.BreakStyleEnum,System.Int32,System.Double,System.Int32,System.Boolean)">
-            <summary>Method that adds a break to a drawing view. The newly created BreakOperation object is returned.</summary>
-            <param name="Orientation">
-                <summary>Input BreakOrientationEnum that specifies whether the orientation of the break is horizontal or vertical. Valid values are kHorizontalBreakOrientation and kVerticalBreakOrientation.</summary>
-            </param>
-            <param name="StartPoint">
-                <summary>Input Point2d object that specifies the start point of the break in sheet space. For a horizontal break orientation, only the 'x' component of the point is used and the 'y' component is ignored. For a vertical break, only the 'y' component of the point is used and the 'x' component is ignored.</summary>
-            </param>
-            <param name="EndPoint">
-                <summary>Input Point2d object that specifies the end point of the break in sheet space. For a horizontal break orientation, only the 'x' component of the point is used and the 'y' component is ignored. For a vertical break, only the 'y' component of the point is used and the 'x' component is ignored.</summary>
-            </param>
-            <param name="BreakStyle">
-                <summary>Optional input BreakStyleEnum that specifies the break style. Valid values are kRectangularBreakStyle and kStructuralBreakStyle. If not specified, a rectangular style break is created.</summary>
-            </param>
-            <param name="DisplayLevel">
-                <summary>Optional input Long that specifies the appearance of the break lines. Valid range of values is 1 through10. For rectangular break style, this value controls the quantity or pitch of break edges displayed. For structural break style, this value controls amplitude of break line. If not specified, a value of 5 is used.</summary>
-            </param>
-            <param name="Gap">
-                <summary>Optional input Double that specifies the gap (in centimeters) between the break lines. If not specified, a gap value is automatically calculated based on the view size.</summary>
-            </param>
-            <param name="NumberOfSymbols">
-                <summary>Optional input Long that specifies the number of break symbols to use for a structural style break. Valid values are 1, 2 and 3. This argument is not applicable and is ignored for rectangular style breaks. If not specified, a value of 1 is assumed.</summary>
-            </param>
-            <param name="PropagateToParentView">
-                <summary>Optional input Boolean that specifies whether to apply this break to the parent view as well. This is not applicable in all situations and is ignored if not applicable. The default value is False.</summary>
-            </param>
-            <returns />
-        </member>
         <member name="M:Inventor.BreakOperations.AddBySketch(Inventor.DrawingSketch,Inventor.BreakStyleEnum,System.Int32,System.Double,System.Int32,System.Object)">
             <summary>Method that adds a break to a drawing view. The newly created BreakOperation object is returned.</summary>
             <param name="Sketch">
@@ -28812,6 +28987,36 @@ An ObjectCollection that can contain any combination of SketchEntity, SketchEnti
             </param>
             <param name="Reserved">
                 <summary>Reserved for future use.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="M:Inventor.BreakOperations.AddWithOptions(Inventor.BreakOrientationEnum,Inventor.Point2d,Inventor.Point2d,System.Object)">
+            <summary>Method that adds a break to a drawing view. The newly created BreakOperation object is returned.</summary>
+            <param name="Orientation">
+                <summary>Input BreakOrientationEnum that specifies the orientation of the break.  Valid values are kHorizontalBreakOrientation and kVerticalBreakOrientation.</summary>
+            </param>
+            <param name="StartPoint">
+                <summary>Input Point2d object that specifies the start point of the break in sheet space.  For a horizontal break orientation, only the ‘x’ component of the point is used and the ‘y’ component is ignored.  For a vertical break, only the ‘y’ component of the point is used and the ‘x’ component is ignored.</summary>
+            </param>
+            <param name="EndPoint">
+                <summary>Input Point2d object that specifies the end point of the break in sheet space.  For a horizontal break orientation, only the ‘x’ component of the point is used and the ‘y’ component is ignored.  For a vertical break, only the ‘y’ component of the point is used and the ‘x’ component is ignored.</summary>
+            </param>
+            <param name="Options">
+                <summary>Optional input NameValueMap that specifies more options for the break. 
+
+Valid values are: 
+
+Name = AlignedCurve. Value = DrawingCurve that specifies the curve the break orientation aligns to. This is ignored if the parent drawing view already has a break operation, and the AlignedCurve of the first break operation of the parent drawing view will be applied to this break operaton. 
+
+Name = BreakStyle. Value = BreakStyleEnum that specifies the break style. If not specified the kRectangularBreakStyle is used. 
+
+Name = DisplayLevel. Value = Long value that specifies the appearance of the break lines. Valid range of values is 1 through 10. For rectangular break style, this value controls the quantity or pitch of break edges displayed. For structural break style, this value controls amplitude of break line. If not specified, a value of 5 is used. 
+
+Name = Gap. Value = Double that specifies the gap (in centimeters) between the break lines. If not specified, a gap value is automatically calculated based on the view size. 
+
+Name = NumberOfSymbols. Value = Long that specifies the number of break symbols to use for a structural style break. Valid values are 1, 2 and 3. This argument is not applicable and is ignored for rectangular style breaks. If not specified, a value of 1 is assumed. 
+
+Name = PropagateToParentView. Value = Boolean that specifies whether to apply this break to the parent view as well. This is not applicable in all situations and is ignored if not applicable. The default value is False.</summary>
             </param>
             <returns />
         </member>
@@ -28984,14 +29189,14 @@ An ObjectCollection containing multiple ComponentOccurrence (or ComponentOccurre
             </param>
             <returns />
         </member>
-        <member name="P:Inventor.BrowserFolder.InternalName">
-            <summary>Read-only property that returns the unique internal name of the folder.</summary>
-        </member>
         <member name="P:Inventor.BrowserFolder.Name">
             <summary>Read-write property that gets and sets the name of the folder.</summary>
         </member>
         <member name="P:Inventor.BrowserFolder.Parent">
             <summary>Property that returns the parent browser node for the folder.</summary>
+        </member>
+        <member name="P:Inventor.BrowserFolder.PartFeatureFolder">
+            <summary>Read-only property that returns whether the folder can only be located like a part feature node.</summary>
         </member>
         <member name="M:Inventor.BrowserFolder.Remove(Inventor.BrowserNode,System.Object,System.Boolean)">
             <summary>Method that removes a node from the folder. The node is automatically reordered in the browser if required. If the node cannot be reordered as needed, the method returns an error.</summary>
@@ -29182,6 +29387,22 @@ An ObjectCollection containing multiple ComponentOccurrence (or ComponentOccurre
             </param>
             <returns />
         </member>
+        <member name="M:Inventor.BrowserPane.AddBrowserFolderWithOptions(System.String,System.Object)">
+            <summary>Method that creates a new browser folder.</summary>
+            <param name="Name">
+                <summary>Optional input String that specifies a name for the folder.  If not specified, the default naming scheme is used to assign a name to the folder.</summary>
+            </param>
+            <param name="Options">
+                <summary>Optional input NameValueMap that specifies options to create the browser folder. 
+
+Valid options are: 
+
+Name = PartFeatureFolder. Value = Boolean value that indicates whether this browser folder is used for part features only. Set this to True to indicate that the browser folder will be only located where a part feature node can be located in part document. This defaults to False if not specified, and this is ignored when the browser pane is not from a part document. 
+
+Name = BrowserNodes. Value = ObjectCollection containing BrowserNode objects to create the folder for. If not specified, an empty folder is created as the last node in the browser in assembly, and if the PartFeatureFolder is set to True an empty folder is created just above the end of feature node in part(bases on the active environment for sheet metal or flat pattern it can be End of Folder or End of Flat node) and if PartFeatureFolder is set to False an empty folder is created as the last node in the browser in part. The input nodes should be contiguous in the browser. If not contiguous, Inventor attempts to reorder the nodes so they are contiguous before putting them in a folder. Use GetBrowserNodeFromObject method to get corresponding browser nodes for Inventor objects.</summary>
+            </param>
+            <returns />
+        </member>
         <member name="P:Inventor.BrowserPane.Application">
             <summary>Returns the top-level parent application object.  When used the context of Inventor, an Application object is returned.  When used in the context of Apprentice, an ApprenticeServer object is returned.</summary>
         </member>
@@ -29203,9 +29424,9 @@ An ObjectCollection containing multiple ComponentOccurrence (or ComponentOccurre
             <returns />
         </member>
         <member name="M:Inventor.BrowserPane.GetBrowserNodeFromObject(System.Object)">
-            <summary>Returns the browser node that corresponds to the input object.  The method returns an error if no corresponding node is found within this pane. If multiple matches are found, the method returns the first match.</summary>
+            <summary>Returns the browser node that corresponds to the input object.&amp;nbsp;The method returns an error if no corresponding node is found within this pane. If multiple matches are found, the method returns the first match.</summary>
             <param name="NativeObject">
-                <summary />
+                <summary>Input object to return the node for.</summary>
             </param>
             <returns />
         </member>
@@ -30073,6 +30294,27 @@ The CreateImage method is similar to this but instead of writing the image to a 
             </param>
             <param name="bottomColor">
                 <summary>Optional argument that specified the background color at the bottom of the image.  This argument is only valid when the TopBackgroundColor argument has been supplied.  This argument defines the color of the background at the bottom of the image and a gradient background is created that varies from the top color to the bottom color.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="M:Inventor.Camera.SaveAsBitmapWithOptions(System.String,System.Int32,System.Int32,Inventor.NameValueMap)">
+            <summary>Method that saves the view as a bitmap with more options.</summary>
+            <param name="FullFileName">
+                <summary>Input String value that specifies the full filename of the file to which to save the view.  The extension of this filename controls the type of file that’s created.  Valid extensions are bmp, jpg, png, tiff, and gif.</summary>
+            </param>
+            <param name="Width">
+                <summary>Input Long that specifies the width of the view.  A value of 0 will use the current width.</summary>
+            </param>
+            <param name="Height">
+                <summary>Input Long that specifies the height of the view.  A value of 0 will use the current height.</summary>
+            </param>
+            <param name="Options">
+                <summary>Input NameValueMap that specifies more options to create the bitmap. The valid values for the options are:
+Name = TransparentBackground. Value = Boolean value that specifies whether the saved bitmap will have transparent background. If not specified this will default to False. This is applicable to the image formats: png and tiff. 
+
+Name = TopBackgroundColor. Value = Color object that specifies the background color at the top of the image. If a bottom background color is supplied, then the background will be a gradient between the top and bottom colors. If only a top background color is supplied, the background will be a solid color using this color. If no color is defined a default color will be used. 
+
+Name = BottomBackgroundColor. Value = Color object that specified the background color at the bottom of the image. This argument is only valid when the TopBackgroundColor argument has been supplied. This argument defines the color of the background at the bottom of the image and a gradient background is created that varies from the top color to the bottom color. </summary>
             </param>
             <returns />
         </member>
@@ -32002,6 +32244,9 @@ Valid events can be suppressed are: ApplicationEvents.OnDocumentChange.</summary
         <member name="P:Inventor.CircularPatternFeatureDefinition.HasBoundarySettingConfigured">
             <summary>Read-write property that gets and sets whether this pattern has boundary setting configured or not. When set this property it can only be set from True to False to clear the boundary setting.</summary>
         </member>
+        <member name="P:Inventor.CircularPatternFeatureDefinition.IrregularDistributionSet">
+            <summary>Read-only property that returns the IrregularDistributionSet object used to specify the irregular distribution.</summary>
+        </member>
         <member name="P:Inventor.CircularPatternFeatureDefinition.LockRotation">
             <summary>Read-write property that gets and sets whether the patterned occurrences keep the same rotation as their parent features.</summary>
         </member>
@@ -32363,7 +32608,7 @@ Valid events can be suppressed are: ApplicationEvents.OnDocumentChange.</summary
             <summary>Property that returns the BrowserNode object in the model browser associated with this client feature.</summary>
         </member>
         <member name="P:Inventor.ClientFeature.ClientGraphicsVisible">
-            <summary>Property that gets and sets whether all the client graphics in this client featureare visible or not.When getting this property valid values are kAllGraphicsVisible,kNoGraphicsVisible, and kSomeGraphicsVisible. When setting this propertykAllGraphicsVisible and.</summary>
+            <summary>Read-write property that gets and sets whether all the client graphics in this client feature are visible or not.</summary>
         </member>
         <member name="P:Inventor.ClientFeature.ClientId">
             <summary>Property that returns the string that uniquely identifies the client. This is the CLSID of the AddIn in a string form, e.g. "{C9A6C580-3817-11D0-BE4E-080036E87B02}".</summary>
@@ -32645,7 +32890,7 @@ Valid events can be suppressed are: ApplicationEvents.OnDocumentChange.</summary
             <summary>Property that returns the BrowserNode object in the model browser associated with this client feature.</summary>
         </member>
         <member name="P:Inventor.ClientFeatureProxy.ClientGraphicsVisible">
-            <summary>Property that gets and sets whether all the client graphics in this client featureare visible or not.When getting this property valid values are kAllGraphicsVisible,kNoGraphicsVisible, and kSomeGraphicsVisible. When setting this propertykAllGraphicsVisible and.</summary>
+            <summary>Read-write property that gets and sets whether all the client graphics in this client feature are visible or not.</summary>
         </member>
         <member name="P:Inventor.ClientFeatureProxy.ClientId">
             <summary>Property that returns the string that uniquely identifies the client. This is the CLSID of the AddIn in a string form, e.g. "{C9A6C580-3817-11D0-BE4E-080036E87B02}".</summary>
@@ -35868,11 +36113,11 @@ Button 1 options (i.e. what is allowed/not allowed if button 1 is picked)
 * kDontAllowButton1NoMoreThisSession (Disable the "Do not show this message again this session") 
 
 Button 2 options (i.e. what is allowed/not allowed if button 2 is picked) 
-* kDontAllowButton2NeverAgain (Disable the "Do not show this message again ever" option if button 1 is selected) 
+* kDontAllowButton2NeverAgain (Disable the "Do not show this message again ever" option if button 2 is selected) 
 * kDontAllowButton2NoMoreThisSession (Disable the "Do not show this message again this session") 
 
 Button 3 options (i.e. what is allowed/not allowed if button 3 is picked) 
-* kDontAllowButton3NeverAgain (Disable the "Do not show this message again ever" option if button 1 is selected) 
+* kDontAllowButton3NeverAgain (Disable the "Do not show this message again ever" option if button 3 is selected) 
 * kDontAllowButton3NoMoreThisSession (Disable the "Do not show this message again this session") </summary>
             </param>
             <param name="PromptStrings">
@@ -37508,6 +37753,9 @@ context of the active assembly/part/sketch.</summary>
         </member>
         <member name="P:Inventor.ContentCenterOptions.RefreshOutOfDateStandardParts">
             <summary>Gets/sets whether to automatically refresh out of date standard parts during placement.</summary>
+        </member>
+        <member name="P:Inventor.ContentCenterOptions.SaveAsmToSharedFolder">
+            <summary>Gets/sets wheter to place Assembly from Content center in to Shared Folder.</summary>
         </member>
         <member name="M:Inventor.ContentCenterOptions.SetAccessOption(Inventor.ContentCenterAccessOptionEnum,System.String)">
             <summary>Method that sets the access option for content center (Inventor Desktop or Vault/Productstream).</summary>
@@ -47594,7 +47842,7 @@ When reading the polylines within a group, the first polyline is the outer polyl
                 <summary>Input SketchLine object.</summary>
             </param>
             <param name="Entity">
-                <summary>Input sketch entity. This must be either a or SketchPoint object. If creating a linear diameter dimension and Entity is a SketchLine, then Entity is used as the centerline. If Entity is a SketchPoint, then Line is used as the centerline.</summary>
+                <summary>Input sketch entity. This must be either a SketchLine or SketchPoint object. If creating a linear diameter dimension and Entity is a SketchLine, then Entity is used as the centerline. If Entity is a SketchPoint, then Line is used as the centerline.</summary>
             </param>
             <param name="TextPoint">
                 <summary>Input object that defines the position of the dimension text.</summary>
@@ -49552,13 +49800,13 @@ OptionName = RightHandedThread. Value = Boolean that indicates whether to displa
         <member name="M:Inventor.DockableWindows.Add(System.String,System.String,System.String)">
             <summary>Method that creates a new DockableWindow.&amp;nbsp;The newly created DockableWindow is returned.&amp;nbsp;The window is created invisible and is undocked.&amp;nbsp;The window remains invisible until explicitly made visible by the creator of the window.</summary>
             <param name="ClientId">
-                <summary />
+                <summary>Input String that uniquely identifies the client. This is the CLSID of the AddIn in a string form, e.g. "{C9A6C580-3817-11D0-BE4E-080036E87B02}". If supplied, this string is used at Inventor start up time to determine whether the AddIn that created this ribbon tab has since been uninstalled. If so, settings (such as window position, docking state, etc.) associated with the window are deleted.  The string is also used to find all the windows to delete when the associated Add-in is unloaded. A “dummy” string or a null string can be specified, but is not recommended.</summary>
             </param>
             <param name="InternalName">
-                <summary />
+                <summary>Input String that specifies a unique internal name for the window.  This name is never displayed to the user and is only used (in combination with ClientId) to uniquely identify the window.</summary>
             </param>
             <param name="Caption">
-                <summary />
+                <summary>Input String that specifies the caption of the window.  This should be a localized string.</summary>
             </param>
             <returns />
         </member>
@@ -49685,8 +49933,8 @@ OptionName = RightHandedThread. Value = Boolean that indicates whether to displa
         <member name="P:Inventor.Document.DisabledCommandTypes">
             <summary>Bit mask indicating the disabled command types.</summary>
         </member>
-        <member name="P:Inventor.Document.DisplayName">
-            <summary>Gets/Sets the user-displayable name of this Document. Defaults to file-name.</summary>
+        <member name="P:Inventor.Document.DisplayNameBasis">
+            <summary>Gets and sets the display name basis of this document. This defaults to file name.</summary>
         </member>
         <member name="P:Inventor.Document.DisplayNameOverridden">
             <summary>Read-write property that gets and sets whether the display name of the document has been overridden.</summary>
@@ -49718,6 +49966,9 @@ OptionName = RightHandedThread. Value = Boolean that indicates whether to displa
                 <summary>Input String that specifies the full file name of the file to search for references to.</summary>
             </param>
             <returns />
+        </member>
+        <member name="P:Inventor.Document.FullDisplayName">
+            <summary>Read-only property that returns the full display name of this document.</summary>
         </member>
         <member name="P:Inventor.Document.FullDocumentName">
             <summary>Property that returns the fully qualified name of the document. The string is the full file name concatenated with the document name and is a unique identifier for the document. The document name is returned by the Name property on the Document object.</summary>
@@ -50272,6 +50523,26 @@ Name = "ConsideredDirty", Value = "". If this name appears in the context list t
             </param>
             <param name="CreateVisible">
                 <summary>Optional input Boolean that specifies whether the created document or template is visible.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="M:Inventor.Documents.AddWithOptions(Inventor.DocumentTypeEnum,System.Object)">
+            <summary>Creates a new Document of the specified type.The options are passed in as a NameValueMap object.</summary>
+            <param name="DocumentType">
+                <summary>Input that specifies the type of document to add. If the DocumentType argument is specified to be kDrawingDocumentObject, the method will honor the application option to decide whether to use an idw template or an Inventor DWG template.</summary>
+            </param>
+            <param name="Options">
+                <summary>Optional input NameValueMap that specifies the options for creating the document. Valid values are: 
+
+Name = “TemplateFileName”, Value = String value specifies the name of template file. 
+
+Name = “CreateVisible”, Value = Boolean value that specifies whether to create the document in visible mode or not. 
+
+Name = “SheetFormat”, Value = String value that specifies the name of the sheet format that being used to create a new sheet. This is applicable only when the DocumentType is specified as kDrawingDocumentObject. 
+
+Name = “SheetFormatModelFileName”, Value = String value that specifies the name of model file that being used for sheet format. This is applicable only when the SheetFormat is specified. 
+
+Name = “PresentationSceneModelFileName”, Value = String value that specifies the name of model file that being used for presentation scene. This is applicable only when the document type kPresentationDocumentObject is specified. If this is provided then the Insert model dialog won’t appear.</summary>
             </param>
             <returns />
         </member>
@@ -51035,8 +51306,8 @@ Face and edges that belong to surfaces can also be used to specify the pull dire
         <member name="P:Inventor.DrawingDocument.DisabledCommandTypes">
             <summary>Bit mask indicating the disabled command types.</summary>
         </member>
-        <member name="P:Inventor.DrawingDocument.DisplayName">
-            <summary>Gets/Sets the user-displayable name of this Document. Defaults to file-name.</summary>
+        <member name="P:Inventor.DrawingDocument.DisplayNameBasis">
+            <summary>Gets and sets the display name basis of this document. This defaults to file name.</summary>
         </member>
         <member name="P:Inventor.DrawingDocument.DisplayNameOverridden">
             <summary>Read-write property that gets and sets whether the display name of the document has been overridden.</summary>
@@ -51083,6 +51354,9 @@ Face and edges that belong to surfaces can also be used to specify the pull dire
                 <summary>Input String that specifies the full file name of the file to search for references to.</summary>
             </param>
             <returns />
+        </member>
+        <member name="P:Inventor.DrawingDocument.FullDisplayName">
+            <summary>Read-only property that returns the full display name of this document.</summary>
         </member>
         <member name="P:Inventor.DrawingDocument.FullDocumentName">
             <summary>Property that returns the fully qualified name of the document. The string is the full file name concatenated with the document name and is a unique identifier for the document. The document name is returned by the Name property on the Document object.</summary>
@@ -54344,7 +54618,7 @@ Results are available when the entire simulation has been computed (LastComputed
             <returns />
         </member>
         <member name="T:Inventor.DSSettings">
-            <summary>The DSDegreeOfFreedom object represents a degree of freedom associated with a joint.</summary>
+            <summary>The DSSettings object allows to access the settings associated with this simulation.</summary>
         </member>
         <member name="P:Inventor.DSSettings.Application">
             <summary>Returns the top-level parent application object.  When used the context of Inventor, an Application object is returned.  When used in the context of Apprentice, an ApprenticeServer object is returned.</summary>
@@ -61915,6 +62189,9 @@ Name: MaxNormalDeviation, Value: Defines the maximum deviation between adjacent 
         <member name="P:Inventor.Features.SketchDrivenPatternFeatures">
             <summary>Gets the collection object that besides listing out the subset of features that are SketchDrivenPatterns, allows the creations of new SketchDrivenPatterns.</summary>
         </member>
+        <member name="P:Inventor.Features.SlotFeatures">
+            <summary>Read-only property that returns the SlotFeatures collection object.</summary>
+        </member>
         <member name="P:Inventor.Features.SweepFeatures">
             <summary>Property that returns the SweepFeatures collection object. This collection provides access to existing SweepFeature objects.</summary>
         </member>
@@ -62534,6 +62811,17 @@ The NameValueMap that’s returned can be used directly as the NameValueMap for 
             <summary>Method that returns the Revit engine installation status for available versions.</summary>
             <returns />
         </member>
+        <member name="M:Inventor.FileManager.GetRevitFamilyCategories(System.Object)">
+            <summary>Method and returns an array of string that contains the names of Revit family categories.</summary>
+            <param name="InCurrentLanguage">
+                <summary>Optional input Boolean value indicating whether the returned Revit family category names are in current language or English. This defaults to True indicates the names are in current language. Set this to False will return the names in English.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="M:Inventor.FileManager.GetRevitFamilyCategoryIds">
+            <summary>Method and returns an array of Long values that contains the unique Ids of Revit family categories.</summary>
+            <returns />
+        </member>
         <member name="M:Inventor.FileManager.GetRevitFileVersionCreated(System.String)">
             <summary>Method that returns the Revit version that the Revit file was created with.</summary>
             <param name="FullFileName">
@@ -62543,6 +62831,17 @@ RTE - Revit Project Template
 RFA - Revit Family File 
 RFT - Revit Family Templates </summary>
             </param>
+            <returns />
+        </member>
+        <member name="M:Inventor.FileManager.GetRFAFamilyCategories(System.Object)">
+            <summary>Method and returns an array of string that contains the names of RFA family categories.</summary>
+            <param name="InCurrentLanguage">
+                <summary>Optional input Boolean value indicating whether the returned RFA family category names are in current language or English. This defaults to True indicates the names are in current language. Set this to False will return the names in English.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="M:Inventor.FileManager.GetRFAFamilyCategoryIds">
+            <summary>Method and returns an array of Long values that contains the unique Ids of RFA family categories.</summary>
             <returns />
         </member>
         <member name="M:Inventor.FileManager.GetSHXFontList(System.Object)">
@@ -62672,7 +62971,7 @@ Name = “TemplatePathType”. Value = String value that indicates where the tem
         <member name="M:Inventor.FileManager.WillOpenExpressDefault(System.String)">
             <summary>Returns whether the input assembly will open in Express mode by default.</summary>
             <param name="FullFileName">
-                <summary />
+                <summary>Input the full filename of assembly.</summary>
             </param>
             <returns />
         </member>
@@ -62786,6 +63085,18 @@ Name = “TemplatePathType”. Value = String value that indicates where the tem
         <member name="P:Inventor.FilenameAssetValue.ValueType">
             <summary>Read-only property that returns the data type that the Value property for this AssetValue object will return.</summary>
         </member>
+        <member name="T:Inventor.FileNamingDefaultsOptions">
+            <summary>FileNamingDefaultsOptions object.</summary>
+        </member>
+        <member name="P:Inventor.FileNamingDefaultsOptions.FrameGeneratorFileNamingOptions">
+            <summary>Gets Frame Generator file naming options.</summary>
+        </member>
+        <member name="P:Inventor.FileNamingDefaultsOptions.Type">
+            <summary>Gets the constant that indicates the type of this object.</summary>
+        </member>
+        <member name="P:Inventor.FileNamingDefaultsOptions.UnitDecimalMarker">
+            <summary>Gets and sets unit decimal marker type.</summary>
+        </member>
         <member name="T:Inventor.FileOpenOptions">
             <summary>The FileOpenOptions object provides access to options affecting the opening of files.</summary>
         </member>
@@ -62839,6 +63150,9 @@ Name = “TemplatePathType”. Value = String value that indicates where the tem
         </member>
         <member name="P:Inventor.FileOptions.EnvironmentPath">
             <summary>Gets and sets the location of environment files.</summary>
+        </member>
+        <member name="P:Inventor.FileOptions.FileNamingDefaultsOptions">
+            <summary>Gets object that controls various file naming defaults settings.</summary>
         </member>
         <member name="P:Inventor.FileOptions.FileOpenOptions">
             <summary>Property that gets the FileOpenOptions object.</summary>
@@ -65386,6 +65700,9 @@ kDuplicateOverrideBendOrder - The bend order has been assigned by the end-user a
         <member name="P:Inventor.FlatPatternFeatures.SketchDrivenPatternFeatures">
             <summary>Gets the collection object that besides listing out the subset of part features that are SketchDrivenPatterns, allows the creations of new SketchDrivenPatterns.</summary>
         </member>
+        <member name="P:Inventor.FlatPatternFeatures.SlotFeatures">
+            <summary>Property that returns the SlotFeatures collection object. This collection provides access to existing SlotFeature objects and provides functionality to create new SlotFeature objects.</summary>
+        </member>
         <member name="P:Inventor.FlatPatternFeatures.SweepFeatures">
             <summary>Inventor::PartFeatures::SweepFeatures</summary>
         </member>
@@ -66973,6 +67290,78 @@ context of the active assembly/part/sketch.</summary>
         <member name="P:Inventor.FoldFeatures.Type">
             <summary>Returns an ObjectTypeEnum indicating this object's type.</summary>
         </member>
+        <member name="T:Inventor.FrameGeneratorFileNamingOptions">
+            <summary>FrameGeneratorFileNamingOptions object.</summary>
+        </member>
+        <member name="P:Inventor.FrameGeneratorFileNamingOptions.EndCapDisplayName">
+            <summary>Gets and sets formatted text to define the end cap display name.</summary>
+        </member>
+        <member name="P:Inventor.FrameGeneratorFileNamingOptions.EndCapFileName">
+            <summary>Gets and sets formatted text to define the end cap file name.</summary>
+        </member>
+        <member name="P:Inventor.FrameGeneratorFileNamingOptions.FrameAssemblyBOMStructure">
+            <summary>Gets and sets BOM structure for frame assembly.</summary>
+        </member>
+        <member name="P:Inventor.FrameGeneratorFileNamingOptions.FrameAssemblyDisplayName">
+            <summary>Gets and sets formatted text to define the frame assembly display name.</summary>
+        </member>
+        <member name="P:Inventor.FrameGeneratorFileNamingOptions.FrameAssemblyFileName">
+            <summary>Gets and sets formatted text to define the frame assembly file name.</summary>
+        </member>
+        <member name="P:Inventor.FrameGeneratorFileNamingOptions.FrameAssemblyLocation">
+            <summary>Gets and sets formatted text to define the frame assembly location.</summary>
+        </member>
+        <member name="P:Inventor.FrameGeneratorFileNamingOptions.FrameMemberDisplayName">
+            <summary>Gets and sets formatted text to define the frame member display name.</summary>
+        </member>
+        <member name="P:Inventor.FrameGeneratorFileNamingOptions.FrameMemberFileName">
+            <summary>Gets and sets formatted text to define the frame member file name.</summary>
+        </member>
+        <member name="P:Inventor.FrameGeneratorFileNamingOptions.IsDefaultEndCapDisplayName">
+            <summary>Gets and sets whether EndCapDisplayName is set to default formatted text.</summary>
+        </member>
+        <member name="P:Inventor.FrameGeneratorFileNamingOptions.IsDefaultEndCapFileName">
+            <summary>Gets and sets whether EndCapFileName is set to default formatted text.</summary>
+        </member>
+        <member name="P:Inventor.FrameGeneratorFileNamingOptions.IsDefaultFrameAssemblyDisplayName">
+            <summary>Gets and sets whether FrameAssemblyDisplayName is set to default formatted text.</summary>
+        </member>
+        <member name="P:Inventor.FrameGeneratorFileNamingOptions.IsDefaultFrameAssemblyFileName">
+            <summary>Gets and sets whether FrameAssemblyFileName is set to default formatted text.</summary>
+        </member>
+        <member name="P:Inventor.FrameGeneratorFileNamingOptions.IsDefaultFrameAssemblyLocation">
+            <summary>Gets and sets whether FrameAssemblyLocation is set to default formatted text.</summary>
+        </member>
+        <member name="P:Inventor.FrameGeneratorFileNamingOptions.IsDefaultFrameMemberDisplayName">
+            <summary>Gets and sets whether FrameMemberDisplayName is set to default formatted text.</summary>
+        </member>
+        <member name="P:Inventor.FrameGeneratorFileNamingOptions.IsDefaultFrameMemberFileName">
+            <summary>Gets and sets whether FrameMemberFileName is set to default formatted text.</summary>
+        </member>
+        <member name="P:Inventor.FrameGeneratorFileNamingOptions.IsDefaultSkeletonPartDisplayName">
+            <summary>Gets and sets whether SkeletonPartDisplayName is set to default formatted text.</summary>
+        </member>
+        <member name="P:Inventor.FrameGeneratorFileNamingOptions.IsDefaultSkeletonPartFileName">
+            <summary>Gets and sets whether SkeletonPartFileName is set to default formatted text.</summary>
+        </member>
+        <member name="P:Inventor.FrameGeneratorFileNamingOptions.OverwriteCurrentFileForSizeChange">
+            <summary>Gets and sets whether to overwrite current file for size change.</summary>
+        </member>
+        <member name="P:Inventor.FrameGeneratorFileNamingOptions.SkeletonPartDisplayName">
+            <summary>Gets and sets formatted text to define the skeleton part display name.</summary>
+        </member>
+        <member name="P:Inventor.FrameGeneratorFileNamingOptions.SkeletonPartFileName">
+            <summary>Gets and sets formatted text to define the skeleton part file name.</summary>
+        </member>
+        <member name="P:Inventor.FrameGeneratorFileNamingOptions.Type">
+            <summary>Gets the constant that indicates the type of this object.</summary>
+        </member>
+        <member name="P:Inventor.FrameGeneratorFileNamingOptions.UseAssemblyUnits">
+            <summary>Gets and sets whether to use assembly units.</summary>
+        </member>
+        <member name="P:Inventor.FrameGeneratorFileNamingOptions.UseFileNameAsDisplayName">
+            <summary>Gets and sets whether to use the file name as the display name.</summary>
+        </member>
         <member name="T:Inventor.FreeDragMoveOperation">
             <summary>The FreeDragMoveOperation object represents the definition of a free drag within a move feature.</summary>
         </member>
@@ -67560,6 +67949,40 @@ context of the active assembly/part/sketch.</summary>
             </param>
             <returns />
         </member>
+        <member name="M:Inventor.GeneralDimensions.AddAngularSum(Inventor.Point2d,Inventor.AngularGeneralDimension,Inventor.GeometryIntent,System.Object,System.Object,System.Boolean,System.Boolean,System.Object,System.Object,System.Object)">
+            <summary>Creates an angular sum general dimension on the drawing sheet.</summary>
+            <param name="TextOrigin">
+                <summary>Input Point2d object that specifies the position of the dimension text on sheet.</summary>
+            </param>
+            <param name="SpacingDimension">
+                <summary>Input AngularGeneralDimension object that specifies the spacing dimension.</summary>
+            </param>
+            <param name="IntentOne">
+                <summary>Input GeometryIntent object that specifies the first geometry to dimension. The GeometryIntent object can be created using the CreateGeometryIntent method on the Sheet object.</summary>
+            </param>
+            <param name="IntentTwo">
+                <summary>Optional input GeometryIntent object that specifies the second geometry to dimension. The GeometryIntent object can be created using the CreateGeometryIntent method on the Sheet object.</summary>
+            </param>
+            <param name="IntentThree">
+                <summary>Optional input GeometryIntent object that specifies the third geometry to dimension. This argument must be specified if the first and second geometry intents are points. The GeometryIntent object can be created using the CreateGeometryIntent method on the Sheet object.</summary>
+            </param>
+            <param name="ArrowheadsInside">
+                <summary>Optional input Boolean that indicates whether to place the dimension line arrows inside or outside.  If not specified, this argument defaults to True indicating that arrowheads will be place inside (if possible).</summary>
+            </param>
+            <param name="OppositeAngle">
+                <summary>Optional input Boolean that indicates whether to dimension the opposite angle.  If not specified, the argument defaults to False.</summary>
+            </param>
+            <param name="DimensionStyle">
+                <summary>Optional input DimensionStyle object that specifies the dimension style to use for the dimension. If not specified, the style defined by the active standard is used.</summary>
+            </param>
+            <param name="Layer">
+                <summary>Optional input Layer object that specifies the layer to use for the dimension. If not specified, the layer defined by the active standard is used.</summary>
+            </param>
+            <param name="Reserved">
+                <summary>Reserved for future use.</summary>
+            </param>
+            <returns />
+        </member>
         <member name="M:Inventor.GeneralDimensions.AddArcLengthForeshortened(Inventor.Point2d,Inventor.GeometryIntent,System.Object,System.Object,System.Object,System.Boolean,System.Boolean,System.Boolean,System.Object,System.Object)">
             <summary>Creates an arc length foreshortened dimension on the drawing sheet.</summary>
             <param name="TextOrigin">
@@ -67691,6 +68114,34 @@ context of the active assembly/part/sketch.</summary>
             </param>
             <param name="Layer">
                 <summary>Optional input Layer object that specifies the layer to use for the dimension. If not specified, the layer defined by the active standard is used.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="M:Inventor.GeneralDimensions.AddLinearSum(Inventor.Point2d,Inventor.LinearGeneralDimension,Inventor.GeometryIntent,System.Object,System.Boolean,System.Object,System.Object,System.Object)">
+            <summary>Creates an linear sum dimension on the drawing sheet.</summary>
+            <param name="TextOrigin">
+                <summary>Input Point2d object that specifies the position of the dimension text on sheet.</summary>
+            </param>
+            <param name="SpacingDimension">
+                <summary>Input LinearGeneralDimension that specifies the spacing dimension.</summary>
+            </param>
+            <param name="IntentOne">
+                <summary>Input GeometryIntent object that specifies the first geometry to dimension. The GeometryIntent object can be created using the CreateGeometryIntent method on the Sheet object.</summary>
+            </param>
+            <param name="IntentTwo">
+                <summary>Optional input GeometryIntent object that specifies the second geometry to dimension. The GeometryIntent object can be created using the CreateGeometryIntent method on the Sheet object.</summary>
+            </param>
+            <param name="ArrowheadsInside">
+                <summary>Optional input Boolean that indicates whether to place the dimension line arrows inside or outside.  If not specified, this argument defaults to True indicating that arrowheads will be place inside (if possible).</summary>
+            </param>
+            <param name="DimensionStyle">
+                <summary>Optional input DimensionStyle object that specifies the dimension style to use for the dimension. If not specified, the style defined by the active standard is used.</summary>
+            </param>
+            <param name="Layer">
+                <summary>Optional input Layer object that specifies the layer to use for the dimension. If not specified, the layer defined by the active standard is used.</summary>
+            </param>
+            <param name="Reserved">
+                <summary>Reserved for future use.</summary>
             </param>
             <returns />
         </member>
@@ -69918,6 +70369,9 @@ When the GraphicsDataSetsCollection object is obtained from a ClientFeatureDefin
         <member name="P:Inventor.HardwareOptions.EnableViewportGPURayTracing">
             <summary>Read-write property that specifies whether to use GPU Raytracing.</summary>
         </member>
+        <member name="P:Inventor.HardwareOptions.GraphicsDriverType">
+            <summary>Gets/Sets graphics driver type.</summary>
+        </member>
         <member name="P:Inventor.HardwareOptions.GraphicsSettingType">
             <summary>Read-write property that specifies the type of the graphics hardware setting to use.</summary>
         </member>
@@ -71997,6 +72451,40 @@ This can be either a numeric value or a string. A parameter for this value will 
         </member>
         <member name="P:Inventor.HolePlacementDefinition.Type">
             <summary>Returns an ObjectTypeEnum indicating this object's type.</summary>
+        </member>
+        <member name="T:Inventor.HoleSlotPlacementDefinition">
+            <summary>HoleSlotPlacementDefinition Object.</summary>
+        </member>
+        <member name="P:Inventor.HoleSlotPlacementDefinition.Application">
+            <summary>Gets the root Application object. Where the property is weakly-typed, it can be set to (QueryInterfaced for) 'Application' when running with Inventor whereas, 'ApprenticeServer' when running with the Apprentice Server.</summary>
+        </member>
+        <member name="P:Inventor.HoleSlotPlacementDefinition.HoleFeature">
+            <summary>Gets and sets the hole feature that defines the centers of the slots of this feature.</summary>
+        </member>
+        <member name="P:Inventor.HoleSlotPlacementDefinition.IsRotationFlipped">
+            <summary>Gets and sets whether the slot rotation is flipped or not.</summary>
+        </member>
+        <member name="P:Inventor.HoleSlotPlacementDefinition.Rotation">
+            <summary>Gets and sets rotation angle of the slot.</summary>
+        </member>
+        <member name="M:Inventor.HoleSlotPlacementDefinition.SetSlotDirectionType(Inventor.DirectionTypeEnum,System.Object)">
+            <summary>Sets the slot direction type.</summary>
+            <param name="DirectionType">
+                <summary>Input DirectionTypeEnum that specifies the direction type.</summary>
+            </param>
+            <param name="SlotDirectionEntity">
+                <summary>Optional input entity that specifies the slot direction. This can be a planar Face object or a WorkPlane object with which the axis of the slot is perpendicular, or an Edge or WorkAxis object with which the axis of the slot is parallel. This is ignored if the DirectionType is not set to kCustomDirection.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="P:Inventor.HoleSlotPlacementDefinition.SlotDirectionEntity">
+            <summary>Gets and sets an entity that defines the slot direction.</summary>
+        </member>
+        <member name="P:Inventor.HoleSlotPlacementDefinition.SlotDirectionType">
+            <summary>Gets the DirectionTypeEnum that defines the slot axis direction.</summary>
+        </member>
+        <member name="P:Inventor.HoleSlotPlacementDefinition.Type">
+            <summary>Gets the constant that indicates the type of this object.</summary>
         </member>
         <member name="T:Inventor.HoleTable">
             <summary>A hole table contains information for some or all holes in a drawing view. A hole tag is associated with each hole and a corresponding row in the table. If an existing hole is changed, the hole table is updated when the drawing updates.</summary>
@@ -77047,6 +77535,9 @@ If EntityOne is a 2D sketch curve, then EntityTwo must also be a 2D sketch curve
         <member name="P:Inventor.InventorServer.ActiveAppearanceLibrary">
             <summary>Gets and sets the library whose contents is listed in the appearances drop-down list in the QAT(Quick Access Toolbar) at the top of the Inventor window.</summary>
         </member>
+        <member name="P:Inventor.InventorServer.ActiveColorScheme">
+            <summary>Gets the active ColorScheme object.</summary>
+        </member>
         <member name="P:Inventor.InventorServer.ActiveMaterialLibrary">
             <summary>Gets and sets the library whose contents is listed in the materials drop-down list in the QAT(Quick Access Toolbar) at the top of the Inventor window.</summary>
         </member>
@@ -77067,6 +77558,31 @@ If EntityOne is a 2D sketch curve, then EntityTwo must also be a 2D sketch curve
         </member>
         <member name="P:Inventor.InventorServer.ChangeManager">
             <summary>Gets the ChangeManager object.</summary>
+        </member>
+        <member name="P:Inventor.InventorServer.ClientOperationEvents">
+            <summary>Read-only property that returns the ClientOperationEvents object.</summary>
+        </member>
+        <member name="P:Inventor.InventorServer.ClientResourceMaps">
+            <summary>Read-only property that returns ClientResourceMaps object.</summary>
+        </member>
+        <member name="P:Inventor.InventorServer.ColorSchemes">
+            <summary>Gets the ColorSchemes object.</summary>
+        </member>
+        <member name="M:Inventor.InventorServer.ConstructInternalNameAndRevisionId(System.String,System.String,System.String@,System.String@)">
+            <summary>Constructs and returns the Internal Name and Revision Identifier.</summary>
+            <param name="InternalNameToken">
+                <summary>Input internal name token.</summary>
+            </param>
+            <param name="RevisionIdToken">
+                <summary>Input revision Id  token.</summary>
+            </param>
+            <param name="InternalName">
+                <summary>Output internal name.</summary>
+            </param>
+            <param name="RevisionId">
+                <summary>Output revision Id.</summary>
+            </param>
+            <returns />
         </member>
         <member name="P:Inventor.InventorServer.ContentCenter">
             <summary>Gets the Content Center object that provides access to the content libraries.</summary>
@@ -77144,6 +77660,9 @@ If EntityOne is a 2D sketch curve, then EntityTwo must also be a 2D sketch curve
         </member>
         <member name="P:Inventor.InventorServer.ModelingEvents">
             <summary>Gets the object that fires the Modeling events.</summary>
+        </member>
+        <member name="P:Inventor.InventorServer.ModelStateEvents">
+            <summary>Read-only property that returns the ModelStateEvents object.</summary>
         </member>
         <member name="P:Inventor.InventorServer.NotebookOptions">
             <summary>Gets the Notebook Options object.</summary>
@@ -77226,7 +77745,10 @@ If EntityOne is a 2D sketch curve, then EntityTwo must also be a 2D sketch curve
             <summary>InventorServer Object.</summary>
         </member>
         <member name="P:Inventor.InventorServerObject.ActiveAppearanceLibrary">
-            <summary>Read-write property that gets and sets the library whose contents is listed in the appearances drop-down list in the QAT (Quick Access Toolbar)_at the top of the Inventor window.&amp;nbsp;The initial active appearance is defined by the active project.&amp;nbsp;Using this property you can override the project appearance.&amp;nbsp;When a new project is activated the active appearance will be determined by the activated project.</summary>
+            <summary>Gets and sets the library whose contents is listed in the appearances drop-down list in the QAT(Quick Access Toolbar) at the top of the Inventor window.</summary>
+        </member>
+        <member name="P:Inventor.InventorServerObject.ActiveColorScheme">
+            <summary>Gets the active ColorScheme object.</summary>
         </member>
         <member name="P:Inventor.InventorServerObject.ActiveMaterialLibrary">
             <summary>Gets and sets the library whose contents is listed in the materials drop-down list in the QAT(Quick Access Toolbar) at the top of the Inventor window.</summary>
@@ -77248,6 +77770,15 @@ If EntityOne is a 2D sketch curve, then EntityTwo must also be a 2D sketch curve
         </member>
         <member name="P:Inventor.InventorServerObject.ChangeManager">
             <summary>Gets the ChangeManager object. The ChangeManager object manages the processes involved in making changes to data and recording the change process.</summary>
+        </member>
+        <member name="P:Inventor.InventorServerObject.ClientOperationEvents">
+            <summary>Read-only property that returns the ClientOperationEvents object.</summary>
+        </member>
+        <member name="P:Inventor.InventorServerObject.ClientResourceMaps">
+            <summary>Read-only property that returns ClientResourceMaps object.</summary>
+        </member>
+        <member name="P:Inventor.InventorServerObject.ColorSchemes">
+            <summary>Gets the ColorSchemes object.</summary>
         </member>
         <member name="M:Inventor.InventorServerObject.ConstructInternalNameAndRevisionId(System.String,System.String,System.String@,System.String@)">
             <summary>Constructs and returns the Internal Name and Revision Identifier</summary>
@@ -77342,6 +77873,9 @@ If EntityOne is a 2D sketch curve, then EntityTwo must also be a 2D sketch curve
         <member name="P:Inventor.InventorServerObject.ModelingEvents">
             <summary>Property that returns the ModelingEvents object. This object supports a set of events that are common to parts and assemblies.</summary>
         </member>
+        <member name="P:Inventor.InventorServerObject.ModelStateEvents">
+            <summary>Read-only property that returns the ModelStateEvents object.</summary>
+        </member>
         <member name="P:Inventor.InventorServerObject.NotebookOptions">
             <summary>Property that returns the NotebookOptions object. The NotebookOptions object provides access to various notebook related application level options. This is somewhat equivalent to the Notebook tab of the Application Options dialog.</summary>
         </member>
@@ -77411,7 +77945,7 @@ If EntityOne is a 2D sketch curve, then EntityTwo must also be a 2D sketch curve
             <returns />
         </member>
         <member name="P:Inventor.InventorServerObject.UserName">
-            <summary>Gets/sets the string that identifies the current user. Autodesk Inventor saves its own copy of this name per user and can thus be manipulated without affecting the rest of the OS.</summary>
+            <summary>Gets/Sets the string that identifies the current user. Inventor saves its own copy of this name per user and can thus be manipulated without effecting the rest of the OS.</summary>
         </member>
         <member name="P:Inventor.InventorServerObject.VBAProjects">
             <summary>Property that returns Autodesk Inventor's VBA projects collection.</summary>
@@ -77943,6 +78477,64 @@ If EntityOne is a 2D sketch curve, then EntityTwo must also be a 2D sketch curve
         </member>
         <member name="P:Inventor.iPartTableRows.Type">
             <summary>Returns an ObjectTypeEnum indicating this object's type.</summary>
+        </member>
+        <member name="T:Inventor.IrregularDistributionItem">
+            <summary>IrregularDistributionItem Object.</summary>
+        </member>
+        <member name="P:Inventor.IrregularDistributionItem.Application">
+            <summary>Gets the root Application object. Where the property is weakly-typed, it can be set to (QueryInterfaced for) 'Application' when running with Inventor whereas, 'ApprenticeServer' when running with the Apprentice Server.</summary>
+        </member>
+        <member name="M:Inventor.IrregularDistributionItem.Delete">
+            <summary>Method that deletes the IrregularDistributionItem.</summary>
+            <returns />
+        </member>
+        <member name="P:Inventor.IrregularDistributionItem.DistributionValue">
+            <summary>Read-write property that gets and sets the distribution value for the pattern member(s). This returns a Parameter when the pattern definition is associative with a pattern feature.</summary>
+        </member>
+        <member name="P:Inventor.IrregularDistributionItem.Parent">
+            <summary>Gets the parent object from whom this object can logically be reached.</summary>
+        </member>
+        <member name="P:Inventor.IrregularDistributionItem.PatternMemberIndices">
+            <summary>Read-write property that gets and sets the pattern member indices.</summary>
+        </member>
+        <member name="P:Inventor.IrregularDistributionItem.Type">
+            <summary>Gets the constant that indicates the type of this object.</summary>
+        </member>
+        <member name="T:Inventor.IrregularDistributionSet">
+            <summary>IrregularDistributionSet Object.</summary>
+        </member>
+        <member name="M:Inventor.IrregularDistributionSet.Add(System.Int32[],System.Object)">
+            <summary>Method that adds a new IrregularDistributionItem.</summary>
+            <param name="PatternMemberIndices">
+                <summary>Input Long array value that indicates the pattern member indices. The pattern member index can be the index for a pattern row/column or occurrence, this is determined by the pattern feature.</summary>
+            </param>
+            <param name="DistributionValue">
+                <summary>Input Variant that defines the distribution value for specified pattern element. This can be either a numeric value or a string. A parameter will be created to control this value when the feature is created. If a string is input it can be any string that can be evaluated by Inventor to result in length or angle unit. If a numeric value is input it would be in centimeters for length and radians for angle.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="P:Inventor.IrregularDistributionSet.Application">
+            <summary>Gets the root Application object. Where the property is weakly-typed, it can be set to (QueryInterfaced for) 'Application' when running with Inventor whereas, 'ApprenticeServer' when running with the Apprentice Server.</summary>
+        </member>
+        <member name="M:Inventor.IrregularDistributionSet.Clear">
+            <summary>Method that clears the irregular distribution set.</summary>
+            <returns />
+        </member>
+        <member name="P:Inventor.IrregularDistributionSet.Count">
+            <summary>Read-only property that specifies the number of items in the collection.</summary>
+        </member>
+        <member name="M:Inventor.IrregularDistributionSet.Item(System.Int32)">
+            <summary>Method that returns the specified IrregularDistributionItem object from the collection. This is the default method of the IrregularDistributionSet collection object.</summary>
+            <param name="Index">
+                <summary>Input Long value that indicates the index of an IrregularDistributionItem in the collection.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="P:Inventor.IrregularDistributionSet.Parent">
+            <summary>Gets the parent object from whom this object can logically be reached.</summary>
+        </member>
+        <member name="P:Inventor.IrregularDistributionSet.Type">
+            <summary>Gets the constant that indicates the type of this object.</summary>
         </member>
         <member name="T:Inventor.KeyboardEvents">
             <summary>The KeyboardEvents object supports a set of events that can be received by the client when a key on the keyboard is pressed while the InteractionEvents object has been started AND the InteractionDisabled flag is set to False.</summary>
@@ -79803,6 +80395,9 @@ If EntityOne is a 2D sketch curve, then EntityTwo must also be a 2D sketch curve
         </member>
         <member name="P:Inventor.LinearGeneralDimension.ShowLeader">
             <summary>Gets and sets whether to display a leader line for the dimension text.</summary>
+        </member>
+        <member name="P:Inventor.LinearGeneralDimension.SpacingDimension">
+            <summary>Gets and sets spacing dimension for the linear sum dimension.</summary>
         </member>
         <member name="P:Inventor.LinearGeneralDimension.Style">
             <summary>Gets and sets the DimensionStyle associated with the dimension.</summary>
@@ -84198,6 +84793,9 @@ The String “Favorites” - Copies it to the Favorites list of assets.</summary
             <summary>Method that deletes this asset from the library.&amp;nbsp;An asset can only be deleted if it is not currently being used, which you can determine using the IsUsed property.</summary>
             <returns />
         </member>
+        <member name="P:Inventor.MaterialAsset.Description">
+            <summary>Read-write property that gets and sets the description of this asset.</summary>
+        </member>
         <member name="P:Inventor.MaterialAsset.DisplayName">
             <summary>Gets and sets the name of this asset as seen in the Material or Appearance Browser.</summary>
         </member>
@@ -84336,7 +84934,7 @@ The String “Favorites” - Copies it to the Favorites list of assets.</summary
             <returns />
         </member>
         <member name="M:Inventor.Matrix.PreMultiplyBy(Inventor.Matrix)">
-            <summary>Method that post-multiplies this matrix by the specified matrix, setting this matrix to the result.</summary>
+            <summary>Method that pre-multiplies this matrix by the specified matrix, setting this matrix to the result.</summary>
             <param name="Matrix">
                 <summary>Input Matrix object that specifies the matrix to pre-multiply by.</summary>
             </param>
@@ -84827,10 +85425,10 @@ IntersectionFoundBoolean that indicates whether an intersection was found betwee
         <member name="M:Inventor.MeshEdge.GetReferenceKey(System.Byte[]@,System.Int32)">
             <summary>Generate the sequence of bytes, called this object's reference key, which can be held onto beyond document edits and which will allow the caller to be bound back to the live object.</summary>
             <param name="ReferenceKey">
-                <summary />
+                <summary>Input/output array of Bytes that contains the reference key.</summary>
             </param>
             <param name="KeyContext">
-                <summary />
+                <summary>Input Long that specifies the key context. The key context must be supplied when working with any B-Rep entities (and SurfaceBody, FaceShell, Face, Edge, EdgeUse and Vertex objects). A key context is created using the CreateKeyContext method of the ReferenceKeyManager object. For all other object types, the key context argument is not used and is ignored if provided.</summary>
             </param>
             <returns />
         </member>
@@ -84867,10 +85465,10 @@ IntersectionFoundBoolean that indicates whether an intersection was found betwee
         <member name="M:Inventor.MeshEdgeProxy.GetReferenceKey(System.Byte[]@,System.Int32)">
             <summary>Generate the sequence of bytes, called this object's reference key, which can be held onto beyond document edits and which will allow the caller to be bound back to the live object.</summary>
             <param name="ReferenceKey">
-                <summary />
+                <summary>Input/output array of Bytes that contains the reference key.</summary>
             </param>
             <param name="KeyContext">
-                <summary />
+                <summary>Input Long that specifies the key context. The key context must be supplied when working with any B-Rep entities (and SurfaceBody, FaceShell, Face, Edge, EdgeUse and Vertex objects). A key context is created using the CreateKeyContext method of the ReferenceKeyManager object. For all other object types, the key context argument is not used and is ignored if provided.</summary>
             </param>
             <returns />
         </member>
@@ -85052,18 +85650,6 @@ IntersectionFoundBoolean that indicates whether an intersection was found betwee
         <member name="P:Inventor.MeshFeatureEntity.ColorBinding">
             <summary>Read-only property that returns the color binding of the mesh feature entity.</summary>
         </member>
-        <member name="P:Inventor.MeshFeatureEntity.ColorIndexSet">
-            <summary>Read-only property that returns the color index set of the mesh feature entity.</summary>
-        </member>
-        <member name="P:Inventor.MeshFeatureEntity.ColorSet">
-            <summary>Read-only property that returns the color set of the mesh feature entity.</summary>
-        </member>
-        <member name="P:Inventor.MeshFeatureEntity.CoordinateIndexSet">
-            <summary>Read-only property that returns the coordinate index set of the mesh feature entity.</summary>
-        </member>
-        <member name="P:Inventor.MeshFeatureEntity.CoordinateSet">
-            <summary>Read-only property that returns the coordinate set of the mesh feature entity.</summary>
-        </member>
         <member name="M:Inventor.MeshFeatureEntity.GetReferenceKey(System.Byte[]@,System.Int32)">
             <summary>Generate the sequence of bytes, called this object's reference key, which can be held onto beyond document edits and which will allow the caller to be bound back to the live object.</summary>
             <param name="ReferenceKey">
@@ -85074,14 +85660,11 @@ IntersectionFoundBoolean that indicates whether an intersection was found betwee
             </param>
             <returns />
         </member>
+        <member name="P:Inventor.MeshFeatureEntity.GraphicsDataSetsCollection">
+            <summary>Read-only property that returns the GraphicsDataSetsCollection containing data defining how the meshes are displayed.</summary>
+        </member>
         <member name="P:Inventor.MeshFeatureEntity.NormalBinding">
             <summary>Read-only property that returns the normal binding of the mesh feature entity.</summary>
-        </member>
-        <member name="P:Inventor.MeshFeatureEntity.NormalIndexSet">
-            <summary>Read-only property that returns the normal index set of the mesh feature entity.</summary>
-        </member>
-        <member name="P:Inventor.MeshFeatureEntity.NormalSet">
-            <summary>Read-only property that returns the normal set of the mesh feature entity.</summary>
         </member>
         <member name="P:Inventor.MeshFeatureEntity.Parent">
             <summary>Gets the parent object from whom this object can logically be reached.</summary>
@@ -85101,20 +85684,8 @@ IntersectionFoundBoolean that indicates whether an intersection was found betwee
         <member name="P:Inventor.MeshFeatureEntityProxy.ColorBinding">
             <summary>Read-only property that returns the color binding of the mesh feature entity.</summary>
         </member>
-        <member name="P:Inventor.MeshFeatureEntityProxy.ColorIndexSet">
-            <summary>Read-only property that returns the color index set of the mesh feature entity.</summary>
-        </member>
-        <member name="P:Inventor.MeshFeatureEntityProxy.ColorSet">
-            <summary>Read-only property that returns the color set of the mesh feature entity.</summary>
-        </member>
         <member name="P:Inventor.MeshFeatureEntityProxy.ContainingOccurrence">
             <summary>Property that returns the ComponentOccurrence that the native object is being referenced through. The returned occurrence is the containing occurrence.</summary>
-        </member>
-        <member name="P:Inventor.MeshFeatureEntityProxy.CoordinateIndexSet">
-            <summary>Read-only property that returns the coordinate index set of the mesh feature entity.</summary>
-        </member>
-        <member name="P:Inventor.MeshFeatureEntityProxy.CoordinateSet">
-            <summary>Read-only property that returns the coordinate set of the mesh feature entity.</summary>
         </member>
         <member name="M:Inventor.MeshFeatureEntityProxy.GetReferenceKey(System.Byte[]@,System.Int32)">
             <summary>Generate the sequence of bytes, called this object's reference key, which can be held onto beyond document edits and which will allow the caller to be bound back to the live object.</summary>
@@ -85126,17 +85697,14 @@ IntersectionFoundBoolean that indicates whether an intersection was found betwee
             </param>
             <returns />
         </member>
+        <member name="P:Inventor.MeshFeatureEntityProxy.GraphicsDataSetsCollection">
+            <summary>Read-only property that returns the GraphicsDataSetsCollection containing data defining how the meshes are displayed.</summary>
+        </member>
         <member name="P:Inventor.MeshFeatureEntityProxy.NativeObject">
             <summary>Gets the object in the context of the definition instead of the containing assembly.</summary>
         </member>
         <member name="P:Inventor.MeshFeatureEntityProxy.NormalBinding">
             <summary>Read-only property that returns the normal binding of the mesh feature entity.</summary>
-        </member>
-        <member name="P:Inventor.MeshFeatureEntityProxy.NormalIndexSet">
-            <summary>Read-only property that returns the normal index set of the mesh feature entity.</summary>
-        </member>
-        <member name="P:Inventor.MeshFeatureEntityProxy.NormalSet">
-            <summary>Read-only property that returns the normal set of the mesh feature entity.</summary>
         </member>
         <member name="P:Inventor.MeshFeatureEntityProxy.Parent">
             <summary>Gets the parent object from whom this object can logically be reached.</summary>
@@ -91482,8 +92050,8 @@ When reading the polylines within a group, the first polyline is the outer polyl
         <member name="P:Inventor.ModelState.AttributeSets">
             <summary>Gets the Attribute Sets collection on this object.</summary>
         </member>
-        <member name="P:Inventor.ModelState.BOMDelegate">
-            <summary>Read-only property that returns the ModelState which this ModelState's BOM is delegated to.</summary>
+        <member name="P:Inventor.ModelState.ChildModelStates">
+            <summary>Read-only property that returns the child ModelState objects which delegate to this model state.</summary>
         </member>
         <member name="M:Inventor.ModelState.Copy(System.String)">
             <summary>Method that creates a copy of the ModelState.&amp;nbsp;The new created ModelState is returned.</summary>
@@ -91499,6 +92067,9 @@ When reading the polylines within a group, the first polyline is the outer polyl
             </param>
             <returns />
         </member>
+        <member name="P:Inventor.ModelState.DelegateModelState">
+            <summary>Read-write property that gets and sets the delegate ModelState which this ModelState's BOM can be delegated to. Setting this to Nothing will remove the delegation.</summary>
+        </member>
         <member name="M:Inventor.ModelState.Delete">
             <summary>Method that deletes the ModelState. The method returns an error if this is a built-in ModelState.</summary>
             <returns />
@@ -91508,6 +92079,9 @@ When reading the polylines within a group, the first polyline is the outer polyl
         </member>
         <member name="P:Inventor.ModelState.FactoryDocument">
             <summary>Read-only property that returns the model state factory Document. If the model state factory document is not open, query this property will cause it open.</summary>
+        </member>
+        <member name="P:Inventor.ModelState.GenerateOnSaveStatus">
+            <summary>Read-write property that gets and sets whether to generate model state member document on save for the model state.</summary>
         </member>
         <member name="M:Inventor.ModelState.GetReferenceKey(System.Byte[]@,System.Int32)">
             <summary>Generate the sequence of bytes, called this object's reference key, which can be held onto beyond document edits and which will allow the caller to be bound back to the live object.</summary>
@@ -91519,6 +92093,12 @@ When reading the polylines within a group, the first polyline is the outer polyl
             </param>
             <returns />
         </member>
+        <member name="P:Inventor.ModelState.MemberDocumentStatus">
+            <summary>Read-only property that returns enum indicating the model state member document status for this model state.</summary>
+        </member>
+        <member name="P:Inventor.ModelState.ModelStateDelegationAssociative">
+            <summary>Read-write property that gets and sets whether the delegate ModelState and this ModelState are associative or not. Set this to False will break the association between this ModelState and delegate ModelState so this ModelState will use its own BOM.</summary>
+        </member>
         <member name="P:Inventor.ModelState.ModelStateType">
             <summary>Read-only property that returns the enum indicating the model state type. This can be kMasterModelState, kSubstituteModelState, or kCustomModelState.</summary>
         </member>
@@ -91527,6 +92107,10 @@ When reading the polylines within a group, the first polyline is the outer polyl
         </member>
         <member name="P:Inventor.ModelState.Parent">
             <summary>Gets the parent object from whom this object can logically be reached.</summary>
+        </member>
+        <member name="M:Inventor.ModelState.RemoveChildModelStates">
+            <summary>Method that removes all child ModelState objects if any.</summary>
+            <returns />
         </member>
         <member name="P:Inventor.ModelState.SubstituteDocumentDescriptor">
             <summary>Read-only property that returns the DocumentDescriptor of the document associated with the substitute occurrence. This property returns Nothing if the ModelState property returns anything but kSubstituteModelState.</summary>
@@ -91640,6 +92224,9 @@ When reading the polylines within a group, the first polyline is the outer polyl
         </member>
         <member name="P:Inventor.ModelStates.ExcelWorkSheet">
             <summary>Read-only property that returns the excel spreadsheet that represents the model states table.</summary>
+        </member>
+        <member name="P:Inventor.ModelStates.GenerateOnSaveStatus">
+            <summary>Read-write property that gets and sets whether to generate model state member documents for primary and all custom model states.</summary>
         </member>
         <member name="P:Inventor.ModelStates.Item">
             <summary>Allows VARIANT-indexed access to items in the collection. You can use names as indexes as well.</summary>
@@ -95421,6 +96008,10 @@ End Sub </summary>
         <member name="P:Inventor.OffsetDimConstraint.Entity">
             <summary>Property that returns the circle or arc being constrained.</summary>
         </member>
+        <member name="M:Inventor.OffsetDimConstraint.FlipDirection">
+            <summary>Method that flips the direction of the dimension constraint.</summary>
+            <returns />
+        </member>
         <member name="M:Inventor.OffsetDimConstraint.GetReferenceKey(System.Byte[]@,System.Int32)">
             <summary>Method that generates and returns the reference key for this entity.</summary>
             <param name="ReferenceKey">
@@ -95476,6 +96067,10 @@ End Sub </summary>
         </member>
         <member name="P:Inventor.OffsetDimConstraintProxy.Entity">
             <summary>Property that returns the circle or arc being constrained.</summary>
+        </member>
+        <member name="M:Inventor.OffsetDimConstraintProxy.FlipDirection">
+            <summary>Method that flips the direction of the dimension constraint.</summary>
+            <returns />
         </member>
         <member name="M:Inventor.OffsetDimConstraintProxy.GetReferenceKey(System.Byte[]@,System.Int32)">
             <summary>Method that generates and returns the reference key for this entity.</summary>
@@ -97865,8 +98460,8 @@ Name = AllParameters. Value = Boolean that specifies whether all parameters will
         <member name="P:Inventor.PartDocument.DisabledCommandTypes">
             <summary>Bit mask indicating the disabled command types.</summary>
         </member>
-        <member name="P:Inventor.PartDocument.DisplayName">
-            <summary>Gets/Sets the user-displayable name of this Document. Defaults to file-name.</summary>
+        <member name="P:Inventor.PartDocument.DisplayNameBasis">
+            <summary>Gets and sets the display name basis of this document. This defaults to file name.</summary>
         </member>
         <member name="P:Inventor.PartDocument.DisplayNameOverridden">
             <summary>Read-write property that gets and sets whether the display name of the document has been overridden.</summary>
@@ -97910,6 +98505,9 @@ Name = AllParameters. Value = Boolean that specifies whether all parameters will
         </member>
         <member name="P:Inventor.PartDocument.FlatPatternSettings">
             <summary>Gets the FlatPatternSettings object.</summary>
+        </member>
+        <member name="P:Inventor.PartDocument.FullDisplayName">
+            <summary>Read-only property that returns the full display name of this document.</summary>
         </member>
         <member name="P:Inventor.PartDocument.FullDocumentName">
             <summary>Property that returns the fully qualified name of the document. The string is the full file name concatenated with the document name and is a unique identifier for the document. The document name is returned by the Name property on the Document object.</summary>
@@ -98593,6 +99191,9 @@ Name = DocumentsToSave. Value = ObjectCollection that contains the Document obje
         <member name="P:Inventor.PartFeatures.SketchDrivenPatternFeatures">
             <summary>Gets the collection object that besides listing out the subset of part features that are SketchDrivenPatterns, allows the creations of new SketchDrivenPatterns.</summary>
         </member>
+        <member name="P:Inventor.PartFeatures.SlotFeatures">
+            <summary>Read-only property that returns the SlotFeatures collection object.</summary>
+        </member>
         <member name="P:Inventor.PartFeatures.SnapFitFeatures">
             <summary>Gets the collection object that lists the subset of part features that are SnapFitFeatures.</summary>
         </member>
@@ -98835,6 +99436,22 @@ Name = DocumentsToSave. Value = ObjectCollection that contains the Document obje
         </member>
         <member name="M:Inventor.PartsList.Renumber">
             <summary>Method that renumbers all rows in the parts list.</summary>
+            <returns />
+        </member>
+        <member name="M:Inventor.PartsList.ReplaceBOMView(Inventor.PartsListLevelEnum,System.Object,System.Object,System.Object)">
+            <summary>Replaces the BOM view that is associated with this parts list.</summary>
+            <param name="Level">
+                <summary />
+            </param>
+            <param name="NumberingScheme">
+                <summary />
+            </param>
+            <param name="MinimumDigitsOrDelimiter">
+                <summary />
+            </param>
+            <param name="IgnoreOverrides">
+                <summary />
+            </param>
             <returns />
         </member>
         <member name="P:Inventor.PartsList.Rotation">
@@ -102909,8 +103526,8 @@ Name: MaxNormalDeviation, Value: Defines the maximum deviation between adjacent 
         <member name="P:Inventor.PresentationDocument.DisabledCommandTypes">
             <summary>Bit mask indicating the disabled command types.</summary>
         </member>
-        <member name="P:Inventor.PresentationDocument.DisplayName">
-            <summary>Gets/Sets the user-displayable name of this Document. Defaults to file-name.</summary>
+        <member name="P:Inventor.PresentationDocument.DisplayNameBasis">
+            <summary>Gets and sets the display name basis of this document. This defaults to file name.</summary>
         </member>
         <member name="P:Inventor.PresentationDocument.DisplayNameOverridden">
             <summary>Read-write property that gets and sets whether the display name of the document has been overridden.</summary>
@@ -102948,6 +103565,9 @@ Name: MaxNormalDeviation, Value: Defines the maximum deviation between adjacent 
                 <summary>Input String that specifies the full file name of the file to search for references to.</summary>
             </param>
             <returns />
+        </member>
+        <member name="P:Inventor.PresentationDocument.FullDisplayName">
+            <summary>Read-only property that returns the full display name of this document.</summary>
         </member>
         <member name="P:Inventor.PresentationDocument.FullDocumentName">
             <summary>Property that returns the fully qualified name of the document. The string is the full file name concatenated with the document name and is a unique identifier for the document. The document name is returned by the Name property on the Document object.</summary>
@@ -105639,11 +106259,11 @@ Button 1 options (i.e. what is allowed/not allowed if button 1 is picked) :
 kDontAllowButton1NeverAgain (Disable the "Do not show this message again ever" option if button 1 is selected) 
 kDontAllowButton1NoMoreThisSession (Disable the "Do not show this message again this session" option if button 1 is selected) 
 Button 2 options (i.e. what is allowed/not allowed if button 2 is picked) : 
-kDontAllowButton1NeverAgain (Disable the "Do not show this message again ever" option if button 2 is selected) 
-kDontAllowButton1NoMoreThisSession (Disable the "Do not show this message again this session" option if button 2 is selected) 
+kDontAllowButton2NeverAgain (Disable the "Do not show this message again ever" option if button 2 is selected) 
+kDontAllowButton2NoMoreThisSession (Disable the "Do not show this message again this session" option if button 2 is selected) 
 Button 3 options (i.e. what is allowed/not allowed if button 3 is picked) : 
-kDontAllowButton1NeverAgain (Disable the "Do not show this message again ever" option if button 3 is selected) 
-kDontAllowButton1NoMoreThisSession (Disable the "Do not show this message again this session" option if button 3 is selected) </summary>
+kDontAllowButton3NeverAgain (Disable the "Do not show this message again ever" option if button 3 is selected) 
+kDontAllowButton3NoMoreThisSession (Disable the "Do not show this message again this session" option if button 3 is selected) </summary>
             </param>
             <param name="PromptSettings">
                 <summary>Optional input NameValueMap object that specifies more prompt settings. 
@@ -108841,6 +109461,9 @@ When reading the polylines within a group, the first polyline is the outer polyl
         <member name="P:Inventor.RectangularPatternFeatureDefinition.XDirectionEntity">
             <summary>Read-write property that gets and sets the X direction entity. This can be a linear Edge, a WorkAxis, a WorkPlane (normal is used), a planar Face (normal is used), or a GeometryIntent.</summary>
         </member>
+        <member name="P:Inventor.RectangularPatternFeatureDefinition.XDirectionIrregularDistributionSet">
+            <summary>Read-only property that returns the IrregularDistributionSet object used to specify the irregular distribution set along X direction.</summary>
+        </member>
         <member name="P:Inventor.RectangularPatternFeatureDefinition.XDirectionMidPlanePattern">
             <summary>Read-write property that gets and sets whether the patterned occurrences should fall on either side of the original in the X direction.</summary>
         </member>
@@ -108858,6 +109481,9 @@ When reading the polylines within a group, the first polyline is the outer polyl
         </member>
         <member name="P:Inventor.RectangularPatternFeatureDefinition.YDirectionEntity">
             <summary>Read-write property that gets and sets the Y direction entity. This can be a linear Edge, a WorkAxis, a WorkPlane (normal is used), a planar Face (normal is used), or a GeometryIntent.</summary>
+        </member>
+        <member name="P:Inventor.RectangularPatternFeatureDefinition.YDirectionIrregularDistributionSet">
+            <summary>Read-only property that returns the IrregularDistributionSet object used to specify the irregular distribution set along Y direction.</summary>
         </member>
         <member name="P:Inventor.RectangularPatternFeatureDefinition.YDirectionMidPlanePattern">
             <summary>Read-write property that gets and sets whether the patterned occurrences should fall on either side of the original in the Y direction.</summary>
@@ -118505,7 +119131,7 @@ If this argument is omitted the following rules apply. If automated centerlines 
             </param>
             <returns />
         </member>
-        <member name="M:Inventor.Sheet.GetRetrievableAnnotations(Inventor.DrawingView,System.Object,System.Object,System.Object)">
+        <member name="M:Inventor.Sheet.GetRetrievableAnnotations2(Inventor.DrawingView,System.Object,System.Object,System.Object)">
             <summary>Returns a collection of objects that represent the valid set of model dimensions that can be retrieved into the input drawing view.</summary>
             <param name="View">
                 <summary>Input DrawingView object to get the retrievable annotations from.</summary>
@@ -118545,7 +119171,7 @@ If this argument is omitted the following rules apply. If automated centerlines 
         <member name="P:Inventor.Sheet.PartsLists">
             <summary>Property that returns the PartsLists collection object associated with this sheet. This provides access to the existing parts lists on the sheet.</summary>
         </member>
-        <member name="M:Inventor.Sheet.RetrieveAnnotations(System.Object,System.Object)">
+        <member name="M:Inventor.Sheet.RetrieveAnnotations2(System.Object,System.Object)">
             <summary>Retrieves sketch and/or model annotations into the drawing.</summary>
             <param name="ViewOrSketch">
                 <summary>Input object that specifies the DrawingView or the DrawingSketch object to retrieve annotations from.</summary>
@@ -119327,6 +119953,9 @@ Name = “FitViewsToSheet”, Value = Boolean value that specifies whether to fi
         </member>
         <member name="P:Inventor.SheetMetalFeatures.SketchDrivenPatternFeatures">
             <summary>Gets the collection object that besides listing out the subset of part features that are SketchDrivenPatterns, allows the creations of new SketchDrivenPatterns.</summary>
+        </member>
+        <member name="P:Inventor.SheetMetalFeatures.SlotFeatures">
+            <summary>Read-only property that returns the SlotFeatures collection object.</summary>
         </member>
         <member name="P:Inventor.SheetMetalFeatures.SnapFitFeatures">
             <summary>Gets the collection object that lists the subset of part features that are SnapFitFeatures.</summary>
@@ -129976,6 +130605,40 @@ Since only one of the above options to specify a group of connected entities can
         <member name="P:Inventor.SketchSettings.YSnapSpacing">
             <summary>Gets and sets the spacing between snap points for the Y axis.</summary>
         </member>
+        <member name="T:Inventor.SketchSlotPlacementDefinition">
+            <summary>SketchSlotPlacementDefinition Object.</summary>
+        </member>
+        <member name="P:Inventor.SketchSlotPlacementDefinition.Application">
+            <summary>Gets the root Application object. Where the property is weakly-typed, it can be set to (QueryInterfaced for) 'Application' when running with Inventor whereas, 'ApprenticeServer' when running with the Apprentice Server.</summary>
+        </member>
+        <member name="P:Inventor.SketchSlotPlacementDefinition.IsRotationFlipped">
+            <summary>Gets and sets whether the slot rotation is flipped or not.</summary>
+        </member>
+        <member name="P:Inventor.SketchSlotPlacementDefinition.Rotation">
+            <summary>Gets and sets rotation angle of the slot.</summary>
+        </member>
+        <member name="M:Inventor.SketchSlotPlacementDefinition.SetSlotDirectionType(Inventor.DirectionTypeEnum,System.Object)">
+            <summary>Sets the slot direction type.</summary>
+            <param name="DirectionType">
+                <summary>Input DirectionTypeEnum that specifies the direction type.</summary>
+            </param>
+            <param name="SlotDirectionEntity">
+                <summary>Optional input entity that specifies the slot direction. This can be a planar Face object or a WorkPlane object with which the axis of the slot is perpendicular, or an Edge or WorkAxis object with which the axis of the slot is parallel. This is ignored if the DirectionType is not set to kCustomDirection.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="P:Inventor.SketchSlotPlacementDefinition.SlotCenterPoints">
+            <summary>Gets and sets the set of sketch points that define the centers of the slots of this feature.</summary>
+        </member>
+        <member name="P:Inventor.SketchSlotPlacementDefinition.SlotDirectionEntity">
+            <summary>Gets and sets an entity that defines the slot direction.</summary>
+        </member>
+        <member name="P:Inventor.SketchSlotPlacementDefinition.SlotDirectionType">
+            <summary>Gets the DirectionTypeEnum that defines the slot axis direction.</summary>
+        </member>
+        <member name="P:Inventor.SketchSlotPlacementDefinition.Type">
+            <summary>Gets the constant that indicates the type of this object.</summary>
+        </member>
         <member name="T:Inventor.SketchSpline">
             <summary>The SketchSpline object represents a spline within a sketch. See the article in the overviews section.</summary>
         </member>
@@ -131131,6 +131794,612 @@ Since only one of the above options to specify a group of connected entities can
         </member>
         <member name="P:Inventor.SketchSplines3D.Type">
             <summary>Returns an ObjectTypeEnum indicating this object's type.</summary>
+        </member>
+        <member name="T:Inventor.SlotDefinition">
+            <summary>SlotDefinition Object.</summary>
+        </member>
+        <member name="P:Inventor.SlotDefinition.AddiMate">
+            <summary>Read-write property that gets and sets whether to add iMate automatically on the slot feature.</summary>
+        </member>
+        <member name="P:Inventor.SlotDefinition.AffectedBodies">
+            <summary>Read-write property that gets and sets the collection of bodies affected by this feature.&amp;nbsp;If this property is not set for multi-body parts, the default solid body is used as the affected body.&amp;nbsp;This property applies only to features in a part.</summary>
+        </member>
+        <member name="P:Inventor.SlotDefinition.AffectedOccurrences">
+            <summary>Read-write property that gets and sets the collection of occurrences that should participate in this feature.&amp;nbsp;If this property is not set, all possible occurrences will participate.&amp;nbsp;This property applies only to features in an assembly.</summary>
+        </member>
+        <member name="P:Inventor.SlotDefinition.Application">
+            <summary>Gets the root Application object. Where the property is weakly-typed, it can be set to (QueryInterfaced for) 'Application' when running with Inventor whereas, 'ApprenticeServer' when running with the Apprentice Server.</summary>
+        </member>
+        <member name="P:Inventor.SlotDefinition.CenterMarksType">
+            <summary>Read-write property that gets and sets the center marks type for the slot feature.</summary>
+        </member>
+        <member name="P:Inventor.SlotDefinition.ClearanceInfo">
+            <summary>Read-write property that gets and sets the HoleClearanceInfo object associated with the slot feature.</summary>
+        </member>
+        <member name="M:Inventor.SlotDefinition.Copy">
+            <summary>Method that creates a copy of this SlotDefinition object.</summary>
+            <returns />
+        </member>
+        <member name="P:Inventor.SlotDefinition.CounterboreDepth">
+            <summary>Read-write property that gets and sets the counterbore depth of slot.</summary>
+        </member>
+        <member name="P:Inventor.SlotDefinition.CounterboreWidth">
+            <summary>Read-write property that gets and sets the counterbore width of slot.</summary>
+        </member>
+        <member name="P:Inventor.SlotDefinition.CountersinkAngle">
+            <summary>Read-write property that gets and sets the countersink angle of slot.</summary>
+        </member>
+        <member name="P:Inventor.SlotDefinition.CountersinkWidth">
+            <summary>Read-write property that gets and sets the countersink width of slot.</summary>
+        </member>
+        <member name="P:Inventor.SlotDefinition.Depth">
+            <summary>Read-write property that gets and sets the depth of slot.</summary>
+        </member>
+        <member name="P:Inventor.SlotDefinition.EndMillAngle">
+            <summary>Read-write property that gets and sets the end mill angle of slot.</summary>
+        </member>
+        <member name="P:Inventor.SlotDefinition.EndMillType">
+            <summary>Read-write property that gets and sets the end mill type of slot.</summary>
+        </member>
+        <member name="P:Inventor.SlotDefinition.ExtendStart">
+            <summary>Read-write property that gets and sets whether to extend the start of the Slot feature.</summary>
+        </member>
+        <member name="P:Inventor.SlotDefinition.Extent">
+            <summary>Read-only object that returns the PartFeatureExtent object.</summary>
+        </member>
+        <member name="P:Inventor.SlotDefinition.ExtentDirection">
+            <summary>Read-write property that gets and sets the extent direction of this slot feature.</summary>
+        </member>
+        <member name="P:Inventor.SlotDefinition.ExtentType">
+            <summary>Read-only property that returns the extent type of slot.</summary>
+        </member>
+        <member name="P:Inventor.SlotDefinition.FilletType">
+            <summary>Read-write property that gets and sets the slot fillet type.</summary>
+        </member>
+        <member name="P:Inventor.SlotDefinition.IsClearanceHole">
+            <summary>Read-write property that gets and sets whether the slot is clearance hole or not.</summary>
+        </member>
+        <member name="P:Inventor.SlotDefinition.Length">
+            <summary>Read-write property that gets and sets the length of slot.</summary>
+        </member>
+        <member name="P:Inventor.SlotDefinition.Parent">
+            <summary>Read-only property that returns the parent SlotFeature object.</summary>
+        </member>
+        <member name="P:Inventor.SlotDefinition.PlacementDefinition">
+            <summary>Read-write property that gets and sets the placement type for the Slot feature.</summary>
+        </member>
+        <member name="P:Inventor.SlotDefinition.SeatType">
+            <summary>Read-only property that returns the slot seat type.</summary>
+        </member>
+        <member name="M:Inventor.SlotDefinition.SetDistanceExtent(System.Object,Inventor.PartFeatureExtentDirectionEnum,System.Object,System.Object)">
+            <summary>Method that changes the extents to be Distance extents.</summary>
+            <param name="Distance">
+                <summary>Input Variant that specifies the depth to which to extend the slot feature.  This can be either a numeric value or a string.  A parameter for this value will be created and the supplied string or value is assigned to the parameter.  If a value is input, the units are centimeters.  If a string is input, the units can be specified as part of the string or it will default to the current length units of the document.</summary>
+            </param>
+            <param name="ExtentDirection">
+                <summary>Input PartFeatureExtentDirectionEnum that indicates which side to extrude towards.  Valid input is kPositiveExtentDirection or kNegativeExtentDirection.  kPositiveExtentDirection defines the offset direction to be in the same direction as the normal of the sketch plane or direction of the geometry that defines the slot direction.</summary>
+            </param>
+            <param name="EndMillType">
+                <summary>Optional input SlotEndMillTypeEnum that specifies the end mill type of the Slot. Valid value is kFlatEndMillType or kAngledEndMillType. If kAngledEndMillType is specified then the BottomTipAngle argument needs to be provided to specify the angle. 
+
+The default value is kFlatEndMillType .</summary>
+            </param>
+            <param name="BottomTipAngle">
+                <summary>Optional input Variant that defines the angle of the tip at the bottom of a Slot. This argument is only used when the EndMillType argument is kAngledEndMillType. If this argument is not supplied a default value of 118 degrees is assigned. 
+
+This can be either a numeric value or a string. A parameter for this value will be created and the supplied string or value is assigned to the parameter. If a value is input, the units are radians. If a string is input, the units can be specified as part of the string or it will default to the current angle units of the document.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="M:Inventor.SlotDefinition.SetThroughAllExtent(Inventor.PartFeatureExtentDirectionEnum)">
+            <summary>Method that changes the extents to be Through All extents.</summary>
+            <param name="ExtentDirection">
+                <summary>Input PartFeatureExtentDirectionEnum  value that indicates which side to extrude towards.  Valid input is kPositiveExtentDirection or kNegativeExtentDirection.  kPositiveExtentDirection defines the offset direction to be in the same direction as the normal of the sketch plane.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="M:Inventor.SlotDefinition.SetToCounterboreSeat(System.Object,System.Object)">
+            <summary>Method that changes the seat type to counterbore.</summary>
+            <param name="CounterboreWidth">
+                <summary>Input Variant that specifies the counterbore width of the slot feature.  This can be either a numeric value or a string.  A parameter for this value will be created and the supplied string or value is assigned to the parameter.  If a value is input, the units are centimeters.  If a string is input, the units can be specified as part of the string or it will default to the current length units of the document.</summary>
+            </param>
+            <param name="CounterboreDepth">
+                <summary>Input Variant that specifies the counterbore depth of the slot feature.  This can be either a numeric value or a string.  A parameter for this value will be created and the supplied string or value is assigned to the parameter.  If a value is input, the units are centimeters.  If a string is input, the units can be specified as part of the string or it will default to the current length units of the document.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="M:Inventor.SlotDefinition.SetToCountersinkSeat(System.Object,System.Object)">
+            <summary>Method that changes the seat type to countersink.</summary>
+            <param name="CountersinkWidth">
+                <summary>Input Variant that specifies the countersink width of the slot feature.  This can be either a numeric value or a string.  A parameter for this value will be created and the supplied string or value is assigned to the parameter.  If a value is input, the units are centimeters.  If a string is input, the units can be specified as part of the string or it will default to the current length units of the document.</summary>
+            </param>
+            <param name="CountersinkAngle">
+                <summary>Input Variant that specifies the countersink angle of the slot feature.  This can be either a numeric value or a string. A parameter for this value will be created and the supplied string or value is assigned to the parameter. If a value is input, the units are radians. If a string is input, the units can be specified as part of the string or it will default to the current angle units of the document.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="M:Inventor.SlotDefinition.SetToFaceExtent(System.Object,System.Boolean,System.Object,System.Object)">
+            <summary>Method that changes the extents to be To Face extents.</summary>
+            <param name="ToFace">
+                <summary>Input Object that defines the to face the slot will terminate on.  This can be either a Face or WorkPlane object.</summary>
+            </param>
+            <param name="ExtendToFace">
+                <summary>Input Boolean that defines whether the “to face” should be extended to contain the extents of the profile.</summary>
+            </param>
+            <param name="EndMillType">
+                <summary>Optional input SlotEndMillTypeEnum that specifies the end mill type of the Slot. Valid value is kFlatEndMillType or kAngledEndMillType. If kAngledEndMillType is specified then the BottomTipAngle argument needs to be provided to specify the angle. 
+
+The default value is kFlatEndMillType.</summary>
+            </param>
+            <param name="BottomTipAngle">
+                <summary>Optional input Variant that defines the angle of the tip at the bottom of a Slot. This argument is only used when the EndMillType argument is kAngledEndMillType. If this argument is not supplied a default value of 118 degrees is assigned. 
+
+This can be either a numeric value or a string. A parameter for this value will be created and the supplied string or value is assigned to the parameter. If a value is input, the units are radians. If a string is input, the units can be specified as part of the string or it will default to the current angle units of the document.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="M:Inventor.SlotDefinition.SetToNoneSeat">
+            <summary>Method that changes the seat type to none.</summary>
+            <returns />
+        </member>
+        <member name="M:Inventor.SlotDefinition.SetToSpotfaceSeat(System.Object,System.Object)">
+            <summary>Method that changes the seat type to spotface.</summary>
+            <param name="SpotfaceWidth">
+                <summary>Input Variant that specifies the spotface width of the slot feature.  This can be either a numeric value or a string.  A parameter for this value will be created and the supplied string or value is assigned to the parameter.  If a value is input, the units are centimeters.  If a string is input, the units can be specified as part of the string or it will default to the current length units of the document.</summary>
+            </param>
+            <param name="SpotFaceDepth">
+                <summary>Input Variant that specifies the spotface depth of the slot feature.  This can be either a numeric value or a string.  A parameter for this value will be created and the supplied string or value is assigned to the parameter.  If a value is input, the units are centimeters.  If a string is input, the units can be specified as part of the string or it will default to the current length units of the document.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="P:Inventor.SlotDefinition.Sketch">
+            <summary>Read-only property that returns the Sketch object that contains the points the slot is based on.</summary>
+        </member>
+        <member name="P:Inventor.SlotDefinition.SpotFaceDepth">
+            <summary>Read-write property that gets and sets the spotface depth of slot.</summary>
+        </member>
+        <member name="P:Inventor.SlotDefinition.SpotfaceWidth">
+            <summary>Read-write property that gets and sets the spotface width of slot.</summary>
+        </member>
+        <member name="P:Inventor.SlotDefinition.Type">
+            <summary>Gets the constant that indicates the type of this object.</summary>
+        </member>
+        <member name="P:Inventor.SlotDefinition.Width">
+            <summary>Read-write property that gets and sets the width of slot.</summary>
+        </member>
+        <member name="T:Inventor.SlotFeature">
+            <summary>SlotFeature Object.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeature.Adaptive">
+            <summary>Gets and sets whether this feature is adaptive or not.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeature.Appearance">
+            <summary>Gets and sets the current appearance of the feature.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeature.AppearanceSourceType">
+            <summary>Gets and sets the source of the appearance for the feature.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeature.Application">
+            <summary>Returns the top-level parent application object.  When used the context of Inventor, an Application object is returned.  When used in the context of Apprentice, an ApprenticeServer object is returned.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeature.AttributeSets">
+            <summary>Property that returns the AttributeSets collection object associated with this object.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeature.ConsumeInputs">
+            <summary>Gets and sets whether the inputs to this feature should be nested under this feature in the browser.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeature.Definition">
+            <summary>Read-write property that gets and sets the SlotDefinition object associated with this Slot feature.</summary>
+        </member>
+        <member name="M:Inventor.SlotFeature.Delete(System.Boolean,System.Boolean,System.Boolean)">
+            <summary>Method that deletes the feature. The arguments allow control over which dependent objects are also deleted.</summary>
+            <param name="RetainConsumedSketches">
+                <summary>Optional input Boolean indicating if consumed sketches within the feature should be deleted. If the feature being deleted is not a sketch based feature this argument is ignored.</summary>
+            </param>
+            <param name="RetainDependentFeaturesAndSketches">
+                <summary>Optional input Boolean that specifies if dependent features should be deleted. If there are no dependent features this argument is ignored.</summary>
+            </param>
+            <param name="RetainDependentWorkFeatures">
+                <summary>Optional input Boolean that specifies if dependent work features should be deleted. If there are no dependent work features this argument is ignored.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="P:Inventor.SlotFeature.ExtendedName">
+            <summary>Read-only property that returns the full feature name including any extended information.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeature.Faces">
+            <summary>Property that returns a collection that provides access to all of the faces of the feature. The Faces collection object will return the faces that still currently exist in the part. For example, if a face has been consumed by additional modeling operations it will not be returned.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeature.FeatureDimensions">
+            <summary>Property that returns the FeatureDimensions collection object.</summary>
+        </member>
+        <member name="M:Inventor.SlotFeature.GetReferenceKey(System.Byte[]@,System.Int32)">
+            <summary>Method that generates and returns the reference key for this entity.</summary>
+            <param name="ReferenceKey">
+                <summary>Input/output array of Bytes that contains the reference key.</summary>
+            </param>
+            <param name="KeyContext">
+                <summary>Input Long that specifies the key context. The key context must be supplied when working with any B-Rep entities (and SurfaceBody, FaceShell, Face, Edge, EdgeUse and Vertex objects). A key context is created using the CreateKeyContext method of the ReferenceKeyManager object. For all other object types, the key context argument is not used and is ignored if provided.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="M:Inventor.SlotFeature.GetSuppressionCondition(Inventor.Parameter@,Inventor.ComparisonTypeEnum@,System.Object@)">
+            <summary>Method that gets the suppression condition for the feature. The method returns False if no condition has been applied.</summary>
+            <param name="Parameter">
+                <summary>Parameter object that specifies the parameter whose value is to be checked for feature suppression.</summary>
+            </param>
+            <param name="ComparisonType">
+                <summary>ComparisonTypeEnum that specifies the type of comparison. Valid return types are kEqualToComparison, kNotEqualToComparison, kLessThanComparison, kGreaterThanComparison, kLessThanOrEqualToComparison, kGreaterThanOrEqualToComparison.</summary>
+            </param>
+            <param name="Expression">
+                <summary>Specifies the expression used for the comparison with the parameter value. This can either be a string or a parameter object.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="P:Inventor.SlotFeature.HealthStatus">
+            <summary>Property that returns an enum indicating the current state of the object.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeature.IsOwnedByFeature">
+            <summary>Property that returns whether this object is owned by a feature. If True, the OwnedBy property returns the owning feature.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeature.Name">
+            <summary>Gets/Sets the name of this Part Feature within the scope of this Document.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeature.OwnedBy">
+            <summary>Property that returns the owning PartFeature object. This property returns Nothing if the IsOwnedByFeature property returns False.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeature.Parameters">
+            <summary>Property that returns all the parameters associated with the feature.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeature.Parent">
+            <summary>Property that returns the parent of the feature.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeature.Participants">
+            <summary>Property that returns the list of participants for an assembly feature. This list is empty for features in a part.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeature.RangeBox">
+            <summary>Property that returns a Box object which contains the opposing points of a rectangular box that is guaranteed to enclose this object.</summary>
+        </member>
+        <member name="M:Inventor.SlotFeature.RemoveParticipant(Inventor.ComponentOccurrence)">
+            <summary>Method that removes the specified participant from the assembly feature. This method fails for features in a part.</summary>
+            <param name="Occurrence">
+                <summary>ComponentOccurrence object that specifies the participant to be removed. An error occurs if the input ComponentOccurrence is not a participant.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="M:Inventor.SlotFeature.SetAffectedBodies(Inventor.ObjectCollection)">
+            <summary>Method that sets a collection of SurfaceBody objects affected by this feature.</summary>
+            <param name="Bodies">
+                <summary>ObjectCollection of SurfaceBody objects.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="M:Inventor.SlotFeature.SetEndOfPart(System.Boolean)">
+            <summary>Method that repositions the end-of-part marker relative to the object this method is called from.</summary>
+            <param name="Before">
+                <summary>Input Boolean that indicates if the end of part marker should be immediately before or after this work feature. A value of True indicates before and False indicates after.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="M:Inventor.SlotFeature.SetSuppressionCondition(Inventor.Parameter,Inventor.ComparisonTypeEnum,System.Object)">
+            <summary>Method that sets the suppression condition for the feature.</summary>
+            <param name="Parameter">
+                <summary>Parameter object that specifies the parameter whose value is to be checked for feature suppression.</summary>
+            </param>
+            <param name="ComparisonType">
+                <summary>ComparisonTypeEnum that specifies the type of comparison. Valid types are kEqualToComparison, kNotEqualToComparison, kLessThanComparison, kGreaterThanComparison, kLessThanOrEqualToComparison, kGreaterThanOrEqualToComparison.</summary>
+            </param>
+            <param name="Expression">
+                <summary>Specifies the expression used for the comparison with the parameter value. This can either be a string, a value or a parameter object. If a value is input, the database units for the units defined by the parameter are used. For instance, if the parameter defines length units, the value is assumed to be in centimeters. If a string is input, the units can be specified as part of the string or it will default to the current units of the document. For instance, if the parameter defines length units, the current length units of the document are used.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="P:Inventor.SlotFeature.Shared">
+            <summary>Gets and sets whether the part feature is shared or not, applies only to surface features.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeature.Suppressed">
+            <summary>Gets and sets whether this feature is suppressed or not.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeature.SurfaceBodies">
+            <summary>Property that returns the bodies that this feature has created or modified.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeature.Type">
+            <summary>Returns an ObjectTypeEnum indicating this object's type.</summary>
+        </member>
+        <member name="T:Inventor.SlotFeatureProxy">
+            <summary>Slot Feature Proxy Object.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeatureProxy.Adaptive">
+            <summary>Gets and sets whether this feature is adaptive or not.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeatureProxy.Appearance">
+            <summary>Gets and sets the current appearance of the feature.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeatureProxy.AppearanceSourceType">
+            <summary>Gets and sets the source of the appearance for the feature.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeatureProxy.Application">
+            <summary>Returns the top-level parent application object.  When used the context of Inventor, an Application object is returned.  When used in the context of Apprentice, an ApprenticeServer object is returned.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeatureProxy.AttributeSets">
+            <summary>Property that returns the AttributeSets collection object associated with this object.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeatureProxy.ConsumeInputs">
+            <summary>Gets and sets whether the inputs to this feature should be nested under this feature in the browser.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeatureProxy.ContainingOccurrence">
+            <summary>Use F1 key to display help topic.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeatureProxy.Definition">
+            <summary>Read-write property that gets and sets the SlotDefinition object associated with this Slot feature.</summary>
+        </member>
+        <member name="M:Inventor.SlotFeatureProxy.Delete(System.Boolean,System.Boolean,System.Boolean)">
+            <summary>Method that deletes the feature. The arguments allow control over which dependent objects are also deleted.</summary>
+            <param name="RetainConsumedSketches">
+                <summary>Optional input Boolean indicating if consumed sketches within the feature should be deleted. If the feature being deleted is not a sketch based feature this argument is ignored.</summary>
+            </param>
+            <param name="RetainDependentFeaturesAndSketches">
+                <summary>Optional input Boolean that specifies if dependent features should be deleted. If there are no dependent features this argument is ignored.</summary>
+            </param>
+            <param name="RetainDependentWorkFeatures">
+                <summary>Optional input Boolean that specifies if dependent work features should be deleted. If there are no dependent work features this argument is ignored.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="P:Inventor.SlotFeatureProxy.ExtendedName">
+            <summary>Read-only property that returns the full feature name including any extended information.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeatureProxy.Faces">
+            <summary>Property that returns a collection that provides access to all of the faces of the feature. The Faces collection object will return the faces that still currently exist in the part. For example, if a face has been consumed by additional modeling operations it will not be returned.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeatureProxy.FeatureDimensions">
+            <summary>Property that returns the FeatureDimensions collection object.</summary>
+        </member>
+        <member name="M:Inventor.SlotFeatureProxy.GetReferenceKey(System.Byte[]@,System.Int32)">
+            <summary>Method that generates and returns the reference key for this entity.</summary>
+            <param name="ReferenceKey">
+                <summary>Input/output array of Bytes that contains the reference key.</summary>
+            </param>
+            <param name="KeyContext">
+                <summary>Input Long that specifies the key context. The key context must be supplied when working with any B-Rep entities (and SurfaceBody, FaceShell, Face, Edge, EdgeUse and Vertex objects). A key context is created using the CreateKeyContext method of the ReferenceKeyManager object. For all other object types, the key context argument is not used and is ignored if provided.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="M:Inventor.SlotFeatureProxy.GetSuppressionCondition(Inventor.Parameter@,Inventor.ComparisonTypeEnum@,System.Object@)">
+            <summary>Method that gets the suppression condition for the feature. The method returns False if no condition has been applied.</summary>
+            <param name="Parameter">
+                <summary>Parameter object that specifies the parameter whose value is to be checked for feature suppression.</summary>
+            </param>
+            <param name="ComparisonType">
+                <summary>ComparisonTypeEnum that specifies the type of comparison. Valid return types are kEqualToComparison, kNotEqualToComparison, kLessThanComparison, kGreaterThanComparison, kLessThanOrEqualToComparison, kGreaterThanOrEqualToComparison.</summary>
+            </param>
+            <param name="Expression">
+                <summary>Specifies the expression used for the comparison with the parameter value. This can either be a string or a parameter object.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="P:Inventor.SlotFeatureProxy.HealthStatus">
+            <summary>Property that returns an enum indicating the current state of the object.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeatureProxy.IsOwnedByFeature">
+            <summary>Property that returns whether this object is owned by a feature. If True, the OwnedBy property returns the owning feature.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeatureProxy.Name">
+            <summary>Gets/Sets the name of this Part Feature within the scope of this Document.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeatureProxy.NativeObject">
+            <summary>Use F1 key to display help topic.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeatureProxy.OwnedBy">
+            <summary>Property that returns the owning PartFeature object. This property returns Nothing if the IsOwnedByFeature property returns False.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeatureProxy.Parameters">
+            <summary>Property that returns all the parameters associated with the feature.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeatureProxy.Parent">
+            <summary>Property that returns the parent of the feature.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeatureProxy.Participants">
+            <summary>Property that returns the list of participants for an assembly feature. This list is empty for features in a part.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeatureProxy.RangeBox">
+            <summary>Property that returns a Box object which contains the opposing points of a rectangular box that is guaranteed to enclose this object.</summary>
+        </member>
+        <member name="M:Inventor.SlotFeatureProxy.RemoveParticipant(Inventor.ComponentOccurrence)">
+            <summary>Method that removes the specified participant from the assembly feature. This method fails for features in a part.</summary>
+            <param name="Occurrence">
+                <summary>ComponentOccurrence object that specifies the participant to be removed. An error occurs if the input ComponentOccurrence is not a participant.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="M:Inventor.SlotFeatureProxy.SetAffectedBodies(Inventor.ObjectCollection)">
+            <summary>Method that sets a collection of SurfaceBody objects affected by this feature.</summary>
+            <param name="Bodies">
+                <summary>ObjectCollection of SurfaceBody objects.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="M:Inventor.SlotFeatureProxy.SetEndOfPart(System.Boolean)">
+            <summary>Method that repositions the end-of-part marker relative to the object this method is called from.</summary>
+            <param name="Before">
+                <summary>Input Boolean that indicates if the end of part marker should be immediately before or after this work feature. A value of True indicates before and False indicates after.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="M:Inventor.SlotFeatureProxy.SetSuppressionCondition(Inventor.Parameter,Inventor.ComparisonTypeEnum,System.Object)">
+            <summary>Method that sets the suppression condition for the feature.</summary>
+            <param name="Parameter">
+                <summary>Parameter object that specifies the parameter whose value is to be checked for feature suppression.</summary>
+            </param>
+            <param name="ComparisonType">
+                <summary>ComparisonTypeEnum that specifies the type of comparison. Valid types are kEqualToComparison, kNotEqualToComparison, kLessThanComparison, kGreaterThanComparison, kLessThanOrEqualToComparison, kGreaterThanOrEqualToComparison.</summary>
+            </param>
+            <param name="Expression">
+                <summary>Specifies the expression used for the comparison with the parameter value. This can either be a string, a value or a parameter object. If a value is input, the database units for the units defined by the parameter are used. For instance, if the parameter defines length units, the value is assumed to be in centimeters. If a string is input, the units can be specified as part of the string or it will default to the current units of the document. For instance, if the parameter defines length units, the current length units of the document are used.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="P:Inventor.SlotFeatureProxy.Shared">
+            <summary>Gets and sets whether the part feature is shared or not, applies only to surface features.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeatureProxy.Suppressed">
+            <summary>Gets and sets whether this feature is suppressed or not.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeatureProxy.SurfaceBodies">
+            <summary>Property that returns the bodies that this feature has created or modified.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeatureProxy.Type">
+            <summary>Returns an ObjectTypeEnum indicating this object's type.</summary>
+        </member>
+        <member name="T:Inventor.SlotFeatures">
+            <summary>SlotFeatures Object.</summary>
+        </member>
+        <member name="M:Inventor.SlotFeatures.Add(Inventor.SlotDefinition)">
+            <summary>Method that creates a new SlotFeature object.</summary>
+            <param name="pDefinition">
+                <summary>Input SlotDefinition object that defines the input for the slot feature. A SlotDefinition object can be created using the SlotFeatures.CreateSlotDefinition method. It can also be obtained from an existing SlotFeature object.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="P:Inventor.SlotFeatures.Application">
+            <summary>Gets the root Application object. Where the property is weakly-typed, it can be set to (QueryInterfaced for) 'Application' when running with Inventor whereas, 'ApprenticeServer' when running with the Apprentice Server.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeatures.Count">
+            <summary>Gets the number of items in this collection.</summary>
+        </member>
+        <member name="M:Inventor.SlotFeatures.CreateClearanceInfo(System.String,System.String,System.String,System.Object)">
+            <summary>Method that creates a new HoleClearanceInfo object.</summary>
+            <param name="FastenerStandard">
+                <summary>Input String value that specifies the fastener standard. The standard is the name of the sheet in the Clearance.xls file that is used to define the clearance info.</summary>
+            </param>
+            <param name="FastenerType">
+                <summary>Input String value that specifies the fastener type.</summary>
+            </param>
+            <param name="FastenerSize">
+                <summary>Input String value that specifies the fastener size.</summary>
+            </param>
+            <param name="FastenerFitType">
+                <summary>Optional input FastenerFitTypeEnum value that specifies the fastener fit type. If not provided the default kNormalFitType will be used.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="M:Inventor.SlotFeatures.CreateHolePlacementDefinition(Inventor.HoleFeature,System.Object,System.Object,System.Object,System.Object)">
+            <summary>Method that creates a new HoleSlotPlacementDefinition object that can be used for defining the placement of Slot features using an existing hole feature.</summary>
+            <param name="HoleFeature">
+                <summary>Input SlotPlacementDefinition object that defines the position(s) of the slot(s). When input a HoleSlotPlacementDefinition, after the SlotFeature creation the SlotDefinition.PlacementDefinition will be converted to SketchSlotPlacementDefinition.</summary>
+            </param>
+            <param name="SlotDirectionType">
+                <summary>Input SlotFilletTypeEnum that specifies slot fillet type. Valid values are: kFilletsSlotFilletType and kSharpCornersSlotFilletType.</summary>
+            </param>
+            <param name="SlotDirectionEntity">
+                <summary>Input Variant that defines the width of the slot. This can be either a numeric value or a string. A parameter for this value will be created and the supplied string or value is assigned to the parameter. If a value is input, the units are centimeters. If a string is input, the units can be specified as part of the string or it will default to the current length units of the document.
+Input Variant that defines the overall length of the slot. This can be either a numeric value or a string. A parameter for this value will be created and the supplied string or value is assigned to the parameter. If a value is input, the units are centimeters. If a string is input, the units can be specified as part of the string or it will default to the current length units of the document.</summary>
+            </param>
+            <param name="Rotation">
+                <summary />
+            </param>
+            <param name="FlipRotation">
+                <summary />
+            </param>
+            <returns />
+        </member>
+        <member name="M:Inventor.SlotFeatures.CreateSketchPlacementDefinition(Inventor.ObjectCollection,System.Object,System.Object,System.Object,System.Object)">
+            <summary>Method that creates a new SketchSlotPlacementDefinition object.</summary>
+            <param name="SlotCenterPoints">
+                <summary>Input ObjectCollection containing sketch point(s) that defines the centerpoint(s) of the slot feature. All the sketch points should be from the same sketch.</summary>
+            </param>
+            <param name="SlotDirectionType">
+                <summary>Optional input DirectionTypeEnum that specifies the direction of the slot. When specify this with kCustomDirection, the SlotDirectionEntity should be specified.</summary>
+            </param>
+            <param name="SlotDirectionEntity">
+                <summary>Optional input an entity that defines the direction of the slot. This is required only when the SlotDirectionType is specified as kCustomDirection, otherwise this is ignored. 
+
+This can be a WorkPlane or planar Face object with which the axis of the slot is perpendicular, a linear Edge, SletchLine, SketchLine3D or WorkAxis object with which the axis of the slot is parallel, a cylindrical/hemispherical/toroidal/conical Face object with which the axis of the slot is parallel to the axis of the face.</summary>
+            </param>
+            <param name="Rotation">
+                <summary>Optional input Double or String value specifying the slot rotation angle. 
+
+This can be a double or a string. If a double is input, the units are radians. If a string is input, the units can be specified as part of the string or it will default to the current angle units of the document. When using a string you can also define equations and reference existing parameters. For example, the string “MyAngle * 2” is valid, assuming there is a parameter named MyAngle.
+
+This defaults to 0 if not specified.</summary>
+            </param>
+            <param name="FlipRotation">
+                <summary>Optional input Boolean value specifying if slot rotation is flipped or not. 
+
+This defaults to False if not specified.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="M:Inventor.SlotFeatures.CreateSlotDefinition(Inventor.SlotPlacementDefinition,Inventor.SlotFilletTypeEnum,System.Object,System.Object,System.Object,System.Object)">
+            <summary>Method that creates the SlotDefinition object.</summary>
+            <param name="PlacementDefinition">
+                <summary>Input SlotPlacementDefinition object that defines the position(s) of the slot(s). When input a HoleSlotPlacementDefinition, after the SlotFeature creation the SlotDefinition.PlacementDefinition will be converted to SketchSlotPlacementDefinition.</summary>
+            </param>
+            <param name="FilletType">
+                <summary>Input SlotFilletTypeEnum that specifies slot fillet type. Valid values are: kFilletsSlotFilletType and kSharpCornersSlotFilletType.</summary>
+            </param>
+            <param name="Width">
+                <summary>Input Variant that defines the width of the slot. This can be either a numeric value or a string. A parameter for this value will be created and the supplied string or value is assigned to the parameter. If a value is input, the units are centimeters. If a string is input, the units can be specified as part of the string or it will default to the current length units of the document.</summary>
+            </param>
+            <param name="Length">
+                <summary>Input Variant that defines the overall length of the slot. This can be either a numeric value or a string. A parameter for this value will be created and the supplied string or value is assigned to the parameter. If a value is input, the units are centimeters. If a string is input, the units can be specified as part of the string or it will default to the current length units of the document.</summary>
+            </param>
+            <param name="SeatType">
+                <summary>Optional input SeatTypeEnum that specifies slot seat type. When the FilletType is specified as kShartCornersSlotFilletType then this is ignored. This defaults to kNoneSeat if not specified.</summary>
+            </param>
+            <param name="MoreShapeInfo">
+                <summary>Optional input NameValueMap that specifies more info to define the slot shape. Valid values for the NameValueMap in the MoreShapeInfo argument: 
+
+Name = CounterboreWidth. Value = A numeric value or a string that specifies the counterbore width. A parameter for this value will be created and the supplied string or value is assigned to the parameter. If a value is input, the units are centimeters. If a string is input, the units can be specified as part of the string or it will default to the current length units of the document. This is ignored if the SeatType is not specified as kCounterboreSeat. 
+
+Name = CounterboreDepth. Value = A numeric value or a string that specifies the counterbore depth. A parameter for this value will be created and the supplied string or value is assigned to the parameter. If a value is input, the units are centimeters. If a string is input, the units can be specified as part of the string or it will default to the current length units of the document. This is ignored if the SeatType is not specified as kCounterboreSeat. 
+
+Name = CountersinkWidth. Value = A numeric value or a string that specifies the countersink width. A parameter for this value will be created and the supplied string or value is assigned to the parameter. If a value is input, the units are centimeters. If a string is input, the units can be specified as part of the string or it will default to the current length units of the document. This is ignored if the SeatType is not specified as kCountersinkSeat. 
+
+Name = CountersinkAngle. Value = A numeric value or a string that specifies the countersink angle. A parameter for this value will be created and the supplied string or value is assigned to the parameter. If a value is input, the units are radians. If a string is input, the units can be specified as part of the string or it will default to the current angle units of the document. This is ignored if the SeatType is not specified as kCountersinkSeat. 
+
+Name = SpotfaceWidth. Value = A numeric value or a string that specifies the spotface width. A parameter for this value will be created and the supplied string or value is assigned to the parameter. If a value is input, the units are centimeters. If a string is input, the units can be specified as part of the string or it will default to the current length units of the document. This is ignored if the SeatType is not specified as kSpotfaceSeat. 
+
+Name = SpotfaceDepth. Value = A numeric value or a string that specifies the spotface depth. A parameter for this value will be created and the supplied string or value is assigned to the parameter. If a value is input, the units are centimeters. If a string is input, the units can be specified as part of the string or it will default to the current length units of the document. This is ignored if the SeatType is not specified as kSpotfaceSeat.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="P:Inventor.SlotFeatures.Item">
+            <summary>Allows VARIANT-indexed access to items in the collection. You can use names as indexes as well.</summary>
+        </member>
+        <member name="P:Inventor.SlotFeatures.Type">
+            <summary>Gets the constant that indicates the type of this object.</summary>
+        </member>
+        <member name="T:Inventor.SlotPlacementDefinition">
+            <summary>SlotPlacementDefinition Object.</summary>
+        </member>
+        <member name="P:Inventor.SlotPlacementDefinition.Application">
+            <summary>Gets the root Application object. Where the property is weakly-typed, it can be set to (QueryInterfaced for) 'Application' when running with Inventor whereas, 'ApprenticeServer' when running with the Apprentice Server.</summary>
+        </member>
+        <member name="P:Inventor.SlotPlacementDefinition.IsRotationFlipped">
+            <summary>Gets and sets whether the slot rotation is flipped or not.</summary>
+        </member>
+        <member name="P:Inventor.SlotPlacementDefinition.Rotation">
+            <summary>Gets and sets rotation angle of the slot.</summary>
+        </member>
+        <member name="M:Inventor.SlotPlacementDefinition.SetSlotDirectionType(Inventor.DirectionTypeEnum,System.Object)">
+            <summary>Sets the slot direction type.</summary>
+            <param name="DirectionType">
+                <summary>Input DirectionTypeEnum that specifies the direction type.</summary>
+            </param>
+            <param name="SlotDirectionEntity">
+                <summary>Optional input entity that specifies the slot direction. This can be a planar Face object or a WorkPlane object with which the axis of the slot is perpendicular, or an Edge or WorkAxis object with which the axis of the slot is parallel. This is ignored if the DirectionType is not set to kCustomDirection.</summary>
+            </param>
+            <returns />
+        </member>
+        <member name="P:Inventor.SlotPlacementDefinition.SlotDirectionEntity">
+            <summary>Gets and sets an entity that defines the slot direction.</summary>
+        </member>
+        <member name="P:Inventor.SlotPlacementDefinition.SlotDirectionType">
+            <summary>Gets the DirectionTypeEnum that defines the slot axis direction.</summary>
+        </member>
+        <member name="P:Inventor.SlotPlacementDefinition.Type">
+            <summary>Gets the constant that indicates the type of this object.</summary>
         </member>
         <member name="T:Inventor.SmoothConstraint">
             <summary>The SmoothConstraint object represents a smooth (G2-continuous) constraint within a sketch.</summary>
@@ -136714,6 +137983,10 @@ If a bias point is not given, one is calculated that is at the center of the par
         <member name="P:Inventor.TangentDistanceDimConstraint.EntityTwo">
             <summary>Property that returns the second circle or line being constrained.</summary>
         </member>
+        <member name="M:Inventor.TangentDistanceDimConstraint.FlipDirection">
+            <summary>Method that flips the direction of the dimension constraint.</summary>
+            <returns />
+        </member>
         <member name="M:Inventor.TangentDistanceDimConstraint.GetReferenceKey(System.Byte[]@,System.Int32)">
             <summary>Method that generates and returns the reference key for this entity.</summary>
             <param name="ReferenceKey">
@@ -136775,6 +138048,10 @@ If a bias point is not given, one is calculated that is at the center of the par
         </member>
         <member name="P:Inventor.TangentDistanceDimConstraintProxy.EntityTwo">
             <summary>Property that returns the second circle or line being constrained.</summary>
+        </member>
+        <member name="M:Inventor.TangentDistanceDimConstraintProxy.FlipDirection">
+            <summary>Method that flips the direction of the dimension constraint.</summary>
+            <returns />
         </member>
         <member name="M:Inventor.TangentDistanceDimConstraintProxy.GetReferenceKey(System.Byte[]@,System.Int32)">
             <summary>Method that generates and returns the reference key for this entity.</summary>
@@ -142962,7 +144239,7 @@ If a bias point is not given, one is calculated that is at the center of the par
         <member name="M:Inventor.TranslatorAddIn.SaveCopyAs(System.Object,Inventor.TranslationContext,Inventor.NameValueMap,Inventor.DataMedium)">
             <summary>Save the document to the specified data-source.</summary>
             <param name="SourceObject">
-                <summary>Input object that specifies the source of the data to be saved. This can be a Document or FlatPattern object. FlatPattern can be exported to DXF, DWG, STEP and IGES formats.</summary>
+                <summary>Input object that specifies the source of the data to be saved. This can be a Document or FlatPattern object. FlatPattern can be exported to DXF, DWG, SAT, STEP and IGES formats.</summary>
             </param>
             <param name="Context">
                 <summary>Input TranslationContext object that can be used to determine the context for the translation.</summary>
@@ -144405,6 +145682,10 @@ If a bias point is not given, one is calculated that is at the center of the par
         <member name="P:Inventor.TwoPointDistanceDimConstraint.Driven">
             <summary>Gets and sets whether this dimension constraint is driving the geometry or the geometry is defining the value associated with the constraint.</summary>
         </member>
+        <member name="M:Inventor.TwoPointDistanceDimConstraint.FlipDirection">
+            <summary>Method that flips the direction of the dimension constraint.</summary>
+            <returns />
+        </member>
         <member name="M:Inventor.TwoPointDistanceDimConstraint.GetReferenceKey(System.Byte[]@,System.Int32)">
             <summary>Method that generates and returns the reference key for this entity.</summary>
             <param name="ReferenceKey">
@@ -144566,6 +145847,10 @@ If a bias point is not given, one is calculated that is at the center of the par
         </member>
         <member name="P:Inventor.TwoPointDistanceDimConstraintProxy.Driven">
             <summary>Gets and sets whether this dimension constraint is driving the geometry or the geometry is defining the value associated with the constraint.</summary>
+        </member>
+        <member name="M:Inventor.TwoPointDistanceDimConstraintProxy.FlipDirection">
+            <summary>Method that flips the direction of the dimension constraint.</summary>
+            <returns />
         </member>
         <member name="M:Inventor.TwoPointDistanceDimConstraintProxy.GetReferenceKey(System.Byte[]@,System.Int32)">
             <summary>Method that generates and returns the reference key for this entity.</summary>
@@ -151471,6 +152756,18 @@ If there are no consumers of the construction work feature, it is the responsibi
         </member>
         <member name="P:Inventor.WorkPoints.Type">
             <summary>Returns an ObjectTypeEnum indicating this object's type.</summary>
+        </member>
+        <member name="T:Inventor.WorkPointsEnumerator">
+            <summary>Work Points Enumerator Object.</summary>
+        </member>
+        <member name="P:Inventor.WorkPointsEnumerator.Count">
+            <summary>Gets the number of items in this collection.</summary>
+        </member>
+        <member name="P:Inventor.WorkPointsEnumerator.Item">
+            <summary>Allows integer-indexed access to items in the collection.</summary>
+        </member>
+        <member name="P:Inventor.WorkPointsEnumerator.Type">
+            <summary>Gets the constant that indicates the type of this object.</summary>
         </member>
         <member name="T:Inventor.WorkSurface">
             <summary>The WorkSurface object represents a work surface, which is a type of work feature.</summary>

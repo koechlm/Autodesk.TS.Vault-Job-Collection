@@ -3619,7 +3619,7 @@ Enumeration of Navisworks <see cref="T:Autodesk.Navisworks.Api.Document">Documen
       <summary>Version of file format used by Navisworks 2025</summary>
     </member>
     <member name="F:Autodesk.Navisworks.Api.DocumentFileVersion.Navisworks2026">
-      <summary>Version of file format used by Navisworks 2026</summary>
+      <summary>Version of file format used by Navisworks 2027</summary>
     </member>
     <member name="T:Autodesk.Navisworks.Api.DocumentInfo">
       <summary>

@@ -223,9 +223,12 @@ namespace adsk.ts.job.shared
                     _WebSrvMgr.DocumentServiceExtensions.UpdateFileRevisionNumbers(new long[] { mExpFile.Id }, new string[] { mFile.FileRev.Label }, "Rev Index synchronized by ExportSampleJob");
                     mExpFile = (_WebSrvMgr.DocumentService.GetLatestFileByMasterId(mExpFile.MasterId));
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    //the job will not stop execution in this sample, if revision labels don't synchronize
+                    _trace.WriteLine("Job failed synchronizing the revision label of " + mFile.Name + " with export file: " + mExpFile.Name + " . Exception details: " + ex);
+                    //you may uncomment the action below if the job should abort executing due to failures copying property values
+                    //throw new Exception("Job failed synchronizing the revision label of " + mFile.Name + " with export file: " + mExpFile.Name + " . Exception details: " + ex.ToString() + " ");
+
                 }
 
                 //synchronize source file properties to export file properties for UDPs assigned to both
