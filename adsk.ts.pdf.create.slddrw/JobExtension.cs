@@ -259,7 +259,11 @@ namespace adsk.ts.pdf.create.slddrw
 
                         // prepare the PDF export                        
                         DrawingDoc swDraw = (DrawingDoc)swModel;
-                        ExportPdfData swPdfData = (ExportPdfData)sldWorks.GetExportFileData((int)swExportDataFileType_e.swExportPdfData);                        
+                        ExportPdfData swPdfData = (ExportPdfData)sldWorks.GetExportFileData((int)swExportDataFileType_e.swExportPdfData);
+                        if (swPdfData == null)
+                        {
+                            throw new Exception("Failed to get PDF export data. Ensure the SolidWorks PDF export add-in is available.");
+                        }
 
                         // get all sheets in the drawing
                         object[] sheetNames = (object[])swDraw.GetSheetNames();
