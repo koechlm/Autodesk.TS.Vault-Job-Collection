@@ -206,8 +206,8 @@ namespace adsk.ts.job.assignupdateitem
                 bool mPromoteFailed = false;
                 try
                 {
-                    // in this case - we enforce to create/update an item by checkin; with that we must not cause the item creation "twice" in case an assembly's subcomponent also requires an item creation
-                    // with that we have to set ItemAssignAll = No
+                    // we want to handle the root component only and avoid promoting the children components again, as they run through the same job when they get processed;
+                    // therefore, we set ItemAssignAll to No, which means only the root item will be created/updated
                     mItemSvc.AddFilesToPromote(new long[] { mFileId }, ItemAssignAll.No, true);
                     DateTime timestamp;
                     GetPromoteOrderResults promoteOrderResults = mItemSvc.GetPromoteComponentOrder(out timestamp);
@@ -236,15 +236,22 @@ namespace adsk.ts.job.assignupdateitem
                         if (mPromoteFailed != true)
                         {
                             promoteResult = mItemSvc.GetPromoteComponentsResults(timestamp);
-                            //check the result for locked root item as we continue to update this
-                            if (promoteResult.ItemRevArray[0].Locked != true)
+                            updatedItems = promoteResult.ItemRevArray;
+
+                            // collect all unlocked items to commit
+                            List<Item> itemsToCommit = new List<Item>();
+                            foreach (Item mItem in promoteResult.ItemRevArray)
                             {
-                                updatedItems = promoteResult.ItemRevArray;
-                                Item m_CurrentItem = promoteResult.ItemRevArray[0];
-                                Item[] m_ItemToUpdateCommit = new Item[1];
-                                m_ItemToUpdateCommit[0] = m_CurrentItem;
-                                // commit the changes for the root element only; the reason is as stated before for ItemAssignAll = No
-                                mItemSvc.UpdateAndCommitItems(m_ItemToUpdateCommit);
+                                if (mItem.Locked != true)
+                                {
+                                    itemsToCommit.Add(mItem);
+                                }
+                            }
+
+                            if (itemsToCommit.Count > 0)
+                            {
+                                // commit the changes for all unlocked items
+                                mItemSvc.UpdateAndCommitItems(itemsToCommit.ToArray());
 
                                 // check for FM Sync setting and execute if needed
                                 if (mSettings.FMSync.ToLower() == "true")
@@ -254,15 +261,17 @@ namespace adsk.ts.job.assignupdateitem
 
                                     if (mExternalSyncService != null)
                                     {
-                                        // submit the task to FM for the created/modified item                                       
-                                        long mRevId = serviceManager.ItemService.GetLatestItemByItemMasterId(m_CurrentItem.MasterId).Id;
-                                        mExternalSyncService.AddExtSyncTask(mRevId, "ITEM", mFMConfigName, null);
+                                        foreach (Item mItem in itemsToCommit)
+                                        {
+                                            // submit the task to FM for each created/modified item
+                                            long mRevId = serviceManager.ItemService.GetLatestItemByItemMasterId(mItem.MasterId).Id;
+                                            NameValuePair[] taskParamArray = new NameValuePair[] { };
+                                            string workflowType = "Adsk.UploadItem";
+                                            string description = "Assign/Update Item for file " + mFile.Name;
+                                            mExternalSyncService.AddExtSyncTask(mRevId, "ITEM", mFMConfigName, workflowType, description, taskParamArray);
+                                        }
                                     }
                                 }
-                            }
-                            else
-                            {
-                                //create a restriction for file e and item promoteResult.ItemRevArray[0] Number / Title
                             }
                         }
 
@@ -286,16 +295,18 @@ namespace adsk.ts.job.assignupdateitem
                     else
                     {
                         mPromoteFailed = true;
-                        context.Log("Job failed likely due to missing Item Data; Check the property 'Item Assignable'", MessageType.eError);
+                        context.Log("Job failed likely due to missing Item Data; Check the property 'Item Assignable'. Details: " + ex.Message, MessageType.eError);
                     }
                 }
                 finally
                 {
                     if (promoteResult != null && mPromoteFailed == true)
                     {
-                        // clear out the promoted item
-                        serviceManager.ItemService.DeleteUnusedItemNumbers(new long[] { promoteResult.ItemRevArray[0].MasterId });
-                        serviceManager.ItemService.UndoEditItems(new long[] { promoteResult.ItemRevArray[0].Id });
+                        // clear out all promoted items
+                        long[] masterIds = promoteResult.ItemRevArray.Select(i => i.MasterId).ToArray();
+                        long[] itemIds = promoteResult.ItemRevArray.Select(i => i.Id).ToArray();
+                        serviceManager.ItemService.DeleteUnusedItemNumbers(masterIds);
+                        serviceManager.ItemService.UndoEditItems(itemIds);
                     }
                 }
 
