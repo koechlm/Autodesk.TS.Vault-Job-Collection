@@ -43,6 +43,12 @@ namespace adsk.ts.rvt.create.inventor
         [XmlElement("AcceptLocalIpj")]
         public string AcceptLocalIpj;
 
+        [XmlElement("TargetRevitVersion")]
+        public string TargetRevitVersion;
+
+        [XmlElement("RevitTemplate")]
+        public string RevitTemplate;
+
         #region for future use
         //[XmlElement("OutputPath")]
         //public string mOutPutPath;

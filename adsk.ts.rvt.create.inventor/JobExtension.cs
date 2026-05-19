@@ -494,7 +494,7 @@ namespace adsk.ts.rvt.create.inventor
                     revitExportDef.RemovePartsBySize = true;
                     revitExportDef.RemovePartsSize = 1.0; // 1 cm
                     // Feature removal
-                    ObjectCollection mPreservedFeatures = null ;
+                    ObjectCollection mPreservedFeatures = null;
                     revitExportDef.PreservedFeatures = mPreservedFeatures; //118789 Do not preserve any features
                     revitExportDef.RemoveHolesStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveByRange; //118787 Remove in range
                     revitExportDef.RemoveHolesDiameterRange = 1.0; // 1 cm
@@ -518,39 +518,80 @@ namespace adsk.ts.rvt.create.inventor
 
             // create or update the export feature
             if (mNewExportDef == true)
-            {                
-                revitExport = mAsmDoc.ComponentDefinition.RevitExports.Add(revitExportDef);
-                mTrace.WriteLine("Job created new RVT export definition and feature.");
-            }
-            else
             {
-                //delete existing export file; note the resulting file name is e.g. <assemblyfile>.iam.rvt
-                if (System.IO.File.Exists(mExpFileName))
+                // check the availability of the target Revit file format.
+                Inventor.FileManager fileManager = mInv.FileManager;
+                Inventor.NameValueMap formatOptions = mInv.TransientObjects.CreateNameValueMap();
+                if (fileManager != null)
                 {
-                    System.IO.FileInfo fileInfo = new FileInfo(mExpFileName);
-                    fileInfo.IsReadOnly = false;
-                    fileInfo.Delete();
+                    formatOptions = fileManager.GetRevitEngineInstallationStatus();
+                    // check the configured Revit version as available in the formatOptions
+                    if (formatOptions != null)
+                    {
+                        if(mSettings.TargetRevitVersion != null && mSettings.TargetRevitVersion != "")
+                        {
+                            if (formatOptions.Value[mSettings.TargetRevitVersion] == null)
+                            {
+                                mTrace.WriteLine("Job could not find the specified Revit version in the Inventor Revit export engine options; exit job with failure.");
+                                throw new Exception("Translator job's single task creating an RVT export from Inventor file failed: could not find the specified Revit version in the Inventor Revit export engine options.");
+                            }
+                        }
+                        else
+                        {
+                            mTrace.WriteLine("No target Revit version specified in settings file; continue with export creation with default Revit version.");
+                        }
+                    }
+                    revitExportDef.RevitVersion = mSettings.TargetRevitVersion;
                 }
-                revitExport.Update();
-                mTrace.WriteLine("Job updated existing RVT export definition and feature.");
-            }
-            // save the document to make sure the export feature is stored; we did not check-out dependent files
-            mDoc.Save2(false);
-            // close the document and skip save
-            mDoc.Close(true);
 
-            // add the created file to the upload list if its there
-            System.IO.FileInfo mExportFileInfo = new System.IO.FileInfo(mExpFileName);
-            if (mExportFileInfo.Exists)
-            {
-                mFilesToUpload.Add(mExpFileName);
-                mTrace.WriteLine("RVT Simplification created file: " + mFilesToUpload.LastOrDefault());
-                mTrace.IndentLevel -= 1;
-            }
-            else
-            {
-                mJobInventor.mResetIpj(mSaveProject);
-                throw new Exception("Validating the export file " + mExpFileName + " before upload failed.");
+                // download the revit template from Vault, if template consumption is enforced by settings
+                if (mSettings.RevitTemplate != null && mSettings.RevitTemplate != "")
+                {
+                    // Download the template from Vault
+                    ACW.File mTemplateFile = mWsMgr.DocumentService.FindLatestFilesByPaths([mSettings.RevitTemplate]).FirstOrDefault();
+                    if (mTemplateFile != null)
+                    {
+                        string templateLocalPath = tsJobCommon.mDownloadFile(mTemplateFile);
+                        revitExportDef.RevitTemplate = templateLocalPath;
+                    }
+                    else
+                    {
+                        mTrace.WriteLine("Job could not find the specified Revit template in Vault; continue with export creation without template.");
+                    }
+
+                    revitExport = mAsmDoc.ComponentDefinition.RevitExports.Add(revitExportDef);
+                    mTrace.WriteLine("Job created new RVT export definition and feature.");
+                }
+                else
+                {
+                    //delete existing export file; note the resulting file name is e.g. <assemblyfile>.iam.rvt
+                    if (System.IO.File.Exists(mExpFileName))
+                    {
+                        System.IO.FileInfo fileInfo = new FileInfo(mExpFileName);
+                        fileInfo.IsReadOnly = false;
+                        fileInfo.Delete();
+                    }
+                    revitExport.Update();
+                    mTrace.WriteLine("Job updated existing RVT export definition and feature.");
+                }
+                // save the document to make sure the export feature is stored; we did not check-out dependent files
+                mDoc.Save2(false);
+                // close the document and skip save
+                mDoc.Close(true);
+
+                // add the created file to the upload list if its there
+                System.IO.FileInfo mExportFileInfo = new System.IO.FileInfo(mExpFileName);
+                if (mExportFileInfo.Exists)
+                {
+                    mFilesToUpload.Add(mExpFileName);
+                    mTrace.WriteLine("RVT Simplification created file: " + mFilesToUpload.LastOrDefault());
+                    mTrace.IndentLevel -= 1;
+                }
+                else
+                {
+                    mJobInventor.mResetIpj(mSaveProject);
+                    throw new Exception("Validating the export file " + mExpFileName + " before upload failed.");
+                }
             }
 
             #endregion create RVT export

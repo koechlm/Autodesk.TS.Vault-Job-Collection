@@ -13,6 +13,12 @@
   <!-- Export File Format(s)-->
   <!--  Supported Values/File Formats are: RVT -->
   <ExportFormats>RVT</ExportFormats>
+  
+  <!-- Target Revit file release format; valid options are 2024, 2025, 2026 and 2027. Note - the Revit version must be installed on the Job Processor machine -->
+  <TargetRevitVersion>2027</TargetRevitVersion>
+  
+  <!-- Revit Template (*.rte) file location as Vault path, e.g., $/Templates/Revit/RevitExportTemplate.rte; leave empty to consume default template. -->
+  <RevitTemplate>$/Templates/Revit/RevitExportTemplate.rte</RevitTemplate>
 
   <!-- RVT preset: store a Vault path of the Inventor preset file, e.g. $/Templates/Inventor/Presest/SimplifyCmd.preset-->
   <InventorPreset>$/Templates/Inventor/Presets/SimplifyCmd.preset</InventorPreset>
