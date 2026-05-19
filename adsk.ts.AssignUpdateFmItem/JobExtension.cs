@@ -206,9 +206,9 @@ namespace adsk.ts.job.assignupdateitem
                 bool mPromoteFailed = false;
                 try
                 {
-                    // in this case - we enforce to create/update an item by checkin; with that we must not cause the item creation "twice" in case an assembly's subcomponent also requires an item creation
-                    // with that we have to set ItemAssignAll = No
-                    mItemSvc.AddFilesToPromote(new long[] { mFileId }, ItemAssignAll.No, true);
+                    // we primarily want to handle the root component but don't know if the children are processed before.
+                    // therefore, we set ItemAssignAll to Yes, overruling the server setting.
+                    mItemSvc.AddFilesToPromote(new long[] { mFileId }, ItemAssignAll.Yes, true);
                     DateTime timestamp;
                     GetPromoteOrderResults promoteOrderResults = mItemSvc.GetPromoteComponentOrder(out timestamp);
                     if (promoteOrderResults.PrimaryArray != null && promoteOrderResults.PrimaryArray.Any())
