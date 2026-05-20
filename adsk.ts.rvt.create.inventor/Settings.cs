@@ -49,6 +49,9 @@ namespace adsk.ts.rvt.create.inventor
         [XmlElement("RevitTemplate")]
         public string RevitTemplate;
 
+        [XmlElement("RvtAssociative")]
+        public string RvtAssociative;
+
         #region for future use
         //[XmlElement("OutputPath")]
         //public string mOutPutPath;
