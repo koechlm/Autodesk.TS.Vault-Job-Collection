@@ -13,6 +13,9 @@
   <!-- Export File Format(s)-->
   <!--  Supported Values/File Formats are: RVT -->
   <ExportFormats>RVT</ExportFormats>
+
+  <!-- enable/disable Revit Updating; default is False, as Vault Automation secures associativity -->
+  <RvtAssociative>False</RvtAssociative>
   
   <!-- Target Revit file release format; valid options are 2024, 2025, 2026 and 2027. Note - the Revit version must be installed on the Job Processor machine -->
   <TargetRevitVersion>2027</TargetRevitVersion>

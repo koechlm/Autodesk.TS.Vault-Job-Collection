@@ -178,7 +178,7 @@ namespace adsk.ts.rvt.create.inventor
             mTrace.IndentLevel += 1;
             mTrace.WriteLine("Translator Job validates execution rules...");
 
-            // only run the job for 3D source file types, supported by exports (as of today)
+            // only run the job for Inventor assembly file types, supported for Revit simplification (as of today)
             List<string> mFileExtensions = new List<string> { ".iam" }; //ipn is not supported by InventorServer
 
             if (!mFileExtensions.Any(n => mFile.Name.ToLower().EndsWith(n)))
@@ -240,6 +240,30 @@ namespace adsk.ts.rvt.create.inventor
                 }
             }
 
+            // check the availability of the target Revit file format.
+            Inventor.FileManager fileManager = mInv.FileManager;
+            Inventor.NameValueMap formatOptions = mInv.TransientObjects.CreateNameValueMap();
+            if (fileManager != null)
+            {
+                formatOptions = fileManager.GetRevitEngineInstallationStatus();
+                // check the configured Revit version as available in the formatOptions
+                if (formatOptions != null)
+                {
+                    if (mSettings.TargetRevitVersion != null && mSettings.TargetRevitVersion != "")
+                    {
+                        if (formatOptions.Value[mSettings.TargetRevitVersion] is false)
+                        {
+                            mTrace.WriteLine("Job could not find the specified Revit Interoperability version in the Inventor Revit export engine options; exit job with failure.");
+                            throw new Exception("Translator job's single task creating an RVT export from Inventor file failed: could not find the specified Revit Interoperability version in the Inventor Revit export engine options.");
+                        }
+                    }
+                    else
+                    {
+                        mTrace.WriteLine("No target Revit version specified in settings file; continue with export creation with default Revit version.");
+                    }
+                }
+            }
+
             // disable iLogic if active
             try
             {
@@ -254,6 +278,22 @@ namespace adsk.ts.rvt.create.inventor
             catch (Exception)
             {
                 //ignore, iLogic not installed
+            }
+
+            // disable Vault Data Standard Addin if active
+            try
+            {
+                Inventor.ApplicationAddIn addInVDS = null;
+                addInVDS = mInv.ApplicationAddIns.ItemById["{B0E8F1C3-9BFD-4B9A-9C8B-7F2E1C025DCD}"]; // Vault Data Standard
+                if (addInVDS != null && addInVDS.Activated == true)
+                {
+                    addInVDS.Deactivate();
+                    mDisabledAddins.Add(addInVDS);
+                }
+            }
+            catch (Exception)
+            {
+                //ignore, Vault Data Standard Addin not installed
             }
 
             // disable Vault Addin if active
@@ -320,13 +360,25 @@ namespace adsk.ts.rvt.create.inventor
 
             // use shared code to download the file
             tsJobCommon = new(connection, mWsMgr, mTrace);
-            // adding or updating a Revit export feature creates a new file iteration: download and check out
-            string mDocPath = tsJobCommon.mDownloadFile(mFile, true);
-            if (mDocPath != null)
+            string mDocPath = null;
+            // download with/without check-out depending on Revit associativity setting; the download method validates and exits the job in case of failures
+            if (mSettings.RvtAssociative.ToLower() == "true")
             {
-                string mExt = System.IO.Path.GetExtension(mDocPath);
-
+                mDocPath = tsJobCommon.mDownloadFile(mFile, true);
+                if (mDocPath != null)
+                {
+                    string mExt = System.IO.Path.GetExtension(mDocPath);
+                }
             }
+            else
+            {
+                mDocPath = tsJobCommon.mDownloadFile(mFile, false);
+                if (mDocPath != null)
+                {
+                    string mExt = System.IO.Path.GetExtension(mDocPath);
+                }
+            }
+
             ACW.File mDownloadedFile = mWsMgr.DocumentService.GetLatestFileByMasterId(mFile.MasterId);
             mNewFileIteration = new VDF.Vault.Currency.Entities.FileIteration(connection, mDownloadedFile);
 
@@ -364,6 +416,11 @@ namespace adsk.ts.rvt.create.inventor
             if (mDoc == null)
             {
                 mJobInventor.mResetIpj(mSaveProject);
+                // undo the check-out if the file is checked out
+                if (mDownloadedFile.CheckedOut == true)
+                {
+                    mWsMgr.DocumentService.UndoCheckoutFile(mFile.MasterId, out ByteArray downloadTicket);
+                }
                 throw new Exception("Job could not open the source file " + mDocPath + " in Inventor.");
             }
 
@@ -376,6 +433,11 @@ namespace adsk.ts.rvt.create.inventor
             {
                 mTrace.WriteLine("Job could not create RVT export: source file is not an assembly.");
                 mJobInventor.mResetIpj(mSaveProject);
+                // undo the check-out if the file is checked out
+                if (mDownloadedFile.CheckedOut == true)
+                {
+                    mWsMgr.DocumentService.UndoCheckoutFile(mFile.MasterId, out ByteArray downloadTicket);
+                }
                 throw new Exception("Job's single task creating an RVT export from Inventor file failed: source file is not an assembly.");
             }
 
@@ -384,18 +446,22 @@ namespace adsk.ts.rvt.create.inventor
             {
                 mAsmDoc.ComponentDefinition.ModelStates[1].Activate();
             }
-            // check existing export definition
+
+            // check existing export definition if the export type is associative
             Inventor.RevitExport revitExport = null;
             Inventor.RevitExportDefinition revitExportDef = null;
             bool mNewExportDef = false;
             string mExpFileName = mDocPath + ".rvt";
-            foreach (Inventor.RevitExport rvtFeature in mAsmDoc.ComponentDefinition.RevitExports)
+            if (mSettings.RvtAssociative.ToLower() == "true")
             {
-                if (rvtFeature.Name == mExpFileName)
+                foreach (Inventor.RevitExport rvtFeature in mAsmDoc.ComponentDefinition.RevitExports)
                 {
-                    //rvtFeature = rvtFeature;
-                    revitExportDef = rvtFeature.Definition;
-                    break;
+                    if (rvtFeature.Name == mExpFileName)
+                    {
+                        //rvtFeature = rvtFeature;
+                        revitExportDef = rvtFeature.Definition;
+                        break;
+                    }
                 }
             }
 
@@ -493,9 +559,9 @@ namespace adsk.ts.rvt.create.inventor
                     // Part removal
                     revitExportDef.RemovePartsBySize = true;
                     revitExportDef.RemovePartsSize = 1.0; // 1 cm
-                    // Feature removal
-                    ObjectCollection mPreservedFeatures = null;
-                    revitExportDef.PreservedFeatures = mPreservedFeatures; //118789 Do not preserve any features
+                    // Feature removal (not possible for automation)
+                    //ObjectCollection mPreservedFeatures = null;
+                    //revitExportDef.PreservedFeatures = mPreservedFeatures; //118789 Do not preserve any features
                     revitExportDef.RemoveHolesStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveByRange; //118787 Remove in range
                     revitExportDef.RemoveHolesDiameterRange = 1.0; // 1 cm
                     revitExportDef.RemoveFilletsStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll; //118786 Remove all
@@ -506,42 +572,20 @@ namespace adsk.ts.rvt.create.inventor
                     revitExportDef.RemoveTunnelsStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll; //118786 Remove all
                     // Revit structure
                     revitExportDef.Structure = Inventor.RevitExportStructureTypeEnum.kAllInOneElementStructure; //119041 Everything structured as a single Revit element
-                    revitExportDef.EnableUpdating = true;
                     // Advanced Options
                     revitExportDef.RemoveAllInternalVoids = true;
                     revitExportDef.RemoveInternalParts = true;
                     revitExportDef.UseColorOverrideFromSourceComponent = true;
                 }
 
-
-            }
-
-            // create or update the export feature
-            if (mNewExportDef == true)
-            {
-                // check the availability of the target Revit file format.
-                Inventor.FileManager fileManager = mInv.FileManager;
-                Inventor.NameValueMap formatOptions = mInv.TransientObjects.CreateNameValueMap();
-                if (fileManager != null)
+                // enable updating if Revit association feature is required
+                if (mSettings.RvtAssociative.ToLower() == "true")
                 {
-                    formatOptions = fileManager.GetRevitEngineInstallationStatus();
-                    // check the configured Revit version as available in the formatOptions
-                    if (formatOptions != null)
-                    {
-                        if(mSettings.TargetRevitVersion != null && mSettings.TargetRevitVersion != "")
-                        {
-                            if (formatOptions.Value[mSettings.TargetRevitVersion] == null)
-                            {
-                                mTrace.WriteLine("Job could not find the specified Revit version in the Inventor Revit export engine options; exit job with failure.");
-                                throw new Exception("Translator job's single task creating an RVT export from Inventor file failed: could not find the specified Revit version in the Inventor Revit export engine options.");
-                            }
-                        }
-                        else
-                        {
-                            mTrace.WriteLine("No target Revit version specified in settings file; continue with export creation with default Revit version.");
-                        }
-                    }
-                    revitExportDef.RevitVersion = mSettings.TargetRevitVersion;
+                    revitExportDef.EnableUpdating = true;
+                }
+                else
+                {
+                    revitExportDef.EnableUpdating = false;
                 }
 
                 // download the revit template from Vault, if template consumption is enforced by settings
@@ -558,24 +602,33 @@ namespace adsk.ts.rvt.create.inventor
                     {
                         mTrace.WriteLine("Job could not find the specified Revit template in Vault; continue with export creation without template.");
                     }
+                }
 
+                // create export/export feature or update the export feature
+                // delete existing export file; note the resulting file name is e.g. <assemblyfile>.iam.rvt
+                if (System.IO.File.Exists(mExpFileName))
+                {
+                    System.IO.FileInfo fileInfo = new FileInfo(mExpFileName);
+                    fileInfo.IsReadOnly = false;
+                    fileInfo.Delete();
+                }
+                if (mNewExportDef == true)
+                {
                     revitExport = mAsmDoc.ComponentDefinition.RevitExports.Add(revitExportDef);
                     mTrace.WriteLine("Job created new RVT export definition and feature.");
                 }
                 else
-                {
-                    //delete existing export file; note the resulting file name is e.g. <assemblyfile>.iam.rvt
-                    if (System.IO.File.Exists(mExpFileName))
-                    {
-                        System.IO.FileInfo fileInfo = new FileInfo(mExpFileName);
-                        fileInfo.IsReadOnly = false;
-                        fileInfo.Delete();
-                    }
+                {                    
                     revitExport.Update();
                     mTrace.WriteLine("Job updated existing RVT export definition and feature.");
                 }
-                // save the document to make sure the export feature is stored; we did not check-out dependent files
-                mDoc.Save2(false);
+
+                // save the document if associative export is enabled;
+                if (mSettings.RvtAssociative.ToLower() == "true" && mDownloadedFile.CheckedOut == true)
+                {
+                    mDoc.Save2(false);
+                }
+
                 // close the document and skip save
                 mDoc.Close(true);
 
@@ -590,6 +643,11 @@ namespace adsk.ts.rvt.create.inventor
                 else
                 {
                     mJobInventor.mResetIpj(mSaveProject);
+                    // undo the check-out if the file is checked out
+                    if (mDownloadedFile.CheckedOut == true)
+                    {
+                        mWsMgr.DocumentService.UndoCheckoutFile(mFile.MasterId, out ByteArray downloadTicket);
+                    }
                     throw new Exception("Validating the export file " + mExpFileName + " before upload failed.");
                 }
             }
@@ -598,45 +656,54 @@ namespace adsk.ts.rvt.create.inventor
 
             // check in the source file, to add/update the Revit Export feature
             #region check in source file
-            VDF.Currency.FilePathAbsolute vdfPath = new VDF.Currency.FilePathAbsolute(mDocPath);
+
             FileIteration mUploadedFile = null;
-            try
+            if (mDownloadedFile.CheckedOut == true)
             {
-                if (mFileAssocParams.Count > 0)
+                VDF.Currency.FilePathAbsolute vdfPath = new VDF.Currency.FilePathAbsolute(mDocPath);
+
+                try
                 {
-                    mUploadedFile = connection.FileManager.CheckinFile(
-                        file: mNewFileIteration,
-                        comment: "Created by job " + JOB_TYPE,
-                        keepCheckedOut: false,
-                        associations: mFileAssocParams.ToArray(),
-                        bom: null,
-                        copyBom: true,
-                        newFileName: null,
-                        classification: mFileIteration.FileClassification,
-                        hidden: false,
-                        filePath: vdfPath
-                    );
+                    if (mFileAssocParams.Count > 0)
+                    {
+                        mUploadedFile = connection.FileManager.CheckinFile(
+                            file: mNewFileIteration,
+                            comment: "Created by job " + JOB_TYPE,
+                            keepCheckedOut: false,
+                            associations: mFileAssocParams.ToArray(),
+                            bom: null,
+                            copyBom: true,
+                            newFileName: null,
+                            classification: mFileIteration.FileClassification,
+                            hidden: false,
+                            filePath: vdfPath
+                        );
+                    }
+                    else
+                    {
+                        mUploadedFile = connection.FileManager.CheckinFile(
+                            file: mNewFileIteration,
+                            comment: "Created by job " + JOB_TYPE,
+                            keepCheckedOut: false,
+                            associations: null,
+                            bom: null,
+                            copyBom: true,
+                            newFileName: null,
+                            classification: mFileIteration.FileClassification,
+                            hidden: false,
+                            filePath: vdfPath
+                        );
+                    }
                 }
-                else
+                catch
                 {
-                    mUploadedFile = connection.FileManager.CheckinFile(
-                        file: mNewFileIteration,
-                        comment: "Created by job " + JOB_TYPE,
-                        keepCheckedOut: false,
-                        associations: null,
-                        bom: null,
-                        copyBom: true,
-                        newFileName: null,
-                        classification: mFileIteration.FileClassification,
-                        hidden: false,
-                        filePath: vdfPath
-                    );
+                    context.Log(null, "Job could not check-in updated file: " + mUploadedFile.EntityName + ".");
+                    throw new Exception("Job's single task creating an RVT export from Inventor file failed: could not check-in updated source file.");
                 }
             }
-            catch
+            else
             {
-                context.Log(null, "Job could not check-in updated file: " + mUploadedFile.EntityName + ".");
-                throw new Exception("Job's single task creating an RVT export from Inventor file failed: could not check-in updated source file.");
+                mUploadedFile = mFileIteration;
             }
             #endregion check in source file
 
@@ -703,17 +770,18 @@ namespace adsk.ts.rvt.create.inventor
             if (mPresetFile != null)
             {
                 xmlDocument.Load(presetFile);
-                XmlNodeList settingNodes = xmlDocument.DocumentElement.SelectNodes("//OUTPUT_TYPE_SELECTOR[@Value='OUTPUT_TYPE_RVT']");
+                // select all nodes with attribute "Name" starts with RVT_Level_
+                XmlNodeList settingNodes = xmlDocument.SelectNodes("//Preset[starts-with(@Name, 'RVT_Level_')]");
+
                 foreach (XmlNode mNode in settingNodes)
                 {
                     Dictionary<string, string> mSettings = new Dictionary<string, string>();
-                    XmlNode mParentNode = mNode.ParentNode;
-                    foreach (XmlNode mChildNode in mParentNode.ChildNodes)
+                    foreach (XmlNode mChildNode in mNode.ChildNodes)
                     {
                         mSettings.Add(mChildNode.Name, mChildNode.Attributes["Value"].Value);
                     }
-                    mPresetSettings.Add(mParentNode.Attributes["Name"].Value, mSettings);
-                    mRvtPresets.Add(mParentNode.Attributes["Name"].Value);
+                    mPresetSettings.Add(mNode.Attributes["Name"].Value, mSettings);
+                    mRvtPresets.Add(mNode.Attributes["Name"].Value);
                 }
 
                 return mPresetSettings;
