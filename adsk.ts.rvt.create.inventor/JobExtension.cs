@@ -214,6 +214,7 @@ namespace adsk.ts.rvt.create.inventor
 
             #region validate Inventor availability
             // validate Inventor instance for RVT Export format
+            // Inventor.InventorServer mInv = context.InventorObject as InventorServer;
             mInv = mGetInventor();
             if (mInv == null)
             {
@@ -224,20 +225,20 @@ namespace adsk.ts.rvt.create.inventor
             {
                 // check for the BIM Interoperability addin
                 Inventor.ApplicationAddIns addIns = mInv.ApplicationAddIns;
-                Inventor.ApplicationAddIn addInBimSimplify = null;
-                try
-                {
-                    addInBimSimplify = addIns.get_ItemById("{71019C12-43F6-4C11-BA7A-AD9BDBC5EA0C}"); // BIM Simplify
-                    if (addInBimSimplify != null) //removed && addInBimSimplify.Activated == false
-                    {
-                        addInBimSimplify.Activate();
-                    }
-                }
-                catch (Exception)
-                {
-                    mTrace.WriteLine("Translator job required Inventor Application with BIM Simplify addin but failed to find the addin; exit job with failure.");
-                    throw new Exception("Translator job's single task creating an RVT export from Inventor file failed: could not activate Inventor BIM Simplify addin.");
-                }
+                //Inventor.ApplicationAddIn addInBimSimplify = null;
+                //try
+                //{
+                //    addInBimSimplify = addIns.get_ItemById("{71019C12-43F6-4C11-BA7A-AD9BDBC5EA0C}"); // BIM Simplify
+                //    if (addInBimSimplify != null) //removed && addInBimSimplify.Activated == false
+                //    {
+                //        addInBimSimplify.Activate();
+                //    }
+                //}
+                //catch (Exception)
+                //{
+                //    mTrace.WriteLine("Translator job required Inventor Application with BIM Simplify addin but failed to find the addin; exit job with failure.");
+                //    throw new Exception("Translator job's single task creating an RVT export from Inventor file failed: could not activate Inventor BIM Simplify addin.");
+                //}
 
 
                 // Activate the RVT Translator Addin
@@ -366,7 +367,7 @@ namespace adsk.ts.rvt.create.inventor
                 //[Optionally:] get Inventor Design Data settings and download all related files ---------
 
                 // workaround to get the BIM Simplify addin loaded and available
-                mInv.Documents.Add(DocumentTypeEnum.kPartDocumentObject, "", true);
+                // mInv.Documents.Add(DocumentTypeEnum.kPartDocumentObject, "", true);
 
                 mTrace.WriteLine("Job successfully activated Inventor IPJ.");
 
@@ -449,18 +450,18 @@ namespace adsk.ts.rvt.create.inventor
                 {
                     mAsmDoc = (Inventor.AssemblyDocument)mDoc;
 
-                    Inventor.UserInterfaceManager userInterfaceManager = mInv.UserInterfaceManager;
-                    Inventor.EnvironmentManager environmentManager = mAsmDoc.EnvironmentManager;
-                    if (userInterfaceManager != null)
-                    {
-                        Inventor.Environment environment = userInterfaceManager.Environments["AEC_Exchange:Environment"];
-                        if (environment != null)
-                        {
-                            environmentManager.SetCurrentEnvironment(environment);
-                            // wait as it may need to load the related addin
-                            System.Threading.Thread.Sleep(10000);
-                        }
-                    }
+                    //Inventor.UserInterfaceManager userInterfaceManager = mInv.UserInterfaceManager;
+                    //Inventor.EnvironmentManager environmentManager = mAsmDoc.EnvironmentManager;
+                    //if (userInterfaceManager != null)
+                    //{
+                    //    Inventor.Environment environment = userInterfaceManager.Environments["AEC_Exchange:Environment"];
+                    //    if (environment != null)
+                    //    {
+                    //        environmentManager.SetCurrentEnvironment(environment);
+                    //        // wait as it may need to load the related addin
+                    //        System.Threading.Thread.Sleep(10000);
+                    //    }
+                    //}
                 }
                 else
                 {
@@ -509,107 +510,107 @@ namespace adsk.ts.rvt.create.inventor
                     revitExportDef.FileName = mExpFileName;
 
                     // read preset from settings file
-                    Dictionary<string, Dictionary<string, string>> mPresets = new Dictionary<string, Dictionary<string, string>>();
-                    Dictionary<string, object> mPresetObjects = new Dictionary<string, object>();
+                    //Dictionary<string, Dictionary<string, string>> mPresets = new Dictionary<string, Dictionary<string, string>>();
+                    //Dictionary<string, object> mPresetObjects = new Dictionary<string, object>();
 
-                    mPresets = mGetRevitPresets();
-                    mPresetObjects = mReadPresetMap();
+                    //mPresets = mGetRevitPresets();
+                    //mPresetObjects = mReadPresetMap();
 
-                    // apply preset settings
-                    if (mPresets != null)
-                    {
-                        foreach (var preset in mPresets[settings.InventorPresetName])
-                        {
-                            // case selection for all known preset settings
-                            switch (preset.Key)
-                            {
-                                case "ENVELOPE_SELECTOR":
-                                    if (mPresetObjects.ContainsKey(preset.Value))
-                                        revitExportDef.EnvelopesReplaceStyle = (Inventor.EnvelopesReplaceStyleEnum)mPresetObjects[preset.Value];
-                                    break;
-                                case "REMOVE_PART_BY_SIZE_TOGGLE":
-                                    revitExportDef.RemovePartsBySize = Convert.ToBoolean(preset.Value);
-                                    break;
-                                case "MAXIMUM_DIAGONAL_RVEC":
-                                    revitExportDef.RemovePartsSize = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
-                                    break;
-                                case "REMOVE_HOLE_SELECTOR":
-                                    revitExportDef.RemoveHolesStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
-                                    break;
-                                case "MAX_DIAMETER_RVEC":
-                                    revitExportDef.RemoveHolesDiameterRange = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
-                                    break;
-                                case "REMOVE_FILLET_SELECTOR":
-                                    revitExportDef.RemoveFilletsStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
-                                    break;
-                                case "MAX_RADIUS_RVEC":
-                                    revitExportDef.RemoveFilletsRadiusRange = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
-                                    break;
-                                case "REMOVE_CHAMFER_SELECTOR":
-                                    revitExportDef.RemoveChamfersStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
-                                    break;
-                                case "MAX_DISTANCE_RVEC":
-                                    revitExportDef.RemoveChamfersDistanceRange = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
-                                    break;
-                                case "REMOVE_POCKET_SELECTOR":
-                                    revitExportDef.RemovePocketsStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
-                                    break;
-                                case "MAX_LOOP_RVEC":
-                                    revitExportDef.RemovePocketsMaxDepthRange = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
-                                    break;
-                                case "REMOVE_EMBOSS_SELECTOR":
-                                    revitExportDef.RemoveEmbossesStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
-                                    break;
-                                case "MAX_HEIGHT_RVEC":
-                                    revitExportDef.RemoveEmbossMaxHeightRange = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
-                                    break;
-                                case "REMOVE_TUNNEL_SELECTOR":
-                                    revitExportDef.RemoveTunnelsStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
-                                    break;
-                                case "RVT_STRUCTURE_SELECTOR":
-                                    if (mPresetObjects.ContainsKey(preset.Value))
-                                        revitExportDef.Structure = (Inventor.RevitExportStructureTypeEnum)mPresetObjects[preset.Value];
-                                    break;
-                                case "FILL_INTERNAL_VOIDS_TOGGLE":
-                                    revitExportDef.RemoveAllInternalVoids = Convert.ToBoolean(preset.Value);
-                                    break;
-                                case "EMOVE_INTERNAL_PARTS_TOGGLE":
-                                    revitExportDef.RemoveInternalParts = Convert.ToBoolean(preset.Value);
-                                    break;
-                                case "USE_COLOR_OVERRIDE_FROM_SOURCE_TOGGLE":
-                                    revitExportDef.UseColorOverrideFromSourceComponent = Convert.ToBoolean(preset.Value);
-                                    break;
-                            }
-                        }
-                    }
-                    else
-                    {
+                    //// apply preset settings
+                    //if (mPresets != null)
+                    //{
+                    //    foreach (var preset in mPresets[settings.InventorPresetName])
+                    //    {
+                    //        // case selection for all known preset settings
+                    //        switch (preset.Key)
+                    //        {
+                    //            case "ENVELOPE_SELECTOR":
+                    //                if (mPresetObjects.ContainsKey(preset.Value))
+                    //                    revitExportDef.EnvelopesReplaceStyle = (Inventor.EnvelopesReplaceStyleEnum)mPresetObjects[preset.Value];
+                    //                break;
+                    //            case "REMOVE_PART_BY_SIZE_TOGGLE":
+                    //                revitExportDef.RemovePartsBySize = Convert.ToBoolean(preset.Value);
+                    //                break;
+                    //            case "MAXIMUM_DIAGONAL_RVEC":
+                    //                revitExportDef.RemovePartsSize = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
+                    //                break;
+                    //            case "REMOVE_HOLE_SELECTOR":
+                    //                revitExportDef.RemoveHolesStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
+                    //                break;
+                    //            case "MAX_DIAMETER_RVEC":
+                    //                revitExportDef.RemoveHolesDiameterRange = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
+                    //                break;
+                    //            case "REMOVE_FILLET_SELECTOR":
+                    //                revitExportDef.RemoveFilletsStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
+                    //                break;
+                    //            case "MAX_RADIUS_RVEC":
+                    //                revitExportDef.RemoveFilletsRadiusRange = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
+                    //                break;
+                    //            case "REMOVE_CHAMFER_SELECTOR":
+                    //                revitExportDef.RemoveChamfersStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
+                    //                break;
+                    //            case "MAX_DISTANCE_RVEC":
+                    //                revitExportDef.RemoveChamfersDistanceRange = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
+                    //                break;
+                    //            case "REMOVE_POCKET_SELECTOR":
+                    //                revitExportDef.RemovePocketsStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
+                    //                break;
+                    //            case "MAX_LOOP_RVEC":
+                    //                revitExportDef.RemovePocketsMaxDepthRange = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
+                    //                break;
+                    //            case "REMOVE_EMBOSS_SELECTOR":
+                    //                revitExportDef.RemoveEmbossesStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
+                    //                break;
+                    //            case "MAX_HEIGHT_RVEC":
+                    //                revitExportDef.RemoveEmbossMaxHeightRange = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
+                    //                break;
+                    //            case "REMOVE_TUNNEL_SELECTOR":
+                    //                revitExportDef.RemoveTunnelsStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
+                    //                break;
+                    //            case "RVT_STRUCTURE_SELECTOR":
+                    //                if (mPresetObjects.ContainsKey(preset.Value))
+                    //                    revitExportDef.Structure = (Inventor.RevitExportStructureTypeEnum)mPresetObjects[preset.Value];
+                    //                break;
+                    //            case "FILL_INTERNAL_VOIDS_TOGGLE":
+                    //                revitExportDef.RemoveAllInternalVoids = Convert.ToBoolean(preset.Value);
+                    //                break;
+                    //            case "EMOVE_INTERNAL_PARTS_TOGGLE":
+                    //                revitExportDef.RemoveInternalParts = Convert.ToBoolean(preset.Value);
+                    //                break;
+                    //            case "USE_COLOR_OVERRIDE_FROM_SOURCE_TOGGLE":
+                    //                revitExportDef.UseColorOverrideFromSourceComponent = Convert.ToBoolean(preset.Value);
+                    //                break;
+                    //        }
+                    //    }
+                    //}
+                    //else
+                    //{
                         // continue with default settings as no preset could be applied
                         // Input
-                        revitExportDef.IsAssociativeDesignView = false;
-                        // Envelopes
-                        revitExportDef.EnvelopesReplaceStyle = Inventor.EnvelopesReplaceStyleEnum.kNoneReplaceStyle; //118785 No enveloping
-                                                                                                                     // Part removal
-                        revitExportDef.RemovePartsBySize = true;
-                        revitExportDef.RemovePartsSize = 1.0; // 1 cm
-                        // Feature removal (not possible for automation)
-                        //ObjectCollection mPreservedFeatures = null;
-                        //revitExportDef.PreservedFeatures = mPreservedFeatures; //118789 Do not preserve any features
-                        revitExportDef.RemoveHolesStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveByRange; //118787 Remove in range
-                        revitExportDef.RemoveHolesDiameterRange = 1.0; // 1 cm
-                        revitExportDef.RemoveFilletsStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll; //118786 Remove all
-                        revitExportDef.RemoveFilletsRadiusRange = 1.0; // 1 cm
-                        revitExportDef.RemoveChamfersStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll; //118786 Remove all
-                        revitExportDef.RemovePocketsStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll; //118786 Remove all
-                        revitExportDef.RemoveEmbossStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll; //118786 Remove all
-                        revitExportDef.RemoveTunnelsStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll; //118786 Remove all
-                                                                                                                             // Revit structure
-                        revitExportDef.Structure = Inventor.RevitExportStructureTypeEnum.kAllInOneElementStructure; //119041 Everything structured as a single Revit element
-                                                                                                                    // Advanced Options
-                        revitExportDef.RemoveAllInternalVoids = true;
-                        revitExportDef.RemoveInternalParts = true;
-                        revitExportDef.UseColorOverrideFromSourceComponent = true;
-                    }
+                        //revitExportDef.IsAssociativeDesignView = false;
+                        //// Envelopes
+                        //revitExportDef.EnvelopesReplaceStyle = Inventor.EnvelopesReplaceStyleEnum.kNoneReplaceStyle; //118785 No enveloping
+                        //                                                                                             // Part removal
+                        //revitExportDef.RemovePartsBySize = true;
+                        //revitExportDef.RemovePartsSize = 1.0; // 1 cm
+                        //// Feature removal (not possible for automation)
+                        ////ObjectCollection mPreservedFeatures = null;
+                        ////revitExportDef.PreservedFeatures = mPreservedFeatures; //118789 Do not preserve any features
+                        //revitExportDef.RemoveHolesStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveByRange; //118787 Remove in range
+                        //revitExportDef.RemoveHolesDiameterRange = 1.0; // 1 cm
+                        //revitExportDef.RemoveFilletsStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll; //118786 Remove all
+                        //revitExportDef.RemoveFilletsRadiusRange = 1.0; // 1 cm
+                        //revitExportDef.RemoveChamfersStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll; //118786 Remove all
+                        //revitExportDef.RemovePocketsStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll; //118786 Remove all
+                        //revitExportDef.RemoveEmbossStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll; //118786 Remove all
+                        //revitExportDef.RemoveTunnelsStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll; //118786 Remove all
+                        //                                                                                                     // Revit structure
+                        //revitExportDef.Structure = Inventor.RevitExportStructureTypeEnum.kAllInOneElementStructure; //119041 Everything structured as a single Revit element
+                        //                                                                                            // Advanced Options
+                        //revitExportDef.RemoveAllInternalVoids = true;
+                        //revitExportDef.RemoveInternalParts = true;
+                        //revitExportDef.UseColorOverrideFromSourceComponent = true;
+                    //}
 
                     // enable updating if Revit association feature is required
                     if (mSettings.RvtAssociative.ToLower() == "true")
@@ -622,20 +623,20 @@ namespace adsk.ts.rvt.create.inventor
                     }
 
                     // download the revit template from Vault, if template consumption is enforced by settings
-                    if (mSettings.RevitTemplate != null && mSettings.RevitTemplate != "")
-                    {
-                        // Download the template from Vault
-                        ACW.File mTemplateFile = mWsMgr.DocumentService.FindLatestFilesByPaths([mSettings.RevitTemplate]).FirstOrDefault();
-                        if (mTemplateFile != null)
-                        {
-                            string templateLocalPath = tsJobCommon.mDownloadFile(mTemplateFile);
-                            revitExportDef.RevitTemplate = templateLocalPath;
-                        }
-                        else
-                        {
-                            mTrace.WriteLine("Job could not find the specified Revit template in Vault; continue with export creation without template.");
-                        }
-                    }
+                    //if (mSettings.RevitTemplate != null && mSettings.RevitTemplate != "")
+                    //{
+                    //    // Download the template from Vault
+                    //    ACW.File mTemplateFile = mWsMgr.DocumentService.FindLatestFilesByPaths([mSettings.RevitTemplate]).FirstOrDefault();
+                    //    if (mTemplateFile != null)
+                    //    {
+                    //        string templateLocalPath = tsJobCommon.mDownloadFile(mTemplateFile);
+                    //        revitExportDef.RevitTemplate = templateLocalPath;
+                    //    }
+                    //    else
+                    //    {
+                    //        mTrace.WriteLine("Job could not find the specified Revit template in Vault; continue with export creation without template.");
+                    //    }
+                    //}
 
                     // create export/export feature or update the export feature
                     // delete existing export file; note the resulting file name is e.g. <assemblyfile>.iam.rvt
@@ -847,7 +848,7 @@ namespace adsk.ts.rvt.create.inventor
                     mInv = System.Activator.CreateInstance(inventorAppType) as Inventor.Application;
                     if (mInv != null)
                     {
-                        mInv.Visible = true;
+                        mInv.Visible = false;
                         // run Inventor silently
                         mInv.SilentOperation = true;
                         mTrace.WriteLine("Started new Inventor application object.");
