@@ -605,7 +605,7 @@ namespace adsk.ts.rvt.create.inventor
                         //revitExportDef.RemoveEmbossStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll; //118786 Remove all
                         //revitExportDef.RemoveTunnelsStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll; //118786 Remove all
                         //                                                                                                     // Revit structure
-                        //revitExportDef.Structure = Inventor.RevitExportStructureTypeEnum.kAllInOneElementStructure; //119041 Everything structured as a single Revit element
+                        revitExportDef.Structure = Inventor.RevitExportStructureTypeEnum.kAllInOneElementStructure; //119041 Everything structured as a single Revit element
                         //                                                                                            // Advanced Options
                         //revitExportDef.RemoveAllInternalVoids = true;
                         //revitExportDef.RemoveInternalParts = true;
