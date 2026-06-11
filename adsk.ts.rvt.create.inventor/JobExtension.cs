@@ -50,7 +50,9 @@ namespace adsk.ts.rvt.create.inventor
         private WebServiceManager mWsMgr;
         ACW.File mFile;
         VDF.Vault.Currency.Entities.FileIteration mFileIteration, mNewFileIteration;
-        private Inventor.Application mInv = null;
+        private Inventor.Application mInvApp = null;
+        private Inventor.InventorServer mInvSrv = null;
+        private Inventor.ApplicationAddIns addIns = null;
 
         // list active Inventor addins disabled and reenabled during the job
         private List<Inventor.ApplicationAddIn> mDisabledAddins = new();
@@ -128,9 +130,15 @@ namespace adsk.ts.rvt.create.inventor
             }
             finally
             {
-                if (mInv != null)
+                // InventorServer is managed by the hosting context — never call Quit() on it.
+                // If we created an Inventor Application instance on our own, close it; otherwise only re-enable any addins we deactivated.
+                if (mInvApp != null)
                 {
                     mCloseInventor();
+                }
+                else if (mInvSrv != null && mDisabledAddins.Count > 0)
+                {
+                    mReenableAddins();
                 }
 
                 if (mTrace != null)
@@ -213,34 +221,25 @@ namespace adsk.ts.rvt.create.inventor
             }
 
             #region validate Inventor availability
-            // validate Inventor instance for RVT Export format
-            // Inventor.InventorServer mInv = context.InventorObject as InventorServer;
-            mInv = mGetInventor();
-            if (mInv == null)
+            // evaluate setting to use Inventor executable or Inventor Server for the export creation; default to Inventor Server if not specified
+            if (settings.UseInventorExe != null && settings.UseInventorExe.ToLower() == "true")
+            {
+                mInvApp = mCreateInvInstance();
+                addIns = mInvApp.ApplicationAddIns;
+            }
+            else
+            {
+                mInvSrv = context.InventorObject as InventorServer;
+                addIns = mInvSrv.ApplicationAddIns;
+            }
+
+            if (mInvApp == null && mInvSrv == null)
             {
                 mTrace.WriteLine("Translator job required Inventor Application but failed to establish an application instance; exit job with failure.");
                 throw new Exception("Translator job's single task creating an RVT export from Inventor file failed: could not find or start Inventor Application.");
             }
             else
             {
-                // check for the BIM Interoperability addin
-                Inventor.ApplicationAddIns addIns = mInv.ApplicationAddIns;
-                //Inventor.ApplicationAddIn addInBimSimplify = null;
-                //try
-                //{
-                //    addInBimSimplify = addIns.get_ItemById("{71019C12-43F6-4C11-BA7A-AD9BDBC5EA0C}"); // BIM Simplify
-                //    if (addInBimSimplify != null) //removed && addInBimSimplify.Activated == false
-                //    {
-                //        addInBimSimplify.Activate();
-                //    }
-                //}
-                //catch (Exception)
-                //{
-                //    mTrace.WriteLine("Translator job required Inventor Application with BIM Simplify addin but failed to find the addin; exit job with failure.");
-                //    throw new Exception("Translator job's single task creating an RVT export from Inventor file failed: could not activate Inventor BIM Simplify addin.");
-                //}
-
-
                 // Activate the RVT Translator Addin
                 Inventor.ApplicationAddIn mRvtTranslator = null;
                 try
@@ -258,8 +257,8 @@ namespace adsk.ts.rvt.create.inventor
                 }
 
                 // check the availability of the target Revit file format.
-                Inventor.FileManager fileManager = mInv.FileManager;
-                Inventor.NameValueMap formatOptions = mInv.TransientObjects.CreateNameValueMap();
+                Inventor.FileManager fileManager = InvFileManager;
+                Inventor.NameValueMap formatOptions = InvTransientObjects.CreateNameValueMap();
                 if (fileManager != null)
                 {
                     formatOptions = fileManager.GetRevitEngineInstallationStatus();
@@ -285,7 +284,7 @@ namespace adsk.ts.rvt.create.inventor
                 try
                 {
                     Inventor.ApplicationAddIn addIniLogic = null;
-                    addIniLogic = mInv.ApplicationAddIns.ItemById["{3BDD8D79-2179-4B11-8A5A-257B1C0263AC}"]; // iLogic
+                    addIniLogic = addIns.ItemById["{3BDD8D79-2179-4B11-8A5A-257B1C0263AC}"]; // iLogic
                     if (addIniLogic != null) //&& addIniLogic.Activated == true
                     {
                         addIniLogic.Deactivate();
@@ -301,7 +300,7 @@ namespace adsk.ts.rvt.create.inventor
                 try
                 {
                     Inventor.ApplicationAddIn addInVDS = null;
-                    addInVDS = mInv.ApplicationAddIns.ItemById["{B0E8F1C3-9BFD-4B9A-9C8B-7F2E1C025DCD}"]; // Vault Data Standard
+                    addInVDS = addIns.ItemById["{B0E8F1C3-9BFD-4B9A-9C8B-7F2E1C025DCD}"]; // Vault Data Standard
                     if (addInVDS != null && addInVDS.Activated == true)
                     {
                         addInVDS.Deactivate();
@@ -317,7 +316,7 @@ namespace adsk.ts.rvt.create.inventor
                 try
                 {
                     Inventor.ApplicationAddIn addInVault = null;
-                    addInVault = mInv.ApplicationAddIns.ItemById["{48B682BC-42E6-4953-84C5-3D253B52E77B}"]; // Vault
+                    addInVault = addIns.ItemById["{48B682BC-42E6-4953-84C5-3D253B52E77B}"]; // Vault
                     if (addInVault != null && addInVault.Activated == true)
                     {
                         addInVault.Deactivate();
@@ -350,7 +349,7 @@ namespace adsk.ts.rvt.create.inventor
                 mIpjLocalPath = mJobInventor.mGetIpj(settingsAcceptLocalIpj);
 
                 //activate the given project file for this job only
-                projectManager = mInv.DesignProjectManager;
+                projectManager = InvDesignProjectManager;
                 // Inventor might fail with unhandled exeption on fresh installed machines, if no IPJ had been used before
                 try
                 {
@@ -365,9 +364,6 @@ namespace adsk.ts.rvt.create.inventor
                 mProject.Activate();
 
                 //[Optionally:] get Inventor Design Data settings and download all related files ---------
-
-                // workaround to get the BIM Simplify addin loaded and available
-                // mInv.Documents.Add(DocumentTypeEnum.kPartDocumentObject, "", true);
 
                 mTrace.WriteLine("Job successfully activated Inventor IPJ.");
 
@@ -431,7 +427,7 @@ namespace adsk.ts.rvt.create.inventor
                 #region create RVT export
                 mTrace.WriteLine("Job starts task for RVT Simplification.");
                 //use Inventor to open document
-                Inventor.Document mDoc = mInv.Documents.Open(mDocPath);
+                Inventor.Document mDoc = InvDocuments.Open(mDocPath);
 
                 if (mDoc == null)
                 {
@@ -449,19 +445,6 @@ namespace adsk.ts.rvt.create.inventor
                 if (mDoc.DocumentType == DocumentTypeEnum.kAssemblyDocumentObject)
                 {
                     mAsmDoc = (Inventor.AssemblyDocument)mDoc;
-
-                    //Inventor.UserInterfaceManager userInterfaceManager = mInv.UserInterfaceManager;
-                    //Inventor.EnvironmentManager environmentManager = mAsmDoc.EnvironmentManager;
-                    //if (userInterfaceManager != null)
-                    //{
-                    //    Inventor.Environment environment = userInterfaceManager.Environments["AEC_Exchange:Environment"];
-                    //    if (environment != null)
-                    //    {
-                    //        environmentManager.SetCurrentEnvironment(environment);
-                    //        // wait as it may need to load the related addin
-                    //        System.Threading.Thread.Sleep(10000);
-                    //    }
-                    //}
                 }
                 else
                 {
@@ -510,107 +493,104 @@ namespace adsk.ts.rvt.create.inventor
                     revitExportDef.FileName = mExpFileName;
 
                     // read preset from settings file
-                    //Dictionary<string, Dictionary<string, string>> mPresets = new Dictionary<string, Dictionary<string, string>>();
-                    //Dictionary<string, object> mPresetObjects = new Dictionary<string, object>();
+                    Dictionary<string, Dictionary<string, string>> mPresets = new Dictionary<string, Dictionary<string, string>>();
+                    Dictionary<string, object> mPresetObjects = new Dictionary<string, object>();
 
-                    //mPresets = mGetRevitPresets();
-                    //mPresetObjects = mReadPresetMap();
+                    mPresets = mGetRevitPresets();
+                    mPresetObjects = mReadPresetMap();
 
-                    //// apply preset settings
-                    //if (mPresets != null)
-                    //{
-                    //    foreach (var preset in mPresets[settings.InventorPresetName])
-                    //    {
-                    //        // case selection for all known preset settings
-                    //        switch (preset.Key)
-                    //        {
-                    //            case "ENVELOPE_SELECTOR":
-                    //                if (mPresetObjects.ContainsKey(preset.Value))
-                    //                    revitExportDef.EnvelopesReplaceStyle = (Inventor.EnvelopesReplaceStyleEnum)mPresetObjects[preset.Value];
-                    //                break;
-                    //            case "REMOVE_PART_BY_SIZE_TOGGLE":
-                    //                revitExportDef.RemovePartsBySize = Convert.ToBoolean(preset.Value);
-                    //                break;
-                    //            case "MAXIMUM_DIAGONAL_RVEC":
-                    //                revitExportDef.RemovePartsSize = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
-                    //                break;
-                    //            case "REMOVE_HOLE_SELECTOR":
-                    //                revitExportDef.RemoveHolesStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
-                    //                break;
-                    //            case "MAX_DIAMETER_RVEC":
-                    //                revitExportDef.RemoveHolesDiameterRange = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
-                    //                break;
-                    //            case "REMOVE_FILLET_SELECTOR":
-                    //                revitExportDef.RemoveFilletsStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
-                    //                break;
-                    //            case "MAX_RADIUS_RVEC":
-                    //                revitExportDef.RemoveFilletsRadiusRange = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
-                    //                break;
-                    //            case "REMOVE_CHAMFER_SELECTOR":
-                    //                revitExportDef.RemoveChamfersStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
-                    //                break;
-                    //            case "MAX_DISTANCE_RVEC":
-                    //                revitExportDef.RemoveChamfersDistanceRange = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
-                    //                break;
-                    //            case "REMOVE_POCKET_SELECTOR":
-                    //                revitExportDef.RemovePocketsStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
-                    //                break;
-                    //            case "MAX_LOOP_RVEC":
-                    //                revitExportDef.RemovePocketsMaxDepthRange = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
-                    //                break;
-                    //            case "REMOVE_EMBOSS_SELECTOR":
-                    //                revitExportDef.RemoveEmbossesStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
-                    //                break;
-                    //            case "MAX_HEIGHT_RVEC":
-                    //                revitExportDef.RemoveEmbossMaxHeightRange = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
-                    //                break;
-                    //            case "REMOVE_TUNNEL_SELECTOR":
-                    //                revitExportDef.RemoveTunnelsStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
-                    //                break;
-                    //            case "RVT_STRUCTURE_SELECTOR":
-                    //                if (mPresetObjects.ContainsKey(preset.Value))
-                    //                    revitExportDef.Structure = (Inventor.RevitExportStructureTypeEnum)mPresetObjects[preset.Value];
-                    //                break;
-                    //            case "FILL_INTERNAL_VOIDS_TOGGLE":
-                    //                revitExportDef.RemoveAllInternalVoids = Convert.ToBoolean(preset.Value);
-                    //                break;
-                    //            case "EMOVE_INTERNAL_PARTS_TOGGLE":
-                    //                revitExportDef.RemoveInternalParts = Convert.ToBoolean(preset.Value);
-                    //                break;
-                    //            case "USE_COLOR_OVERRIDE_FROM_SOURCE_TOGGLE":
-                    //                revitExportDef.UseColorOverrideFromSourceComponent = Convert.ToBoolean(preset.Value);
-                    //                break;
-                    //        }
-                    //    }
-                    //}
-                    //else
-                    //{
+                    // apply preset settings
+                    if (mPresets != null)
+                    {
+                        foreach (var preset in mPresets[settings.InventorPresetName])
+                        {
+                            // case selection for all known preset settings
+                            switch (preset.Key)
+                            {
+                                case "ENVELOPE_SELECTOR":
+                                    if (mPresetObjects.ContainsKey(preset.Value))
+                                        revitExportDef.EnvelopesReplaceStyle = (Inventor.EnvelopesReplaceStyleEnum)mPresetObjects[preset.Value];
+                                    break;
+                                case "REMOVE_PART_BY_SIZE_TOGGLE":
+                                    revitExportDef.RemovePartsBySize = Convert.ToBoolean(preset.Value);
+                                    break;
+                                case "MAXIMUM_DIAGONAL_RVEC":
+                                    revitExportDef.RemovePartsSize = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
+                                    break;
+                                case "REMOVE_HOLE_SELECTOR":
+                                    revitExportDef.RemoveHolesStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
+                                    break;
+                                case "MAX_DIAMETER_RVEC":
+                                    revitExportDef.RemoveHolesDiameterRange = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
+                                    break;
+                                case "REMOVE_FILLET_SELECTOR":
+                                    revitExportDef.RemoveFilletsStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
+                                    break;
+                                case "MAX_RADIUS_RVEC":
+                                    revitExportDef.RemoveFilletsRadiusRange = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
+                                    break;
+                                case "REMOVE_CHAMFER_SELECTOR":
+                                    revitExportDef.RemoveChamfersStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
+                                    break;
+                                case "MAX_DISTANCE_RVEC":
+                                    revitExportDef.RemoveChamfersDistanceRange = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
+                                    break;
+                                case "REMOVE_POCKET_SELECTOR":
+                                    revitExportDef.RemovePocketsStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
+                                    break;
+                                case "MAX_LOOP_RVEC":
+                                    revitExportDef.RemovePocketsMaxDepthRange = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
+                                    break;
+                                case "REMOVE_EMBOSS_SELECTOR":
+                                    revitExportDef.RemoveEmbossesStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
+                                    break;
+                                case "MAX_HEIGHT_RVEC":
+                                    revitExportDef.RemoveEmbossMaxHeightRange = Convert.ToDouble(preset.Value.Split(' ').FirstOrDefault());
+                                    break;
+                                case "REMOVE_TUNNEL_SELECTOR":
+                                    revitExportDef.RemoveTunnelsStyle = (Inventor.SimplificationRemoveStyleEnum)mPresetObjects[preset.Value];
+                                    break;
+                                case "RVT_STRUCTURE_SELECTOR":
+                                    if (mPresetObjects.ContainsKey(preset.Value))
+                                        revitExportDef.Structure = (Inventor.RevitExportStructureTypeEnum)mPresetObjects[preset.Value];
+                                    break;
+                                case "FILL_INTERNAL_VOIDS_TOGGLE":
+                                    revitExportDef.RemoveAllInternalVoids = Convert.ToBoolean(preset.Value);
+                                    break;
+                                case "EMOVE_INTERNAL_PARTS_TOGGLE":
+                                    revitExportDef.RemoveInternalParts = Convert.ToBoolean(preset.Value);
+                                    break;
+                                case "USE_COLOR_OVERRIDE_FROM_SOURCE_TOGGLE":
+                                    revitExportDef.UseColorOverrideFromSourceComponent = Convert.ToBoolean(preset.Value);
+                                    break;
+                            }
+                        }
+                    }
+                    else
+                    {
                         // continue with default settings as no preset could be applied
                         // Input
-                        //revitExportDef.IsAssociativeDesignView = false;
+                        revitExportDef.IsAssociativeDesignView = false;
                         //// Envelopes
-                        //revitExportDef.EnvelopesReplaceStyle = Inventor.EnvelopesReplaceStyleEnum.kNoneReplaceStyle; //118785 No enveloping
-                        //                                                                                             // Part removal
-                        //revitExportDef.RemovePartsBySize = true;
-                        //revitExportDef.RemovePartsSize = 1.0; // 1 cm
-                        //// Feature removal (not possible for automation)
-                        ////ObjectCollection mPreservedFeatures = null;
-                        ////revitExportDef.PreservedFeatures = mPreservedFeatures; //118789 Do not preserve any features
-                        //revitExportDef.RemoveHolesStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveByRange; //118787 Remove in range
-                        //revitExportDef.RemoveHolesDiameterRange = 1.0; // 1 cm
-                        //revitExportDef.RemoveFilletsStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll; //118786 Remove all
-                        //revitExportDef.RemoveFilletsRadiusRange = 1.0; // 1 cm
-                        //revitExportDef.RemoveChamfersStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll; //118786 Remove all
-                        //revitExportDef.RemovePocketsStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll; //118786 Remove all
-                        //revitExportDef.RemoveEmbossStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll; //118786 Remove all
-                        //revitExportDef.RemoveTunnelsStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll; //118786 Remove all
-                        //                                                                                                     // Revit structure
+                        revitExportDef.EnvelopesReplaceStyle = Inventor.EnvelopesReplaceStyleEnum.kAllInOneEnvelopeReplaceStyle; //118785 No enveloping
+                                                                                                                                 //                                                                                             // Part removal
+                        revitExportDef.RemovePartsBySize = true;
+                        revitExportDef.RemovePartsSize = 1.0; // 1 cm
+                        revitExportDef.RemoveHolesStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveByRange; //118787 Remove in range
+                        revitExportDef.RemoveHolesDiameterRange = 1.0; // 1 cm
+                        revitExportDef.RemoveFilletsStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll; //118786 Remove all
+                        revitExportDef.RemoveFilletsRadiusRange = 1.0; // 1 cm
+                        revitExportDef.RemoveChamfersStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll; //118786 Remove all
+                        revitExportDef.RemovePocketsStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll; //118786 Remove all
+                        revitExportDef.RemoveEmbossStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll; //118786 Remove all
+                        revitExportDef.RemoveTunnelsStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll; //118786 Remove all
+                                                                                                                             // Revit structure
                         revitExportDef.Structure = Inventor.RevitExportStructureTypeEnum.kAllInOneElementStructure; //119041 Everything structured as a single Revit element
-                        //                                                                                            // Advanced Options
-                        //revitExportDef.RemoveAllInternalVoids = true;
-                        //revitExportDef.RemoveInternalParts = true;
-                        //revitExportDef.UseColorOverrideFromSourceComponent = true;
-                    //}
+                                                                                                                    // Advanced Options
+                        revitExportDef.RemoveAllInternalVoids = true;
+                        revitExportDef.RemoveInternalParts = true;
+                        revitExportDef.UseColorOverrideFromSourceComponent = true;
+                    }
 
                     // enable updating if Revit association feature is required
                     if (mSettings.RvtAssociative.ToLower() == "true")
@@ -623,20 +603,20 @@ namespace adsk.ts.rvt.create.inventor
                     }
 
                     // download the revit template from Vault, if template consumption is enforced by settings
-                    //if (mSettings.RevitTemplate != null && mSettings.RevitTemplate != "")
-                    //{
-                    //    // Download the template from Vault
-                    //    ACW.File mTemplateFile = mWsMgr.DocumentService.FindLatestFilesByPaths([mSettings.RevitTemplate]).FirstOrDefault();
-                    //    if (mTemplateFile != null)
-                    //    {
-                    //        string templateLocalPath = tsJobCommon.mDownloadFile(mTemplateFile);
-                    //        revitExportDef.RevitTemplate = templateLocalPath;
-                    //    }
-                    //    else
-                    //    {
-                    //        mTrace.WriteLine("Job could not find the specified Revit template in Vault; continue with export creation without template.");
-                    //    }
-                    //}
+                    if (mSettings.RevitTemplate != null && mSettings.RevitTemplate != "")
+                    {
+                        // Download the template from Vault
+                        ACW.File mTemplateFile = mWsMgr.DocumentService.FindLatestFilesByPaths([mSettings.RevitTemplate]).FirstOrDefault();
+                        if (mTemplateFile != null)
+                        {
+                            string templateLocalPath = tsJobCommon.mDownloadFile(mTemplateFile);
+                            revitExportDef.RevitTemplate = templateLocalPath;
+                        }
+                        else
+                        {
+                            mTrace.WriteLine("Job could not find the specified Revit template in Vault; continue with export creation without template.");
+                        }
+                    }
 
                     // create export/export feature or update the export feature
                     // delete existing export file; note the resulting file name is e.g. <assemblyfile>.iam.rvt
@@ -791,6 +771,12 @@ namespace adsk.ts.rvt.create.inventor
         }
 
 
+        // Unified accessors — null-coalescing between the two Inventor application types; no per-call conditionals needed.
+        private Inventor.Documents             InvDocuments             => mInvApp?.Documents             ?? mInvSrv.Documents;
+        private Inventor.FileManager           InvFileManager           => mInvApp?.FileManager           ?? mInvSrv.FileManager;
+        private Inventor.TransientObjects      InvTransientObjects      => mInvApp?.TransientObjects      ?? mInvSrv.TransientObjects;
+        private Inventor.DesignProjectManager  InvDesignProjectManager  => mInvApp?.DesignProjectManager  ?? mInvSrv.DesignProjectManager;
+
         private Dictionary<string, Dictionary<string, string>> mGetRevitPresets()
         {
             // read the preset XML file and create a name/value map for all simplification options
@@ -826,35 +812,34 @@ namespace adsk.ts.rvt.create.inventor
 
         private Inventor.Application mGetInventor()
         {
-
             // Try to get an active instance of Inventor
             try
             {
                 try
                 {
-                    mInv = MarshalCore.GetActiveObject("Inventor.Application") as Inventor.Application;
-                    if (mInv != null)
+                    mInvApp = MarshalCore.GetActiveObject("Inventor.Application") as Inventor.Application;
+                    if (mInvApp != null)
                     {
-                        mInv.Visible = true;
+                        mInvApp.Visible = true;
                         // run Inventor silently
-                        mInv.SilentOperation = true;
+                        mInvApp.SilentOperation = true;
                         mTrace.WriteLine("Reusing running Inventor application object.");
-                        return mInv;
+                        return mInvApp;
                     }
                 }
                 catch (Exception)
                 {
                     Type inventorAppType = System.Type.GetTypeFromProgID("Inventor.Application");
-                    mInv = System.Activator.CreateInstance(inventorAppType) as Inventor.Application;
-                    if (mInv != null)
+                    mInvApp = System.Activator.CreateInstance(inventorAppType) as Inventor.Application;
+                    if (mInvApp != null)
                     {
-                        mInv.Visible = false;
+                        mInvApp.Visible = false;
                         // run Inventor silently
-                        mInv.SilentOperation = true;
+                        mInvApp.SilentOperation = true;
                         mTrace.WriteLine("Started new Inventor application object.");
                     }
                 }
-                return mInv;
+                return mInvApp;
             }
             catch
             {
@@ -863,36 +848,62 @@ namespace adsk.ts.rvt.create.inventor
             }
         }
 
-        private void mCloseInventor()
+        private Inventor.Application mCreateInvInstance()
         {
-            if (mInv != null)
+            Inventor.Application inventorApp = null;
+            try
             {
-                try
+                Type inventorAppType = System.Type.GetTypeFromProgID("Inventor.Application");
+                inventorApp = System.Activator.CreateInstance(inventorAppType) as Inventor.Application;
+                if (inventorApp != null)
                 {
-                    //reenable disabled addins
-                    foreach (var addin in mDisabledAddins)
+                    inventorApp.Visible = false;
+                    // run Inventor silently
+                    inventorApp.SilentOperation = true;
+                    mTrace.WriteLine("Started new Inventor application object.");
+                }
+                return inventorApp;
+            }
+            catch
+            {
+                mTrace.WriteLine("Failed to create Inventor application object.");
+                throw new Exception("Job run into unhandled exception trying to create an Inventor instance.");
+            }
+        }
+
+        private void mReenableAddins()
+        {
+            try
+            {
+                foreach (var addin in mDisabledAddins)
+                {
+                    if (addin != null && addin.Activated == false)
                     {
-                        if (addin != null && addin.Activated == false)
-                        {
-                            addin.Activate();
-                        }
+                        addin.Activate();
                     }
                 }
-                catch (Exception)
-                {
-                    // not a reason to throw an exception
-                }
+            }
+            catch (Exception)
+            {
+                // not a reason to throw an exception
+            }
+        }
 
-                try
-                {
-                    mInv.Quit();
-                    System.Runtime.InteropServices.Marshal.ReleaseComObject(mInv);
-                    mInv = null;
-                }
-                catch (Exception ex)
-                {
-                    mTrace.WriteLine("Failed to close Inventor application object: " + ex.ToString());
-                }
+        private void mCloseInventor()
+        {
+            if (mInvApp == null) return;
+
+            mReenableAddins();
+
+            try
+            {
+                mInvApp.Quit();
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(mInvApp);
+                mInvApp = null;
+            }
+            catch (Exception ex)
+            {
+                mTrace.WriteLine("Failed to close Inventor application object: " + ex.ToString());
             }
         }
 

@@ -28,6 +28,9 @@ namespace adsk.ts.rvt.create.inventor
         [XmlElement("EnforceSubmittedFileVersion")]
         public string EnforceSubmittedFileVersion;
 
+        [XmlElement("UseInventorExe")]
+        public string UseInventorExe;
+
         [XmlElement("ExportFormats")]
         public string ExportFormats;
 
