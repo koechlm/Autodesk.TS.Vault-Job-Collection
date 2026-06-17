@@ -643,6 +643,19 @@ namespace adsk.ts.rvt.create.inventor
                         mDoc.Save2(false);
                     }
 
+                    // release export COM objects before closing the document so the ATF reference
+                    // counts drop to zero while the document is still alive.
+                    if (revitExport != null)
+                    {
+                        System.Runtime.InteropServices.Marshal.FinalReleaseComObject(revitExport);
+                        revitExport = null;
+                    }
+                    if (revitExportDef != null)
+                    {
+                        System.Runtime.InteropServices.Marshal.FinalReleaseComObject(revitExportDef);
+                        revitExportDef = null;
+                    }
+
                     // close the document and skip save
                     mDoc.Close(true);
 
@@ -731,6 +744,9 @@ namespace adsk.ts.rvt.create.inventor
                 mTrace.IndentLevel = 1;
                 mTrace.WriteLine("Job finished all steps.");
 
+                // Deactivate the RVT Translator addin so ATF releases the out-of-process
+                // Revit engine (ATFRevitBroker), allowing sequential jobs to run cleanly.
+                mShutdownRvtTranslator();
             }
         }
         private Dictionary<string, object> mReadPresetMap()
@@ -904,6 +920,53 @@ namespace adsk.ts.rvt.create.inventor
             catch (Exception ex)
             {
                 mTrace.WriteLine("Failed to close Inventor application object: " + ex.ToString());
+            }
+        }
+
+        private void mShutdownRvtTranslator()
+        {
+            // Deactivating the RVT Translator addin is the designed ATF API signal to release the
+            // out-of-process Revit engine. FinalReleaseComObject ensures the addin RCW drops its
+            // COM reference to the ATF component immediately rather than waiting for the GC.
+            try
+            {
+                Inventor.ApplicationAddIn rvtTranslator = addIns.get_ItemById("{2058EF4F-37A3-4B57-A322-B4E79E7D53E4}");
+                if (rvtTranslator != null && rvtTranslator.Activated)
+                {
+                    rvtTranslator.Deactivate();
+                    System.Runtime.InteropServices.Marshal.FinalReleaseComObject(rvtTranslator);
+                    mTrace.WriteLine("RVT Translator addin deactivated and COM reference released.");
+                }
+            }
+            catch (Exception ex)
+            {
+                mTrace.WriteLine("Could not deactivate RVT Translator addin: " + ex.Message);
+            }
+
+            // ATF process hierarchy: ATFRevitRCEHost is the actual Revit engine host spawned by
+            // ATFRevitBroker. The broker only exits after the host releases it, so we must wait
+            // for them in dependency order. WaitForExit observes the natural exit — it does not
+            // kill anything.
+            const int timeoutMs = 15_000;
+            foreach (string procName in (string[])["ATFRevitRCEHost", "ATFRevitBroker"])
+            {
+                try
+                {
+                    foreach (var proc in System.Diagnostics.Process.GetProcessesByName(procName))
+                    {
+                        using (proc)
+                        {
+                            if (proc.WaitForExit(timeoutMs))
+                                mTrace.WriteLine($"{procName} (PID {proc.Id}) exited cleanly.");
+                            else
+                                mTrace.WriteLine($"{procName} (PID {proc.Id}) did not exit within {timeoutMs / 1000}s; continuing.");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    mTrace.WriteLine($"Could not observe {procName} exit: " + ex.Message);
+                }
             }
         }
 
