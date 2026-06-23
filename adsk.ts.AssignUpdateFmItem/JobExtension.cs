@@ -206,9 +206,9 @@ namespace adsk.ts.job.assignupdateitem
                 bool mPromoteFailed = false;
                 try
                 {
-                    // we want to handle the root component only and avoid promoting the children components again, as they run through the same job when they get processed;
-                    // therefore, we set ItemAssignAll to No, which means only the root item will be created/updated
-                    mItemSvc.AddFilesToPromote(new long[] { mFileId }, ItemAssignAll.No, true);
+                    // we primarily want to handle the root component but don't know if the children are processed before.
+                    // therefore, we set ItemAssignAll to Yes, overruling the server setting.
+                    mItemSvc.AddFilesToPromote(new long[] { mFileId }, ItemAssignAll.Yes, true);
                     DateTime timestamp;
                     GetPromoteOrderResults promoteOrderResults = mItemSvc.GetPromoteComponentOrder(out timestamp);
                     if (promoteOrderResults.PrimaryArray != null && promoteOrderResults.PrimaryArray.Any())
