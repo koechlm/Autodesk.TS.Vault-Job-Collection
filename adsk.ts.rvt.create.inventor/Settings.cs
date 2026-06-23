@@ -55,6 +55,9 @@ namespace adsk.ts.rvt.create.inventor
         [XmlElement("RvtAssociative")]
         public string RvtAssociative;
 
+        [XmlElement("CopySystemComment")]
+        public string CopySystemComment;
+
         #region for future use
         //[XmlElement("OutputPath")]
         //public string mOutPutPath;

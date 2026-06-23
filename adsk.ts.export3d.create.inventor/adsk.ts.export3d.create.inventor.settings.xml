@@ -19,6 +19,9 @@
   <!-- Exclude/include export for design substitute classified files; ; accepted values are True/False-->
   <ExcludeDesignSubstitute>False</ExcludeDesignSubstitute>
 
+  <!-- Copy source file's system comment to the export file's system comment; accepted values are True/False -->
+  <CopySystemComment>False</CopySystemComment>
+
   <!-- Output Path -->
   <!--  The job can copy the resulting file(s) to the given output path after check-in-->
   <OutputPath>C:\Temp\</OutputPath>

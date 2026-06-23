@@ -333,7 +333,7 @@ namespace adsk.ts.nwd.create.navisworks
 
             // process the upload of the created files
             adsktsshared.JobCommon mJobCommon = new(connection, mWsMgr, mTrace);
-            mJobCommon.mUploadFiles(mFile, mFilesToUpload, settings.OutPutPath);
+            mJobCommon.mUploadFiles(mFile, mFilesToUpload, settings.OutPutPath, settings.CopySystemComment == "True");
 
             // finalize log output
             mTrace.IndentLevel = 1;

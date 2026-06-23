@@ -28,6 +28,9 @@ namespace adsk.ts.image.create.inventor
         [XmlElement("AcceptLocalIpj")]
         public string AcceptLocalIpj;
 
+        [XmlElement("CopySystemComment")]
+        public string CopySystemComment;
+
         [XmlElement("EnforceSubmittedFileVersion")]
         public string EnforceSubmittedFileVersion;
 

@@ -119,7 +119,7 @@ namespace adsk.ts.job.shared
         /// <param name="filesToUpload"></param>
         /// <param name="outPutPath"></param>
         /// <exception cref="Exception"></exception>
-        public void mUploadFiles(ACW.File mFile, List<string> filesToUpload, string? outPutPath = null)
+        public void mUploadFiles(ACW.File mFile, List<string> filesToUpload, string? outPutPath = null, bool copySourceComment = false)
         {
             foreach (string file in filesToUpload)
             {
@@ -282,8 +282,9 @@ namespace adsk.ts.job.shared
                             //update export file using the property dictionary; note this the IExplorerUtil method bumps file iteration and requires no check out
                             PropWriteResults propWriteResults = new PropWriteResults();
                             string[] cloakedEntityClasses;
+                            string mComment = copySourceComment && !string.IsNullOrEmpty(mFile.Comm) ? mFile.Comm : "Property Update";
                             manageProps.UpdateFileProperties(
-                                mExpFile, comment: "Property Update", allowSync: true, 
+                                mExpFile, comment: mComment, allowSync: true, 
                                 mPropDictonary, 
                                 out propWriteResults, out cloakedEntityClasses);
                             mExpFile = (_WebSrvMgr.DocumentService.GetLatestFileByMasterId(mExpFile.MasterId));

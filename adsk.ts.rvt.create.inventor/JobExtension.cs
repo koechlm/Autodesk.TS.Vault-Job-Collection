@@ -742,7 +742,7 @@ namespace adsk.ts.rvt.create.inventor
                 adsktsshared.JobCommon mJobCommon = new(connection, mWsMgr, mTrace);
                 // the original file iteration mFile is no longer valid, the export created a new version
                 mFile = connection.WebServiceManager.DocumentService.GetLatestFileByMasterId(mUploadedFile.EntityMasterId);
-                mJobCommon.mUploadFiles(mFile, mFilesToUpload, settings.OutPutPath);
+                mJobCommon.mUploadFiles(mFile, mFilesToUpload, settings.OutPutPath, settings.CopySystemComment == "True");
 
                 // finalize log output
                 mTrace.IndentLevel = 1;

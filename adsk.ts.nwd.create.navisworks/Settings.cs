@@ -28,6 +28,9 @@ namespace adsk.ts.nwd.create.navisworks
         [XmlElement("EnforceSubmittedFileVersion")]
         public string EnforceSubmittedFileVersion;
 
+        [XmlElement("CopySystemComment")]
+        public string CopySystemComment;
+
         [XmlElement("ExportFormats")]
         public string ExportFormats;
 

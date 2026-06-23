@@ -40,6 +40,9 @@ namespace adsk.ts.acad.dwg2d.create.inventor
         [XmlElement("AcceptLocalIpj")]
         public string AcceptLocalIpj;
 
+        [XmlElement("CopySystemComment")]
+        public string CopySystemComment;
+
         #region for future use
         //[XmlElement("OutputPath")]
         //public string mOutPutPath;

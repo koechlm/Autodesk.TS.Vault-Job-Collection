@@ -28,6 +28,9 @@ namespace adsk.ts.pdf.create.slddrw
         [XmlElement("EnforceSubmittedFileVersion")]
         public string EnforceSubmittedFileVersion;
 
+        [XmlElement("CopySystemComment")]
+        public string CopySystemComment;
+
         [XmlElement("ExportFormats")]
         public string ExportFormats;
 
