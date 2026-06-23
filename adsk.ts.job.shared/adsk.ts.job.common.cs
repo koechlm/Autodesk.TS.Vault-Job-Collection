@@ -113,6 +113,50 @@ namespace adsk.ts.job.shared
         }
 
         /// <summary>
+        /// Resolves the system comment to use when updating the export file's properties.
+        /// If the source file is in a consumable lifecycle state the comment of the first iteration
+        /// that entered the current revision+state combination is returned, so that downstream
+        /// property-update iterations (whose Comm would be e.g. "Property Update") are skipped.
+        /// Falls back to mFile.Comm for non-consumable states, and to "Property Update" when Comm is empty.
+        /// </summary>
+        private string mGetSourceComment(ACW.File mFile)
+        {
+            try
+            {
+                if (!mFile.FileLfCyc.Consume)
+                {
+                    // non-consumable state: the current iteration's comment is authoritative
+                    return !string.IsNullOrEmpty(mFile.Comm) ? mFile.Comm : "Property Update";
+                }
+
+                // consumable state: find the first iteration that entered this revision+state combination.
+                // Filter by LfCycStateId  — same lifecycle state (e.g. "Released")
+                //         FileRev.MaxFileId — same revision (all iterations in a revision share this value;
+                //                             using the DB id avoids ambiguity from repeated label strings)
+                // Order by Id ascending   — lowest Id is the oldest iteration = the one that triggered
+                //                           the lifecycle transition into this state
+                ACW.File[] allIterations = _WebSrvMgr.DocumentService.GetFilesByMasterId(mFile.MasterId);
+                ACW.File? firstInState = allIterations
+                    .Where(f => f.FileLfCyc.LfCycStateId == mFile.FileLfCyc.LfCycStateId
+                             && f.FileRev.MaxFileId == mFile.FileRev.MaxFileId)
+                    .OrderBy(f => f.Id)
+                    .FirstOrDefault();
+
+                string comment = firstInState?.Comm ?? string.Empty;
+                if (!string.IsNullOrEmpty(comment))
+                    return comment;
+
+                // fall back to the current iteration's comment
+                return !string.IsNullOrEmpty(mFile.Comm) ? mFile.Comm : "Property Update";
+            }
+            catch (Exception ex)
+            {
+                _trace.WriteLine("Job could not resolve source comment for " + mFile.Name + "; falling back to current iteration comment. Details: " + ex.Message);
+                return !string.IsNullOrEmpty(mFile.Comm) ? mFile.Comm : "Property Update";
+            }
+        }
+
+        /// <summary>
         /// Upload files to Vault, optionally copying them to a local output folder; the files are added as new files or new versions of existing files
         /// </summary>
         /// <param name="mFile"></param>
@@ -282,7 +326,7 @@ namespace adsk.ts.job.shared
                             //update export file using the property dictionary; note this the IExplorerUtil method bumps file iteration and requires no check out
                             PropWriteResults propWriteResults = new PropWriteResults();
                             string[] cloakedEntityClasses;
-                            string mComment = copySourceComment && !string.IsNullOrEmpty(mFile.Comm) ? mFile.Comm : "Property Update";
+                            string mComment = copySourceComment ? mGetSourceComment(mFile) : "Property Update";
                             manageProps.UpdateFileProperties(
                                 mExpFile, comment: mComment, allowSync: true, 
                                 mPropDictonary, 
