@@ -20,7 +20,7 @@
   <!-- enable/disable Revit Updating; default is False, as Vault Automation secures associativity -->
   <RvtAssociative>False</RvtAssociative>
   
-  <!-- Target Revit file release format; valid options are 2024, 2025, 2026 and 2027. Note - the Revit version must be installed on the Job Processor machine -->
+  <!-- Target Revit version(s); comma-separated for multiple outputs, e.g. 2026, 2027. Each version must be installed on the Job Processor machine -->
   <TargetRevitVersion>2027</TargetRevitVersion>
   
   <!-- Revit Template (*.rte) file location as Vault path, e.g., $/Templates/Revit/RevitExportTemplate.rte; leave empty to consume default template. -->
@@ -29,7 +29,7 @@
   <!-- RVT preset: store a Vault path of the Inventor preset file, e.g. $/Templates/Inventor/Presest/SimplifyCmd.preset-->
   <InventorPreset>$/Templates/Inventor/Presets/SimplifyCmd.preset</InventorPreset>
 
-  <!-- RVT preset name: store a name of the preset; supporte values are: RVT_Level_0, RVT_Level_1, RVT_Level_2, RVT_Level_3 -->
+  <!-- RVT preset name(s); comma-separated for multiple outputs per Revit version, e.g. RVT_Level_1, RVT_Level_2. Supported values: RVT_Level_0, RVT_Level_1, RVT_Level_2, RVT_Level_3 -->
   <InventorPresetName>RVT_Level_2</InventorPresetName>
 
   <!-- Copy source file's system comment; accepted values are True/False -->

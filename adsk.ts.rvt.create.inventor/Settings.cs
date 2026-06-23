@@ -43,11 +43,21 @@ namespace adsk.ts.rvt.create.inventor
         [XmlElement("InventorPresetName")]
         public string InventorPresetName;
 
+        /// <summary>Parsed list of all configured Inventor preset names (comma-separated in XML).</summary>
+        [XmlIgnore]
+        public List<string> InventorPresetNames =>
+            (InventorPresetName ?? "").Split(',').Select(v => v.Trim()).Where(v => v.Length > 0).ToList();
+
         [XmlElement("AcceptLocalIpj")]
         public string AcceptLocalIpj;
 
         [XmlElement("TargetRevitVersion")]
         public string TargetRevitVersion;
+
+        /// <summary>Parsed list of all configured target Revit versions (comma-separated in XML).</summary>
+        [XmlIgnore]
+        public List<string> TargetRevitVersions =>
+            (TargetRevitVersion ?? "").Split(',').Select(v => v.Trim()).Where(v => v.Length > 0).ToList();
 
         [XmlElement("RevitTemplate")]
         public string RevitTemplate;
