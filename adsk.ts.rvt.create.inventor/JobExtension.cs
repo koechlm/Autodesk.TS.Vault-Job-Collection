@@ -130,7 +130,7 @@ namespace adsk.ts.rvt.create.inventor
             }
             finally
             {
-                // InventorServer is managed by the hosting context — never call Quit() on it.
+                // InventorServer is managed by the hosting context ï¿½ never call Quit() on it.
                 // If we created an Inventor Application instance on our own, close it; otherwise only re-enable any addins we deactivated.
                 if (mInvApp != null)
                 {
@@ -244,8 +244,26 @@ namespace adsk.ts.rvt.create.inventor
                 Inventor.ApplicationAddIn mRvtTranslator = null;
                 try
                 {
+                    addInBimSimplify = addIns.get_ItemById("{71019C12-43F6-4C11-BA7A-AD9BDBC5EA0C}"); // BIM Simplify
+                    if (addInBimSimplify != null) //&& addInBimSimplify.Activated == false
+                    {
+                        addInBimSimplify.Activate();
+                        // Wait 10 sec
+                        System.Threading.Thread.Sleep(10000);
+                    }
+                }
+                catch (Exception)
+                {
+                    mTrace.WriteLine("Translator job required Inventor Application with RVT Translator addin but failed to find the addin; exit job with failure.");
+                    throw new Exception("Translator job's single task creating an RVT export from Inventor file failed: could not activate Inventor RVT Translator addin.");
+                }
+
+                // Activate the RVT Translator Addin
+                Inventor.ApplicationAddIn mRvtTranslator = null;
+                try
+                {
                     mRvtTranslator = addIns.get_ItemById("{2058EF4F-37A3-4B57-A322-B4E79E7D53E4}"); // RVT Translator functionality
-                    if (mRvtTranslator != null)
+                    if (mRvtTranslator != null && mRvtTranslator.Activated == false)
                     {
                         mRvtTranslator.Activate();
                     }
@@ -257,8 +275,8 @@ namespace adsk.ts.rvt.create.inventor
                 }
 
                 // check the availability of the target Revit file format.
-                Inventor.FileManager fileManager = InvFileManager;
-                Inventor.NameValueMap formatOptions = InvTransientObjects.CreateNameValueMap();
+                Inventor.FileManager fileManager = mInv.FileManager;
+                Inventor.NameValueMap formatOptions = mInv.TransientObjects.CreateNameValueMap();
                 if (fileManager != null)
                 {
                     formatOptions = fileManager.GetRevitEngineInstallationStatus();
@@ -284,8 +302,8 @@ namespace adsk.ts.rvt.create.inventor
                 try
                 {
                     Inventor.ApplicationAddIn addIniLogic = null;
-                    addIniLogic = addIns.ItemById["{3BDD8D79-2179-4B11-8A5A-257B1C0263AC}"]; // iLogic
-                    if (addIniLogic != null) //&& addIniLogic.Activated == true
+                    addIniLogic = mInv.ApplicationAddIns.ItemById["{3BDD8D79-2179-4B11-8A5A-257B1C0263AC}"]; // iLogic
+                    if (addIniLogic != null && addIniLogic.Activated == true)
                     {
                         addIniLogic.Deactivate();
                         mDisabledAddins.Add(addIniLogic);
@@ -300,7 +318,7 @@ namespace adsk.ts.rvt.create.inventor
                 try
                 {
                     Inventor.ApplicationAddIn addInVDS = null;
-                    addInVDS = addIns.ItemById["{B0E8F1C3-9BFD-4B9A-9C8B-7F2E1C025DCD}"]; // Vault Data Standard
+                    addInVDS = mInv.ApplicationAddIns.ItemById["{B0E8F1C3-9BFD-4B9A-9C8B-7F2E1C025DCD}"]; // Vault Data Standard
                     if (addInVDS != null && addInVDS.Activated == true)
                     {
                         addInVDS.Deactivate();
@@ -316,7 +334,7 @@ namespace adsk.ts.rvt.create.inventor
                 try
                 {
                     Inventor.ApplicationAddIn addInVault = null;
-                    addInVault = addIns.ItemById["{48B682BC-42E6-4953-84C5-3D253B52E77B}"]; // Vault
+                    addInVault = mInv.ApplicationAddIns.ItemById["{48B682BC-42E6-4953-84C5-3D253B52E77B}"]; // Vault
                     if (addInVault != null && addInVault.Activated == true)
                     {
                         addInVault.Deactivate();
@@ -328,7 +346,7 @@ namespace adsk.ts.rvt.create.inventor
                     //ignore, Vault Addin not installed
                 }
 
-            #endregion validate Inventor availability
+                #endregion validate Inventor availability
 
                 // Inventor must have a project file activated; we enforce using the Vault stored IPJ
                 #region Inventor IPJ activation
@@ -349,7 +367,7 @@ namespace adsk.ts.rvt.create.inventor
                 mIpjLocalPath = mJobInventor.mGetIpj(settingsAcceptLocalIpj);
 
                 //activate the given project file for this job only
-                projectManager = InvDesignProjectManager;
+                projectManager = mInv.DesignProjectManager;
                 // Inventor might fail with unhandled exeption on fresh installed machines, if no IPJ had been used before
                 try
                 {
@@ -364,6 +382,9 @@ namespace adsk.ts.rvt.create.inventor
                 mProject.Activate();
 
                 //[Optionally:] get Inventor Design Data settings and download all related files ---------
+
+                // workaround to get the BIM Simplify addin loaded and available
+                mInv.Documents.Add(DocumentTypeEnum.kPartDocumentObject, "", true);
 
                 mTrace.WriteLine("Job successfully activated Inventor IPJ.");
 
@@ -427,7 +448,7 @@ namespace adsk.ts.rvt.create.inventor
                 #region create RVT export
                 mTrace.WriteLine("Job starts task for RVT Simplification.");
                 //use Inventor to open document
-                Inventor.Document mDoc = InvDocuments.Open(mDocPath);
+                Inventor.Document mDoc = mInv.Documents.Open(mDocPath);
 
                 if (mDoc == null)
                 {
@@ -440,13 +461,28 @@ namespace adsk.ts.rvt.create.inventor
                     throw new Exception("Job could not open the source file " + mDocPath + " in Inventor.");
                 }
 
-                // validate the assembly context.
+                // since the RVT export moved to the BIM Content environment, we need to activate it.
                 Inventor.AssemblyDocument mAsmDoc = null;
                 if (mDoc.DocumentType == DocumentTypeEnum.kAssemblyDocumentObject)
                 {
                     mAsmDoc = (Inventor.AssemblyDocument)mDoc;
+
+                    Inventor.UserInterfaceManager userInterfaceManager = mInv.UserInterfaceManager;
+                    Inventor.EnvironmentManager environmentManager = mAsmDoc.EnvironmentManager;
+                    if (userInterfaceManager != null)
+                    {
+                        Inventor.Environment environment = userInterfaceManager.Environments["AEC_Exchange:Environment"];
+                        if (environment != null)
+                        {
+                            environmentManager.SetCurrentEnvironment(environment);
+                            // wait as it may need to load the related addin
+                            System.Threading.Thread.Sleep(10000);
+                        }
+                    }
                 }
-                else
+
+                // create new export definition if not existing
+                if (revitExportDef == null)
                 {
                     mTrace.WriteLine("Job could not create RVT export: source file is not an assembly.");
                     mJobInventor.mResetIpj(mSaveProject);
@@ -571,11 +607,14 @@ namespace adsk.ts.rvt.create.inventor
                         // continue with default settings as no preset could be applied
                         // Input
                         revitExportDef.IsAssociativeDesignView = false;
-                        //// Envelopes
-                        revitExportDef.EnvelopesReplaceStyle = Inventor.EnvelopesReplaceStyleEnum.kAllInOneEnvelopeReplaceStyle; //118785 No enveloping
-                                                                                                                                 //                                                                                             // Part removal
+                        // Envelopes
+                        revitExportDef.EnvelopesReplaceStyle = Inventor.EnvelopesReplaceStyleEnum.kNoneReplaceStyle; //118785 No enveloping
+                                                                                                                     // Part removal
                         revitExportDef.RemovePartsBySize = true;
                         revitExportDef.RemovePartsSize = 1.0; // 1 cm
+                                                              // Feature removal (not possible for automation)
+                                                              //ObjectCollection mPreservedFeatures = null;
+                                                              //revitExportDef.PreservedFeatures = mPreservedFeatures; //118789 Do not preserve any features
                         revitExportDef.RemoveHolesStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveByRange; //118787 Remove in range
                         revitExportDef.RemoveHolesDiameterRange = 1.0; // 1 cm
                         revitExportDef.RemoveFilletsStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll; //118786 Remove all
@@ -643,19 +682,6 @@ namespace adsk.ts.rvt.create.inventor
                         mDoc.Save2(false);
                     }
 
-                    // release export COM objects before closing the document so the ATF reference
-                    // counts drop to zero while the document is still alive.
-                    if (revitExport != null)
-                    {
-                        System.Runtime.InteropServices.Marshal.FinalReleaseComObject(revitExport);
-                        revitExport = null;
-                    }
-                    if (revitExportDef != null)
-                    {
-                        System.Runtime.InteropServices.Marshal.FinalReleaseComObject(revitExportDef);
-                        revitExportDef = null;
-                    }
-
                     // close the document and skip save
                     mDoc.Close(true);
 
@@ -678,10 +704,6 @@ namespace adsk.ts.rvt.create.inventor
                         throw new Exception("Validating the export file " + mExpFileName + " before upload failed.");
                     }
                 }
-
-                // Deactivate the RVT Translator addin so ATF releases the out-of-process
-                // Revit engine (ATFRevitBroker), allowing sequential jobs to run cleanly.
-                mShutdownRvtTranslator();
 
                 #endregion create RVT export
 
@@ -747,6 +769,7 @@ namespace adsk.ts.rvt.create.inventor
                 // finalize log output
                 mTrace.IndentLevel = 1;
                 mTrace.WriteLine("Job finished all steps.");
+
             }
         }
         private Dictionary<string, object> mReadPresetMap()
@@ -787,7 +810,7 @@ namespace adsk.ts.rvt.create.inventor
         }
 
 
-        // Unified accessors — null-coalescing between the two Inventor application types; no per-call conditionals needed.
+        // Unified accessors ï¿½ null-coalescing between the two Inventor application types; no per-call conditionals needed.
         private Inventor.Documents             InvDocuments             => mInvApp?.Documents             ?? mInvSrv.Documents;
         private Inventor.FileManager           InvFileManager           => mInvApp?.FileManager           ?? mInvSrv.FileManager;
         private Inventor.TransientObjects      InvTransientObjects      => mInvApp?.TransientObjects      ?? mInvSrv.TransientObjects;
@@ -849,13 +872,14 @@ namespace adsk.ts.rvt.create.inventor
                     mInvApp = System.Activator.CreateInstance(inventorAppType) as Inventor.Application;
                     if (mInvApp != null)
                     {
-                        mInvApp.Visible = false;
+                        mInv.Visible = true;
                         // run Inventor silently
                         mInvApp.SilentOperation = true;
                         mTrace.WriteLine("Started new Inventor application object.");
                     }
                 }
-                return mInvApp;
+
+                return mInv;
             }
             catch
             {
@@ -945,7 +969,7 @@ namespace adsk.ts.rvt.create.inventor
 
             // ATF process hierarchy: ATFRevitRCEHost is the actual Revit engine host spawned by
             // ATFRevitBroker. The broker only exits after the host releases it, so we must wait
-            // for them in dependency order. WaitForExit observes the natural exit — it does not
+            // for them in dependency order. WaitForExit observes the natural exit ï¿½ it does not
             // kill anything.
             const int timeoutMs = 15_000;
             foreach (string procName in (string[])["ATFRevitRCEHost", "ATFRevitBroker"])

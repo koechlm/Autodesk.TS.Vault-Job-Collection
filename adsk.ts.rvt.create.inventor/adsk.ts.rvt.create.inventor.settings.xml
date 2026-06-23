@@ -7,15 +7,21 @@
   <!-- Allow the reuse of an existing IPJ file if the download of it fails; accepted values are True/False-->
   <AcceptLocalIpj>True</AcceptLocalIpj>
 
-  <!-- Restrict job execution to transmitted file version. Set to False if a predecessor job synchronizes properties. -->
+  <!-- Restrict job execution to transmitted file version. True is the usual behavior for released files. -->
   <EnforceSubmittedFileVersion>False</EnforceSubmittedFileVersion>
-  
-  <!-- Use Inventor.exe consuming a license; accepted values are True/False, default is False and leverages VaultInventorServer -->
-  <UseInventorExe>False</UseInventorExe>
 
   <!-- Export File Format(s)-->
   <!--  Supported Values/File Formats are: RVT -->
   <ExportFormats>RVT</ExportFormats>
+  
+  <!-- enable/disable Revit Updating; default is False, as Vault Automation secures associativity -->
+  <RvtAssociative>False</RvtAssociative>
+  
+  <!-- Target Revit file release format; valid options are 2024, 2025, 2026. Note - the Revit version must be installed on the Job Processor machine -->
+  <TargetRevitVersion>2026</TargetRevitVersion>
+  
+  <!-- Revit Template (*.rte) file location as Vault path, e.g., $/Templates/Revit/RevitExportTemplate.rte; leave empty to consume default template. -->
+  <RevitTemplate>$/Templates/Revit/RevitExportTemplate.rte</RevitTemplate>
 
   <!-- enable/disable Revit Updating; default is False, as Vault Automation secures associativity -->
   <RvtAssociative>False</RvtAssociative>
