@@ -214,9 +214,9 @@ namespace adsk.ts.rvt.create.inventor
 
             // check Inventor application availability
             Type invType = Type.GetTypeFromProgID("Inventor.Application");
-            if (invType == null)
+            if (mSettings.UseInventorExe != null && mSettings.UseInventorExe.ToLower() == "true" && invType == null)
             {
-                mTrace.WriteLine("Translator job required Inventor Application but failed to find it installed; exit job with failure.");
+                mTrace.WriteLine("Translator job settings required Inventor Application but failed to find it installed; exit job with failure.");
                 throw new Exception("Translator job's single task creating an RVT export from Inventor file failed: could not find Inventor Application.");
             }
 
@@ -235,7 +235,7 @@ namespace adsk.ts.rvt.create.inventor
 
             if (mInvApp == null && mInvSrv == null)
             {
-                mTrace.WriteLine("Translator job required Inventor Application but failed to establish an application instance; exit job with failure.");
+                mTrace.WriteLine("Translator job required Inventor Application or Inventor Server but failed to establish an application instance; exit job with failure.");
                 throw new Exception("Translator job's single task creating an RVT export from Inventor file failed: could not find or start Inventor Application.");
             }
             else
@@ -440,7 +440,7 @@ namespace adsk.ts.rvt.create.inventor
                     throw new Exception("Job could not open the source file " + mDocPath + " in Inventor.");
                 }
 
-                // since the RVT export moved to the BIM Content environment, we need to activate it.
+                // validate the assembly context.
                 Inventor.AssemblyDocument mAsmDoc = null;
                 if (mDoc.DocumentType == DocumentTypeEnum.kAssemblyDocumentObject)
                 {
@@ -679,6 +679,10 @@ namespace adsk.ts.rvt.create.inventor
                     }
                 }
 
+                // Deactivate the RVT Translator addin so ATF releases the out-of-process
+                // Revit engine (ATFRevitBroker), allowing sequential jobs to run cleanly.
+                mShutdownRvtTranslator();
+
                 #endregion create RVT export
 
                 // check in the source file, to add/update the Revit Export feature
@@ -743,10 +747,6 @@ namespace adsk.ts.rvt.create.inventor
                 // finalize log output
                 mTrace.IndentLevel = 1;
                 mTrace.WriteLine("Job finished all steps.");
-
-                // Deactivate the RVT Translator addin so ATF releases the out-of-process
-                // Revit engine (ATFRevitBroker), allowing sequential jobs to run cleanly.
-                mShutdownRvtTranslator();
             }
         }
         private Dictionary<string, object> mReadPresetMap()
