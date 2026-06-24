@@ -52,7 +52,7 @@ Resolves the source file's system comment that will be written to the export fil
 |---|---|
 | Source file is **not in a consumable lifecycle state** (`FileLfCyc.Consume == false`) | `mFile.Comm` — the current iteration's own comment |
 | Source file **is in a consumable state** (`FileLfCyc.Consume == true`) | The comment of the **first iteration** that entered the current revision × lifecycle-state combination |
-| First-in-state comment is empty, or any error occurs | Falls back to `mFile.Comm`, or to `"Property Update"` if that is also empty |
+| First-in-state comment is empty, or any error occurs | Falls back to `mFile.Comm`, or to `"Created by ExportSampleJob"` if that is also empty |
 
 **Why the distinction matters:**  
 When Vault transitions a file into a consumable state (e.g. "Released"), it immediately creates a new iteration tagged *"Property Update"* to propagate properties to attached export files. If the job is triggered by that property-update iteration, `mFile.Comm` would be `"Property Update"` rather than the engineer's original release comment. The helper detects this situation by checking `FileLfCyc.Consume`. When the flag is `true` it queries all iterations of the master (`GetFilesByMasterId`), filters to those sharing the same **lifecycle state ID** and the same **revision** (`FileRev.MaxFileId`), and picks the one with the lowest database ID — i.e. the first iteration that caused the state transition — which still carries the original comment.
@@ -327,7 +327,7 @@ Source file iteration
 ├── FileLfCyc.Consume == false  (not in a consumable state, e.g. "Work in Progress")
 │     └── Use mFile.Comm directly
 │           ├── Non-empty  →  Use that comment
-│           └── Empty      →  Fall back to "Property Update"
+│           └── Empty      →  Fall back to "Created by ExportSampleJob"
 │
 └── FileLfCyc.Consume == true   (in a consumable state, e.g. "Released")
 	  │
@@ -337,7 +337,7 @@ Source file iteration
 	  │
 	  ├── firstInState.Comm non-empty  →  Use that comment
 	  ├── firstInState.Comm empty      →  Fall back to mFile.Comm
-	  └── mFile.Comm empty             →  Fall back to "Property Update"
+	  └── mFile.Comm empty             →  Fall back to "Created by ExportSampleJob"
 ```
 
 **Why this matters:**  

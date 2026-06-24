@@ -117,7 +117,7 @@ namespace adsk.ts.job.shared
         /// If the source file is in a consumable lifecycle state the comment of the first iteration
         /// that entered the current revision+state combination is returned, so that downstream
         /// property-update iterations (whose Comm would be e.g. "Property Update") are skipped.
-        /// Falls back to mFile.Comm for non-consumable states, and to "Property Update" when Comm is empty.
+        /// Falls back to mFile.Comm for non-consumable states, and to "Created by ExportSampleJob" when Comm is empty.
         /// </summary>
         private string mGetSourceComment(ACW.File mFile)
         {
@@ -126,7 +126,7 @@ namespace adsk.ts.job.shared
                 if (!mFile.FileLfCyc.Consume)
                 {
                     // non-consumable state: the current iteration's comment is authoritative
-                    return !string.IsNullOrEmpty(mFile.Comm) ? mFile.Comm : "Property Update";
+                    return !string.IsNullOrEmpty(mFile.Comm) ? mFile.Comm : "Created by ExportSampleJob";
                 }
 
                 // consumable state: find the first iteration that entered this revision+state combination.
@@ -147,12 +147,12 @@ namespace adsk.ts.job.shared
                     return comment;
 
                 // fall back to the current iteration's comment
-                return !string.IsNullOrEmpty(mFile.Comm) ? mFile.Comm : "Property Update";
+                return !string.IsNullOrEmpty(mFile.Comm) ? mFile.Comm : "Created by ExportSampleJob";
             }
             catch (Exception ex)
             {
                 _trace.WriteLine("Job could not resolve source comment for " + mFile.Name + "; falling back to current iteration comment. Details: " + ex.Message);
-                return !string.IsNullOrEmpty(mFile.Comm) ? mFile.Comm : "Property Update";
+                return !string.IsNullOrEmpty(mFile.Comm) ? mFile.Comm : "Created by ExportSampleJob";
             }
         }
 
