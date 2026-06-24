@@ -326,7 +326,7 @@ namespace adsk.ts.job.shared
                             //update export file using the property dictionary; note this the IExplorerUtil method bumps file iteration and requires no check out
                             PropWriteResults propWriteResults = new PropWriteResults();
                             string[] cloakedEntityClasses;
-                            string mComment = copySourceComment ? mGetSourceComment(mFile) : "Property Update";
+                            string mComment = copySourceComment ? mGetSourceComment(mFile) : "Created by ExportSampleJob";
                             manageProps.UpdateFileProperties(
                                 mExpFile, comment: mComment, allowSync: true, 
                                 mPropDictonary, 
