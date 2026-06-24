@@ -24,7 +24,8 @@
   <TargetRevitVersion>2027</TargetRevitVersion>
   
   <!-- Revit Template (*.rte) file location as Vault path, e.g., $/Templates/Revit/RevitExportTemplate.rte; leave empty to consume default template. -->
-  <RevitTemplate>$/Templates/Revit/RevitExportTemplate.rte</RevitTemplate>
+  <!-- Note: Ensure the template file version format matches the minimum target Revit version, e.g. 2026 to be consumed by 2026 and 2027. -->
+  <RevitTemplate></RevitTemplate>
 
   <!-- RVT preset: store a Vault path of the Inventor preset file, e.g. $/Templates/Inventor/Presest/SimplifyCmd.preset-->
   <InventorPreset>$/Templates/Inventor/Presets/SimplifyCmd.preset</InventorPreset>
