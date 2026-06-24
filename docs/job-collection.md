@@ -13,12 +13,12 @@ The shared library `adsk.ts.job.shared` is **not a job** — it is a common infr
 | Project | Job Type ID | Application | Output / Format(s) |
 |---|---|---|---|
 | `adsk.ts.AssignUpdateFmItem` | `adsk.ts.assignupdateitem` | Vault API / Fusion Manage | Vault Item/BOM assignment, Upload to Fusion Manage |
-| `adsk.ts.acad.dwg2d.create.inventor` | `adsk.ts.acad.dwg2d.create.inventor` | Autodesk Inventor / InventorServer | DWG (2D) |
-| `adsk.ts.export3d.create.inventor` | `adsk.ts.export3d.create.inventor` | Autodesk Inventor / InventorServer | 3DDWG, STP, JT *(extensible)* |
+| `adsk.ts.acad.dwg2d.create.inventor` | `adsk.ts.acad.dwg2d.create.inventor` | Autodesk Inventor / VaultInventorServer | DWG (2D) |
+| `adsk.ts.export3d.create.inventor` | `adsk.ts.export3d.create.inventor` | Autodesk Inventor / VaultInventorServer | 3DDWG, STP, JT *(extensible)* |
 | `adsk.ts.nwd.create.navisworks` | `adsk.ts.nwd.create.navisworks` | Autodesk Navisworks Manage | NWD, DWF |
-| `adsk.ts.rvt.create.inventor` | `adsk.ts.rvt.create.inventor` | Autodesk Inventor / InventorServer or Inventor.exe | RVT |
+| `adsk.ts.rvt.create.inventor` | `adsk.ts.rvt.create.inventor` | Autodesk Inventor / VaultInventorServer | RVT |
 | `adsk.ts.pdf.create.slddrw` | `adsk.ts.pdf.create.slddrw` | Autodesk SolidWorks | PDF, DXF |
-| `adsk.ts.image.create.inventor` | `adsk.ts.image.create.inventor` | Autodesk Inventor / InventorServer | BMP, PNG, GIF, JPG, TIFF |
+| `adsk.ts.image.create.inventor` | `adsk.ts.image.create.inventor` | Autodesk Inventor / VaultInventorServer | BMP, PNG, GIF, JPG, TIFF |
 | `adsk.ts.job.shared` | *(shared library)* | — | — |
 
 ---
@@ -92,7 +92,7 @@ Assigns or updates a Fusion Manage (Fusion Operations) item for the triggering V
 **Project:** `adsk.ts.acad.dwg2d.create.inventor`  
 **Job type:** `adsk.ts.acad.dwg2d.create.inventor`  
 **Application:** Autodesk Inventor / VaultInventorServer  
-**Triggered on:** Vault file lifecycle or property event for Inventor 2D drawings
+**Triggered on:** Vault file lifecycle event for Inventor 2D drawings
 
 ### What it does
 Opens an Inventor 2D drawing (`.idw` or `.dwg`) in VaultInventorServer and exports it to AutoCAD DWG format using the built-in DXF/DWG translator add-in (`{C24E3AC2-122E-11D5-8E91-0010B541CD80}`). The DWG translator reads its export options from a configurable `.ini` file. The resulting file is named `<source-file>.<original-ext>.dwg` (e.g. `Drawing1.idw.dwg`).
@@ -120,7 +120,7 @@ Opens an Inventor 2D drawing (`.idw` or `.dwg`) in VaultInventorServer and expor
 **Project:** `adsk.ts.export3d.create.inventor`  
 **Job type:** `adsk.ts.export3d.create.inventor`  
 **Application:** Autodesk Inventor / VaultInventorServer  
-**Triggered on:** Vault file lifecycle or property event for Inventor 3D files
+**Triggered on:** Vault file lifecycle event for Inventor 3D files
 
 ### What it does
 Opens an Inventor part (`.ipt`) or assembly (`.iam`) in VaultInventorServer and exports it to one or more 3D neutral formats. Multiple formats can be listed in `ExportFormats`, and the job iterates over each one in sequence within a single job execution.
@@ -159,7 +159,7 @@ Additional formats that Inventor supports (but are not yet wired up): `CATPart`,
 **Project:** `adsk.ts.nwd.create.navisworks`  
 **Job type:** `adsk.ts.nwd.create.navisworks`  
 **Application:** Autodesk Navisworks Manage (COM automation)  
-**Triggered on:** Vault file lifecycle or property event
+**Triggered on:** Vault file lifecycle event
 
 ### What it does
 Launches a Navisworks Manage automation instance, opens the source file (or appends it to a downloaded NWD template), and saves the result as an NWD file. Optionally it also exports a DWF alongside the NWD. A Navisworks cache file (`.nwc`) that Navisworks may auto-create during import is detected and added to the upload list as well.
@@ -194,8 +194,8 @@ NWC files, when present, are uploaded as additional `DesignRepresentation` attac
 
 **Project:** `adsk.ts.rvt.create.inventor`  
 **Job type:** `adsk.ts.rvt.create.inventor`  
-**Application:** Autodesk Inventor / VaultInventorServer or full Inventor.exe  
-**Triggered on:** Vault file lifecycle or property event for Inventor assemblies
+**Application:** Autodesk Inventor / VaultInventorServer  
+**Triggered on:** Vault file lifecycle event for Inventor assemblies
 
 ### What it does
 Creates a simplified Revit (`.rvt`) file from an Inventor assembly using the Inventor Revit Simplification feature (`RevitExports`). The job supports multiple target Revit versions and multiple simplification presets per run, producing one output file per version × preset combination.
@@ -205,7 +205,7 @@ Creates a simplified Revit (`.rvt`) file from an Inventor assembly using the Inv
 2. Downloads the simplification preset file from Vault and reads the preset map.
 3. Optionally downloads a Revit template (`.rte`) from Vault — once, reused for all version × preset iterations.
 4. Downloads the source `.iam` file including all references.
-5. Opens the assembly in Inventor (InventorServer or full Inventor.exe, depending on `UseInventorExe`).
+5. Opens the assembly in Inventor (VaultInventorServer or full Inventor.exe, depending on `UseInventorExe`).
 6. For each configured **Revit version** × each configured **preset name**:
    - Looks up or creates a `RevitExportDefinition` on the assembly.
    - Sets `revitExportDef.RevitVersion` to the current version.
@@ -230,7 +230,7 @@ Creates a simplified Revit (`.rvt`) file from an Inventor assembly using the Inv
 | `LogFileLocation` | Path | Directory where the job writes its log file. |
 | `AcceptLocalIpj` | `True` / `False` | Same as the 2D DWG job — see above. |
 | `EnforceSubmittedFileVersion` | `True` / `False` | Same as the 2D DWG job — see above. |
-| `UseInventorExe` | `True` / `False` | When `False` (default), the job runs inside VaultInventorServer (no seat required). When `True`, the job launches a full Inventor.exe instance. Use `True` only when specific functionality is not available in InventorServer. |
+| `UseInventorExe` | `True` / `False` | When `False` (default), the job runs inside VaultInventorServer (no seat required). When `True`, the job launches a full Inventor.exe instance. Use `True` only when specific functionality is not available in VaultInventorServer. |
 | `ExportFormats` | `RVT` | Currently only `RVT` is supported. Reserved for future formats. |
 | `RvtAssociative` | `True` / `False` | When `True`, the Revit export feature is created with `EnableUpdating = true` and the assembly is checked out and checked back in so Vault stores the associative link. When `False` (default), a non-associative snapshot export is performed and no check-out is needed. |
 | `TargetRevitVersion` | Comma-separated year(s) | One or more target Revit version years, e.g. `2027` or `2026, 2027`. Each version must be installed on the Job Processor machine. The job validates availability before starting any export. Multiple values produce one output file per version per preset. |
@@ -247,7 +247,7 @@ Creates a simplified Revit (`.rvt`) file from an Inventor assembly using the Inv
 **Project:** `adsk.ts.pdf.create.slddrw`  
 **Job type:** `adsk.ts.pdf.create.slddrw`  
 **Application:** Autodesk SolidWorks (COM automation)  
-**Triggered on:** Vault file lifecycle or property event for SolidWorks drawings
+**Triggered on:** Vault file lifecycle event for SolidWorks drawings
 
 ### What it does
 Launches SolidWorks via COM automation, opens a SolidWorks drawing (`.slddrw`) and exports it to PDF. A named DXF sheet can be handled separately: excluded from the PDF and exported as a standalone DXF file instead.
@@ -283,7 +283,7 @@ Launches SolidWorks via COM automation, opens a SolidWorks drawing (`.slddrw`) a
 **Project:** `adsk.ts.image.create.inventor`  
 **Job type:** `adsk.ts.image.create.inventor`  
 **Application:** Autodesk Inventor / VaultInventorServer  
-**Triggered on:** Vault file lifecycle or property event for Inventor files
+**Triggered on:** Vault file lifecycle event for Inventor files
 
 ### What it does
 Opens an Inventor file in VaultInventorServer and renders a static image using a programmatically created camera. The camera is oriented to `IsoTopRight` for parts and assemblies, or aimed at the active sheet for drawings. The scene is fitted to fill the frame before capture. The output is a `1280 × 768` px image with a white-to-light-grey gradient background.
