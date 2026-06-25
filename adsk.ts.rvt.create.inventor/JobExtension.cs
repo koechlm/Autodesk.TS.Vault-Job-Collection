@@ -815,8 +815,8 @@ namespace adsk.ts.rvt.create.inventor
             if (mPresetFile != null)
             {
                 xmlDocument.Load(presetFile);
-                // select all nodes with attribute "Name" starts with RVT_Level_
-                XmlNodeList settingNodes = xmlDocument.SelectNodes("//Preset[starts-with(@Name, 'RVT_Level_')]");
+                // select all Preset nodes regardless of name
+                XmlNodeList settingNodes = xmlDocument.SelectNodes("//Preset");
 
                 foreach (XmlNode mNode in settingNodes)
                 {

@@ -30,7 +30,7 @@
   <!-- RVT preset: store a Vault path of the Inventor preset file, e.g. $/Templates/Inventor/Presest/SimplifyCmd.preset-->
   <InventorPreset>$/Templates/Inventor/Presets/SimplifyCmd.preset</InventorPreset>
 
-  <!-- RVT preset name(s); comma-separated for multiple outputs per Revit version, e.g. RVT_Level_1, RVT_Level_2. Supported values: RVT_Level_0, RVT_Level_1, RVT_Level_2, RVT_Level_3 -->
+  <!-- RVT preset name(s); comma-separated for multiple outputs per Revit version, e.g. RVT_Level_1, RVT_Level_2.  -->
   <InventorPresetName>RVT_Level_2</InventorPresetName>
 
   <!-- Copy source file's system comment; accepted values are True/False -->
