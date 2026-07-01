@@ -11,8 +11,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <SignAssembly>True</SignAssembly>    
     <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>    
-    <RootNamespace>adsktsshared</RootNamespace>    
-    <FileVersion>31.0.84.0</FileVersion>
+    <RootNamespace>adsktsshared</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
