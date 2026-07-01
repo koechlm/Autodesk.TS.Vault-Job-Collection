@@ -432,6 +432,13 @@ namespace adsk.ts.rvt.create.inventor
 
                 // load presets and preset-object map once before the export loop
                 Dictionary<string, Dictionary<string, string>> mPresets = mGetRevitPresets();
+                // exit the job if the preset map could not be read
+                if (mPresets == null || mPresets.Count == 0)
+                {
+                    mTrace.WriteLine("Job could not read the Inventor Simplification preset map; exit job with failure.");
+                    throw new Exception("Job exited prematurely: could not read the Inventor Simplification preset map.");
+                }
+
                 Dictionary<string, object> mPresetObjects = mReadPresetMap();
 
                 // download the Revit template from Vault once; reused for all version × preset iterations
@@ -538,6 +545,8 @@ namespace adsk.ts.rvt.create.inventor
                                 {
                                     switch (preset.Key)
                                     {
+                                        // todo: check with Inventor team that we covered all available preset keys and values; add missing ones if any
+
                                         case "ENVELOPE_SELECTOR":
                                             if (mPresetObjects.ContainsKey(preset.Value))
                                                 revitExportDef.EnvelopesReplaceStyle = (Inventor.EnvelopesReplaceStyleEnum)mPresetObjects[preset.Value];
@@ -599,23 +608,9 @@ namespace adsk.ts.rvt.create.inventor
                             }
                             else
                             {
-                                // continue with default settings as no preset could be applied
-                                revitExportDef.IsAssociativeDesignView = false;
-                                revitExportDef.EnvelopesReplaceStyle = Inventor.EnvelopesReplaceStyleEnum.kAllInOneEnvelopeReplaceStyle;
-                                revitExportDef.RemovePartsBySize = true;
-                                revitExportDef.RemovePartsSize = 1.0; // 1 cm
-                                revitExportDef.RemoveHolesStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveByRange;
-                                revitExportDef.RemoveHolesDiameterRange = 1.0; // 1 cm
-                                revitExportDef.RemoveFilletsStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll;
-                                revitExportDef.RemoveFilletsRadiusRange = 1.0; // 1 cm
-                                revitExportDef.RemoveChamfersStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll;
-                                revitExportDef.RemovePocketsStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll;
-                                revitExportDef.RemoveEmbossStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll;
-                                revitExportDef.RemoveTunnelsStyle = Inventor.SimplificationRemoveStyleEnum.kSimplificationRemoveAll;
-                                revitExportDef.Structure = Inventor.RevitExportStructureTypeEnum.kAllInOneElementStructure;
-                                revitExportDef.RemoveAllInternalVoids = true;
-                                revitExportDef.RemoveInternalParts = true;
-                                revitExportDef.UseColorOverrideFromSourceComponent = true;
+                                // exit the job with failure if the preset map could not be read or the preset name is not found
+                                mTrace.WriteLine("Job could not read the Inventor Simplification preset map; exit job with failure.");
+                                throw new Exception("Job exited prematurely: could not read the Inventor Simplification preset map.");
                             }
 
                             // enable updating if Revit association feature is required
@@ -804,9 +799,21 @@ namespace adsk.ts.rvt.create.inventor
 
         private Dictionary<string, Dictionary<string, string>> mGetRevitPresets()
         {
-            // read the preset XML file and create a name/value map for all simplification options
-            ACW.File mPresetFile = mWsMgr.DocumentService.FindLatestFilesByPaths([mSettings.InventorPreset]).FirstOrDefault();
-            string presetFile = tsJobCommon.mDownloadFile(mPresetFile);
+            ACW.File mPresetFile = null;
+            string presetFile = null;
+            try
+            {
+                // read the preset XML file and create a name/value map for all simplification options
+                mPresetFile = mWsMgr.DocumentService.FindLatestFilesByPaths([mSettings.InventorPreset]).FirstOrDefault();
+                presetFile = tsJobCommon.mDownloadFile(mPresetFile);
+            }
+            catch (Exception)
+            {
+                // add detail to the log and return null to indicate no presets could be loaded
+                mTrace.WriteLine("Job could not find or download the specified Inventor preset file in Vault; continue without presets.");
+                return null;
+            }
+
             List<string> mRvtPresets = new List<string>();
             XmlDocument xmlDocument = new XmlDocument();
 
