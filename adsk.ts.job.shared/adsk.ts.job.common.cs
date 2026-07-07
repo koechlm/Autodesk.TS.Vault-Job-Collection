@@ -117,7 +117,7 @@ namespace adsk.ts.job.shared
         /// If the source file is in a consumable lifecycle state the comment of the first iteration
         /// that entered the current revision+state combination is returned, so that downstream
         /// property-update iterations (whose Comm would be e.g. "Property Update") are skipped.
-        /// Falls back to mFile.Comm for non-consumable states, and to "Created by ExportSampleJob" when Comm is empty.
+        /// Falls back to mFile.Comm for non-consumable states, and to "Created by TS Job Collection" when Comm is empty.
         /// </summary>
         private string mGetSourceComment(ACW.File mFile)
         {
@@ -126,7 +126,7 @@ namespace adsk.ts.job.shared
                 if (!mFile.FileLfCyc.Consume)
                 {
                     // non-consumable state: the current iteration's comment is authoritative
-                    return !string.IsNullOrEmpty(mFile.Comm) ? mFile.Comm : "Created by ExportSampleJob";
+                    return !string.IsNullOrEmpty(mFile.Comm) ? mFile.Comm : "Created by TS Job Collection";
                 }
 
                 // consumable state: find the first iteration that entered this revision+state combination.
@@ -147,12 +147,12 @@ namespace adsk.ts.job.shared
                     return comment;
 
                 // fall back to the current iteration's comment
-                return !string.IsNullOrEmpty(mFile.Comm) ? mFile.Comm : "Created by ExportSampleJob";
+                return !string.IsNullOrEmpty(mFile.Comm) ? mFile.Comm : "Created by TS Job Collection";
             }
             catch (Exception ex)
             {
                 _trace.WriteLine("Job could not resolve source comment for " + mFile.Name + "; falling back to current iteration comment. Details: " + ex.Message);
-                return !string.IsNullOrEmpty(mFile.Comm) ? mFile.Comm : "Created by ExportSampleJob";
+                return !string.IsNullOrEmpty(mFile.Comm) ? mFile.Comm : "Created by TS Job Collection";
             }
         }
 
@@ -206,12 +206,12 @@ namespace adsk.ts.job.shared
                             //check if the file is a DWF file to upload as a hidden file
                             if (mExportFileInfo.Extension.ToLower() == ".dwf")
                             {
-                                addedFile = _connection.FileManager.AddFile(folderEntity, "Created by ExportSampleJob", null, null, ACW.FileClassification.DesignVisualization, true, vdfPath);
+                                addedFile = _connection.FileManager.AddFile(folderEntity, "Created by TS Job Collection", null, null, ACW.FileClassification.DesignVisualization, true, vdfPath);
                                 mExpFile = addedFile;
                             }
                             else
                             {
-                                addedFile = _connection.FileManager.AddFile(folderEntity, "Created by ExportSampleJob", null, null, ACW.FileClassification.DesignRepresentation, false, vdfPath);
+                                addedFile = _connection.FileManager.AddFile(folderEntity, "Created by TS Job Collection", null, null, ACW.FileClassification.DesignRepresentation, false, vdfPath);
                                 mExpFile = addedFile;
                             }
                         }
@@ -238,12 +238,12 @@ namespace adsk.ts.job.shared
                             //check if the file is a DWF file to upload as a hidden file
                             if (vdfFile.FileClassification == ACW.FileClassification.DesignVisualization)
                             {
-                                mUploadedFile = _connection.FileManager.CheckinFile(results.FileResults.First().File, "Created by ExportSampleJob", false, null, null, false, null, ACW.FileClassification.DesignVisualization, true, vdfPath);
+                                mUploadedFile = _connection.FileManager.CheckinFile(results.FileResults.First().File, "Created by TS Job Collection", false, null, null, false, null, ACW.FileClassification.DesignVisualization, true, vdfPath);
                                 mExpFile = mUploadedFile;
                             }
                             else
                             {
-                                mUploadedFile = _connection.FileManager.CheckinFile(results.FileResults.First().File, "Created by ExportSampleJob", false, null, null, false, null, ACW.FileClassification.DesignRepresentation, false, vdfPath);
+                                mUploadedFile = _connection.FileManager.CheckinFile(results.FileResults.First().File, "Created by TS Job Collection", false, null, null, false, null, ACW.FileClassification.DesignRepresentation, false, vdfPath);
                                 mExpFile = mUploadedFile;
                             }
                         }
@@ -264,7 +264,7 @@ namespace adsk.ts.job.shared
                 try
                 {
                     _trace.WriteLine("Job tries synchronizing " + mExpFile.Name + "'s revision in Vault.");
-                    _WebSrvMgr.DocumentServiceExtensions.UpdateFileRevisionNumbers(new long[] { mExpFile.Id }, new string[] { mFile.FileRev.Label }, "Rev Index synchronized by ExportSampleJob");
+                    _WebSrvMgr.DocumentServiceExtensions.UpdateFileRevisionNumbers(new long[] { mExpFile.Id }, new string[] { mFile.FileRev.Label }, "Rev Index synchronized by TS Job Collection");
                     mExpFile = (_WebSrvMgr.DocumentService.GetLatestFileByMasterId(mExpFile.MasterId));
                 }
                 catch (Exception ex)
@@ -326,7 +326,7 @@ namespace adsk.ts.job.shared
                             //update export file using the property dictionary; note this the IExplorerUtil method bumps file iteration and requires no check out
                             PropWriteResults propWriteResults = new PropWriteResults();
                             string[] cloakedEntityClasses;
-                            string mComment = copySourceComment ? mGetSourceComment(mFile) : "Created by ExportSampleJob";
+                            string mComment = copySourceComment ? mGetSourceComment(mFile) : "Created by TS Job Collection";
                             manageProps.UpdateFileProperties(
                                 mExpFile, comment: mComment, allowSync: true, 
                                 mPropDictonary, 
@@ -359,7 +359,7 @@ namespace adsk.ts.job.shared
                                 mTargetStateNames.Add(item.DispName, item.Id);
                             }
                             mTargetStateNames.TryGetValue(mFile.FileLfCyc.LfCycStateName, out long mTargetLfcStateId);
-                            _WebSrvMgr.DocumentServiceExtensions.UpdateFileLifeCycleStates(new long[] { mExpFile.MasterId }, new long[] { mTargetLfcStateId }, "Lifecycle state synchronized ExportSampleJob");
+                            _WebSrvMgr.DocumentServiceExtensions.UpdateFileLifeCycleStates(new long[] { mExpFile.MasterId }, new long[] { mTargetLfcStateId }, "Lifecycle state synchronized TS Job Collection");
                         }
                     }
                     catch (Exception ex)
