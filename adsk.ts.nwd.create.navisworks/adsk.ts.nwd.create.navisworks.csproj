@@ -69,15 +69,19 @@
     </Reference>
     <Reference Include="Autodesk.Navisworks.Api">
       <HintPath>..\SDK References\Autodesk.Navisworks.Api.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Autodesk.Navisworks.Automation">
       <HintPath>..\SDK References\Autodesk.Navisworks.Automation.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Autodesk.Navisworks.Controls">
       <HintPath>..\SDK References\Autodesk.Navisworks.Controls.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Autodesk.Navisworks.Resolver">
       <HintPath>..\SDK References\Autodesk.Navisworks.Resolver.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
