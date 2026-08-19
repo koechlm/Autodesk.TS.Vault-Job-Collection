@@ -53,6 +53,9 @@ namespace adsk.ts.assignupdateitem
         // Fusion Manage config name
         private const string mFMConfigName = "Adsk.Vault.ExternalSyncTask.FusionManage";
 
+        // PromoteComponents/PromoteComponentLinks batch size for large assemblies
+        private const int PromoteBatchSize = 15;
+
 
         #endregion custom variables
 
@@ -197,136 +200,205 @@ namespace adsk.ts.assignupdateitem
 
         private bool mPromoteFileToItem(IJobProcessorServices context, long mFileId)
         {
-            using (WebServiceManager serviceManager = context.Connection.WebServiceManager)
-            {
-                ItemService mItemSvc = serviceManager.ItemService;
+            WebServiceManager serviceManager = context.Connection.WebServiceManager;
+            ItemService mItemSvc = serviceManager.ItemService;
 
-                ItemsAndFiles promoteResult = null;
-                Item[] updatedItems = null;
-                bool mPromoteFailed = false;
-                bool mItemsUndone = false;
-                try
+            ItemsAndFiles promoteResult = null;
+            DateTime? promoteTimestamp = null;
+            bool mPromoteFailed = false;
+            bool mItemsUndone = false;
+
+            try
+            {
+                // Match UI behavior: respect server "Assign all" setting
+                mWriteLog("Adding file id " + mFileId + " to promote (ItemAssignAll.Default, autoAssignDuplicates=true)");
+                mItemSvc.AddFilesToPromote(new long[] { mFileId }, ItemAssignAll.Default, true);
+
+                DateTime timestamp;
+                GetPromoteOrderResults promoteOrderResults = mItemSvc.GetPromoteComponentOrder(out timestamp);
+                promoteTimestamp = timestamp;
+
+                int primaryCount = promoteOrderResults.PrimaryArray?.Length ?? 0;
+                int nonPrimaryCount = promoteOrderResults.NonPrimaryArray?.Length ?? 0;
+                mWriteLog("Promote order: " + primaryCount + " primary, " + nonPrimaryCount + " non-primary component(s)");
+
+                if (primaryCount > 0)
                 {
-                    // we primarily want to handle the root component but don't know if the children are processed before.
-                    // therefore, we set ItemAssignAll to Yes, overruling the server setting.
-                    mItemSvc.AddFilesToPromote(new long[] { mFileId }, ItemAssignAll.Yes, true);
-                    DateTime timestamp;
-                    GetPromoteOrderResults promoteOrderResults = mItemSvc.GetPromoteComponentOrder(out timestamp);
-                    if (promoteOrderResults.PrimaryArray != null && promoteOrderResults.PrimaryArray.Any())
-                        try
-                        {
-                            mItemSvc.PromoteComponents(timestamp, promoteOrderResults.PrimaryArray);
-                        }
-                        catch (Exception ex)
-                        {
-                            mPromoteFailed = true;
-                            context.Log("Job " + JOB_TYPE + " failed: " + mFormatExceptionForLog(ex) + " .", MessageType.eError);
-                        }
-                    if (promoteOrderResults.NonPrimaryArray != null && promoteOrderResults.NonPrimaryArray.Any())
-                        try
-                        {
-                            mItemSvc.PromoteComponentLinks(promoteOrderResults.NonPrimaryArray);
-                        }
-                        catch (Exception ex)
-                        {
-                            mPromoteFailed = true;
-                            context.Log("Job " + JOB_TYPE + " failed: " + mFormatExceptionForLog(ex) + " .", MessageType.eError);
-                        }
                     try
                     {
-                        if (mPromoteFailed != true)
-                        {
-                            promoteResult = mItemSvc.GetPromoteComponentsResults(timestamp);
-                            updatedItems = promoteResult.ItemRevArray;
-
-                            // collect all unlocked items to commit
-                            List<Item> itemsToCommit = new List<Item>();
-                            foreach (Item mItem in promoteResult.ItemRevArray)
-                            {
-                                if (mItem.Locked != true)
-                                {
-                                    itemsToCommit.Add(mItem);
-                                }
-                            }
-
-                            if (itemsToCommit.Count > 0)
-                            {
-                                // commit the changes for all unlocked items
-                                mItemSvc.UpdateAndCommitItems(itemsToCommit.ToArray());
-
-                                // check for FM Sync setting and execute if needed
-                                if (mSettings.FMSync.ToLower() == "true")
-                                {
-                                    //Sync to Fusion Manage
-                                    var mExternalSyncService = serviceManager.ExternalSyncService;
-
-                                    if (mExternalSyncService != null)
-                                    {
-                                        foreach (Item mItem in itemsToCommit)
-                                        {
-                                            // submit the task to FM for each created/modified item
-                                            long mRevId = serviceManager.ItemService.GetLatestItemByItemMasterId(mItem.MasterId).Id;
-                                            NameValuePair[] taskParamArray = new NameValuePair[] { };
-                                            string workflowType = "Adsk.UploadItem";
-                                            string description = "Assign/Update Item for file " + mFile.Name;
-                                            mExternalSyncService.AddExtSyncTask(mRevId, "ITEM", mFMConfigName, workflowType, description, taskParamArray);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
+                        mPromoteComponentsInBatches(mItemSvc, timestamp, promoteOrderResults.PrimaryArray);
                     }
                     catch (Exception ex)
                     {
                         mPromoteFailed = true;
-                        context.Log("Job " + JOB_TYPE + " failed: " + mFormatExceptionForLog(ex) + " .", MessageType.eError);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    if (updatedItems != null && updatedItems.Length > 0)
-                    {
-                        long[] itemIds = new long[updatedItems.Length];
-                        for (int i = 0; i < updatedItems.Length; i++)
-                        {
-                            itemIds[i] = updatedItems[i].Id;
-                        }
-                        serviceManager.ItemService.UndoEditItems(itemIds);
-                        mItemsUndone = true;
-                        mPromoteFailed = true;
-                    }
-                    else
-                    {
-                        mPromoteFailed = true;
-                        context.Log("Job failed likely due to missing Item Data; Check the property 'Item Assignable'. Details: " + mFormatExceptionForLog(ex), MessageType.eError);
-                    }
-                }
-                finally
-                {
-                    if (promoteResult != null && mPromoteFailed == true && !mItemsUndone)
-                    {
-                        // clear out all promoted items
-                        long[] masterIds = promoteResult.ItemRevArray.Select(i => i.MasterId).ToArray();
-                        long[] itemIds = promoteResult.ItemRevArray.Select(i => i.Id).ToArray();
-                        serviceManager.ItemService.DeleteUnusedItemNumbers(masterIds);
-                        serviceManager.ItemService.UndoEditItems(itemIds);
+                        mLogPromoteError(context, "PromoteComponents", ex);
                     }
                 }
 
-                if (mPromoteFailed)
-                    return false;
-                else
-                    return true;
+                if (!mPromoteFailed && nonPrimaryCount > 0)
+                {
+                    try
+                    {
+                        mPromoteComponentLinksInBatches(mItemSvc, promoteOrderResults.NonPrimaryArray);
+                    }
+                    catch (Exception ex)
+                    {
+                        mPromoteFailed = true;
+                        mLogPromoteError(context, "PromoteComponentLinks", ex);
+                    }
+                }
+
+                if (!mPromoteFailed)
+                {
+                    promoteResult = mItemSvc.GetPromoteComponentsResults(timestamp);
+
+                    // StatusArray: 1=unchanged, 2=new item, 4=updated item — only commit changed items
+                    List<Item> itemsToCommit = new List<Item>();
+                    for (int i = 0; i < promoteResult.ItemRevArray.Length; i++)
+                    {
+                        if (promoteResult.StatusArray[i] > 1 && promoteResult.ItemRevArray[i].Locked != true)
+                        {
+                            itemsToCommit.Add(promoteResult.ItemRevArray[i]);
+                        }
+                    }
+
+                    mWriteLog("Promote results: " + promoteResult.ItemRevArray.Length + " item(s), "
+                        + itemsToCommit.Count + " to commit");
+
+                    if (itemsToCommit.Count > 0)
+                    {
+                        mItemSvc.UpdateAndCommitItems(itemsToCommit.ToArray());
+                        mWriteLog("Committed " + itemsToCommit.Count + " item(s)");
+
+                        if (mSettings.FMSync.ToLower() == "true")
+                        {
+                            var mExternalSyncService = serviceManager.ExternalSyncService;
+
+                            if (mExternalSyncService != null)
+                            {
+                                foreach (Item mItem in itemsToCommit)
+                                {
+                                    long mRevId = serviceManager.ItemService.GetLatestItemByItemMasterId(mItem.MasterId).Id;
+                                    NameValuePair[] taskParamArray = new NameValuePair[] { };
+                                    string workflowType = "Adsk.UploadItem";
+                                    string description = "Assign/Update Item for file " + mFile.Name;
+                                    mExternalSyncService.AddExtSyncTask(mRevId, "ITEM", mFMConfigName, workflowType, description, taskParamArray);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                mPromoteFailed = true;
+                context.Log("Job failed likely due to missing Item Data; Check the property 'Item Assignable'. Details: "
+                    + mFormatExceptionForLog(ex), MessageType.eError);
+                mWriteLog("Promote failed: " + mFormatExceptionForLog(ex));
+            }
+            finally
+            {
+                mCleanupPromoteOnFailure(serviceManager, promoteTimestamp, promoteResult, mPromoteFailed, ref mItemsUndone);
+            }
+
+            return !mPromoteFailed;
+        }
+
+        private void mPromoteComponentsInBatches(ItemService itemService, DateTime timestamp, long[] componentIds)
+        {
+            int batchIndex = 0;
+            foreach (long[] batch in mChunkArray(componentIds, PromoteBatchSize))
+            {
+                batchIndex++;
+                mWriteLog("PromoteComponents batch " + batchIndex + ": " + batch.Length + " component(s)");
+                itemService.PromoteComponents(timestamp, batch);
             }
         }
 
-        private static void GetErrorAndRestrictionCodesString(Exception e,
-            out string errorCode, out List<string> restrictionCodes)
+        private void mPromoteComponentLinksInBatches(ItemService itemService, long[] componentIds)
+        {
+            int batchIndex = 0;
+            foreach (long[] batch in mChunkArray(componentIds, PromoteBatchSize))
+            {
+                batchIndex++;
+                mWriteLog("PromoteComponentLinks batch " + batchIndex + ": " + batch.Length + " component(s)");
+                itemService.PromoteComponentLinks(batch);
+            }
+        }
+
+        private static IEnumerable<long[]> mChunkArray(long[] array, int chunkSize)
+        {
+            if (array == null || array.Length == 0)
+                yield break;
+
+            for (int i = 0; i < array.Length; i += chunkSize)
+            {
+                int length = Math.Min(chunkSize, array.Length - i);
+                long[] chunk = new long[length];
+                Array.Copy(array, i, chunk, 0, length);
+                yield return chunk;
+            }
+        }
+
+        private void mCleanupPromoteOnFailure(WebServiceManager serviceManager, DateTime? timestamp,
+            ItemsAndFiles promoteResult, bool promoteFailed, ref bool itemsUndone)
+        {
+            if (!promoteFailed || itemsUndone)
+                return;
+
+            try
+            {
+                ItemsAndFiles result = promoteResult;
+
+                // Always attempt to retrieve partial promote state when cleanup is needed
+                if (result == null && timestamp.HasValue)
+                {
+                    try
+                    {
+                        result = serviceManager.ItemService.GetPromoteComponentsResults(timestamp.Value);
+                        mWriteLog("Retrieved promote results for cleanup: "
+                            + (result?.ItemRevArray?.Length ?? 0) + " item(s)");
+                    }
+                    catch (Exception ex)
+                    {
+                        mWriteLog("Could not retrieve promote results for cleanup: " + mFormatExceptionForLog(ex));
+                    }
+                }
+
+                if (result?.ItemRevArray != null && result.ItemRevArray.Length > 0)
+                {
+                    long[] masterIds = result.ItemRevArray.Select(i => i.MasterId).ToArray();
+                    long[] itemIds = result.ItemRevArray.Select(i => i.Id).ToArray();
+                    serviceManager.ItemService.DeleteUnusedItemNumbers(masterIds);
+                    serviceManager.ItemService.UndoEditItems(itemIds);
+                    itemsUndone = true;
+                    mWriteLog("Cleaned up " + itemIds.Length + " locked item(s) after promote failure");
+                }
+            }
+            catch (Exception ex)
+            {
+                mWriteLog("Cleanup after promote failure failed: " + mFormatExceptionForLog(ex));
+            }
+        }
+
+        private void mWriteLog(string message)
+        {
+            mTrace?.WriteLine(message);
+        }
+
+        private void mLogPromoteError(IJobProcessorServices context, string operation, Exception ex)
+        {
+            string logMessage = operation + " failed: " + mFormatExceptionForLog(ex);
+            context.Log("Job " + JOB_TYPE + " failed: " + logMessage + " .", MessageType.eError);
+            mWriteLog(logMessage);
+        }
+
+        private static void GetErrorAndRestrictionDetails(Exception e,
+            out string errorCode, out List<string> restrictionDetails)
         {
             VaultServiceErrorException vse = e as VaultServiceErrorException;
             errorCode = null;
-            restrictionCodes = new List<string>();
+            restrictionDetails = new List<string>();
             string[] restrictionErrors = new string[]
             { "1092", "1387", "1633" };
 
@@ -340,7 +412,16 @@ namespace adsk.ts.assignupdateitem
                     {
                         foreach (var restriction in vse.Restrictions)
                         {
-                            restrictionCodes.Add(restriction.Code.ToString());
+                            string detail = restriction.Code.ToString();
+                            if (restriction.EntityId > 0)
+                                detail += " entityId=" + restriction.EntityId;
+                            if (restriction.Parameters != null)
+                            {
+                                string[] parameters = restriction.Parameters.ToArray();
+                                if (parameters.Length > 0)
+                                    detail += " [" + string.Join(", ", parameters) + "]";
+                            }
+                            restrictionDetails.Add(detail);
                         }
                     }
                 }
@@ -355,15 +436,15 @@ namespace adsk.ts.assignupdateitem
         /// </summary>
         private static string mFormatExceptionForLog(Exception ex)
         {
-            GetErrorAndRestrictionCodesString(ex, out string errorCode, out List<string> restrictionCodes);
+            GetErrorAndRestrictionDetails(ex, out string errorCode, out List<string> restrictionDetails);
 
             if (string.IsNullOrEmpty(errorCode))
                 return ex.ToString();
 
             string message = ex.ToString() + " (Vault error code: " + errorCode + ")";
 
-            if (restrictionCodes.Count > 0)
-                message += " Restrictions: " + string.Join(", ", restrictionCodes);
+            if (restrictionDetails.Count > 0)
+                message += " Restrictions: " + string.Join("; ", restrictionDetails);
 
             return message;
         }
