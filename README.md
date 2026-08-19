@@ -1,4 +1,5 @@
 # Extended Vault API Samples - WiP
+## Detailed Documentation: https://github.com/koechlm/Autodesk.TS.Vault-Job-Collection/blob/2027/docs/job-collection.md
 ## Installer
 
 An MSI installer for this job collection is maintained in a private repository and is not
