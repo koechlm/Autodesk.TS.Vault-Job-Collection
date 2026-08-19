@@ -118,7 +118,7 @@ namespace adsk.ts.assignupdateitem
 
             catch (Exception ex)
             {
-                context.Log("Job " + JOB_TYPE + " failed: " + ex.ToString() + " .", MessageType.eError);
+                context.Log("Job " + JOB_TYPE + " failed: " + mFormatExceptionForLog(ex) + " .", MessageType.eError);
                 mTrace.IndentLevel = 0;
                 mTrace.WriteLine("... ending Job with failure.");
                 return JobOutcome.Failure;
@@ -204,6 +204,7 @@ namespace adsk.ts.assignupdateitem
                 ItemsAndFiles promoteResult = null;
                 Item[] updatedItems = null;
                 bool mPromoteFailed = false;
+                bool mItemsUndone = false;
                 try
                 {
                     // we primarily want to handle the root component but don't know if the children are processed before.
@@ -219,7 +220,7 @@ namespace adsk.ts.assignupdateitem
                         catch (Exception ex)
                         {
                             mPromoteFailed = true;
-                            context.Log("Job " + JOB_TYPE + " failed: " + ex.ToString() + " .", MessageType.eError);
+                            context.Log("Job " + JOB_TYPE + " failed: " + mFormatExceptionForLog(ex) + " .", MessageType.eError);
                         }
                     if (promoteOrderResults.NonPrimaryArray != null && promoteOrderResults.NonPrimaryArray.Any())
                         try
@@ -229,7 +230,7 @@ namespace adsk.ts.assignupdateitem
                         catch (Exception ex)
                         {
                             mPromoteFailed = true;
-                            context.Log("Job " + JOB_TYPE + " failed: " + ex.ToString() + " .", MessageType.eError);
+                            context.Log("Job " + JOB_TYPE + " failed: " + mFormatExceptionForLog(ex) + " .", MessageType.eError);
                         }
                     try
                     {
@@ -278,7 +279,8 @@ namespace adsk.ts.assignupdateitem
                     }
                     catch (Exception ex)
                     {
-                        context.Log("Job " + JOB_TYPE + " failed: " + ex.ToString() + " .", MessageType.eError);
+                        mPromoteFailed = true;
+                        context.Log("Job " + JOB_TYPE + " failed: " + mFormatExceptionForLog(ex) + " .", MessageType.eError);
                     }
                 }
                 catch (Exception ex)
@@ -291,16 +293,18 @@ namespace adsk.ts.assignupdateitem
                             itemIds[i] = updatedItems[i].Id;
                         }
                         serviceManager.ItemService.UndoEditItems(itemIds);
+                        mItemsUndone = true;
+                        mPromoteFailed = true;
                     }
                     else
                     {
                         mPromoteFailed = true;
-                        context.Log("Job failed likely due to missing Item Data; Check the property 'Item Assignable'. Details: " + ex.Message, MessageType.eError);
+                        context.Log("Job failed likely due to missing Item Data; Check the property 'Item Assignable'. Details: " + mFormatExceptionForLog(ex), MessageType.eError);
                     }
                 }
                 finally
                 {
-                    if (promoteResult != null && mPromoteFailed == true)
+                    if (promoteResult != null && mPromoteFailed == true && !mItemsUndone)
                     {
                         // clear out all promoted items
                         long[] masterIds = promoteResult.ItemRevArray.Select(i => i.MasterId).ToArray();
@@ -316,6 +320,54 @@ namespace adsk.ts.assignupdateitem
                     return true;
             }
         }
+
+        private static void GetErrorAndRestrictionCodesString(Exception e,
+            out string errorCode, out List<string> restrictionCodes)
+        {
+            VaultServiceErrorException vse = e as VaultServiceErrorException;
+            errorCode = null;
+            restrictionCodes = new List<string>();
+            string[] restrictionErrors = new string[]
+            { "1092", "1387", "1633" };
+
+            if (vse != null)
+            {
+                try
+                {
+                    errorCode = vse.ErrorCode.ToString();
+
+                    if (restrictionErrors.Contains(errorCode) && vse.Restrictions != null)
+                    {
+                        foreach (var restriction in vse.Restrictions)
+                        {
+                            restrictionCodes.Add(restriction.Code.ToString());
+                        }
+                    }
+                }
+                catch
+                { }
+            }
+        }
+
+        /// <summary>
+        /// Builds a log-friendly message for an exception, appending the Vault error code
+        /// and any restriction codes/entities if the exception is a VaultServiceErrorException.
+        /// </summary>
+        private static string mFormatExceptionForLog(Exception ex)
+        {
+            GetErrorAndRestrictionCodesString(ex, out string errorCode, out List<string> restrictionCodes);
+
+            if (string.IsNullOrEmpty(errorCode))
+                return ex.ToString();
+
+            string message = ex.ToString() + " (Vault error code: " + errorCode + ")";
+
+            if (restrictionCodes.Count > 0)
+                message += " Restrictions: " + string.Join(", ", restrictionCodes);
+
+            return message;
+        }
+
 
         public void OnJobProcessorShutdown(IJobProcessorServices context)
         {
