@@ -141,64 +141,120 @@ namespace adsk.ts.assignupdateitem
 
         private bool mAssignUpdateItem(IJobProcessorServices context, Autodesk.Connectivity.WebServices.File file)
         {
-            // exclude categories that must not get an item assigned and would fail
-            if (mExcludedCategories.Contains(file.Cat.CatName))
-            {
+            if (mShouldSkipFile(file))
                 return true;
-            }
 
-            // exclude file classifications
-            if (mExcludedFileCls.Contains(file.FileClass))
-            {
-                return true;
-            }
-
-            // retrieve the primary referenced file for files of classification "Design Document"
             if (file.FileClass == FileClassification.DesignDocument)
             {
                 WebServiceManager serviceManager = context.Connection.WebServiceManager;
+                List<Autodesk.Connectivity.WebServices.File> referencedFiles =
+                    mGetDirectDependencyReferencedFiles(serviceManager, file);
 
-                Autodesk.Connectivity.WebServices.File parent = null;
-
-                DocumentService docService = serviceManager.DocumentService;
-                // get the associated references
-                List<TreeNode> children = new List<TreeNode>();
-                FileAssocArray[] fileAssociations = serviceManager.DocumentService.GetLatestFileAssociationsByMasterIds(
-                    new long[] { file.MasterId },
-                    FileAssociationTypeEnum.None,
-                    false,
-                    FileAssociationTypeEnum.Dependency,
-                    false,
-                    false,
-                    false,
-                    false);
-
-                if (fileAssociations.FirstOrDefault()?.FileAssocs != null)
+                if (referencedFiles.Count == 0)
                 {
-                    foreach (var fileAssociation in fileAssociations.First().FileAssocs)
-                    {
-                        parent = fileAssociation.CldFile;
-                    }
+                    mWriteLog("Design document '" + file.Name + "' has no direct dependency references; skipping.");
+                    return true;
                 }
 
-                if (parent != null)
+                ItemAssignRestric assignmentRestrictions =
+                    serviceManager.ItemService.GetItemAssignmentRestrictions();
+                bool restrictDesignDoc = (assignmentRestrictions & ItemAssignRestric.RestricDesignDoc) != 0;
+
+                long[] filesToPromote = mBuildDesignDocumentPromoteFileIds(
+                    file, referencedFiles, includeDrawing: !restrictDesignDoc);
+
+                if (restrictDesignDoc)
                 {
-                    // use the parent file for item assignment
-                    file = parent;
+                    mWriteLog("ItemAssignRestric.RestricDesignDoc is set; drawing excluded from promote list.");
+                    mWriteLog("Design document '" + file.Name + "' promotes "
+                        + referencedFiles.Count + " referenced file(s): "
+                        + string.Join(", ", referencedFiles.Select(f => f.Name)));
                 }
                 else
                 {
-                    // no valid parent found - exit
-                    return true;
+                    mWriteLog("Design document '" + file.Name + "' promotes drawing plus "
+                        + referencedFiles.Count + " referenced file(s): "
+                        + string.Join(", ", referencedFiles.Select(f => f.Name)));
                 }
+
+                return mPromoteFilesToItem(context, filesToPromote);
             }
 
-            // call promote file to assign or update item on FM
-            return mPromoteFileToItem(context, file.Id);
-
+            return mPromoteFilesToItem(context, new long[] { file.Id });
         }
 
-        private bool mPromoteFileToItem(IJobProcessorServices context, long mFileId)
+        private bool mShouldSkipFile(Autodesk.Connectivity.WebServices.File file)
+        {
+            if (mExcludedCategories.Contains(file.Cat.CatName))
+                return true;
+
+            if (mExcludedFileCls.Contains(file.FileClass))
+                return true;
+
+            return false;
+        }
+
+        /// <summary>
+        /// Returns unique, promotable files directly referenced by the drawing via dependency associations.
+        /// </summary>
+        private List<Autodesk.Connectivity.WebServices.File> mGetDirectDependencyReferencedFiles(
+            WebServiceManager serviceManager, Autodesk.Connectivity.WebServices.File drawingFile)
+        {
+            List<Autodesk.Connectivity.WebServices.File> referencedFiles = new List<Autodesk.Connectivity.WebServices.File>();
+            HashSet<long> seenMasterIds = new HashSet<long>();
+
+            FileAssocArray[] fileAssociations = serviceManager.DocumentService.GetLatestFileAssociationsByMasterIds(
+                new long[] { drawingFile.MasterId },
+                FileAssociationTypeEnum.None,
+                false,
+                FileAssociationTypeEnum.Dependency,
+                false,
+                false,
+                false,
+                false);
+
+            FileAssoc[] associations = fileAssociations.FirstOrDefault()?.FileAssocs;
+            if (associations == null)
+                return referencedFiles;
+
+            foreach (FileAssoc fileAssociation in associations)
+            {
+                Autodesk.Connectivity.WebServices.File referencedFile = fileAssociation.CldFile;
+                if (referencedFile == null || seenMasterIds.Contains(referencedFile.MasterId))
+                    continue;
+
+                if (mShouldSkipFile(referencedFile))
+                    continue;
+
+                seenMasterIds.Add(referencedFile.MasterId);
+                referencedFiles.Add(referencedFile);
+            }
+
+            return referencedFiles;
+        }
+
+        /// <summary>
+        /// Build promote list for a design document. When allowed, the drawing is added first
+        /// (documentation link) and referenced model files last (primary links).
+        /// AddFilesToPromote processes from end to start.
+        /// </summary>
+        private static long[] mBuildDesignDocumentPromoteFileIds(
+            Autodesk.Connectivity.WebServices.File drawingFile,
+            List<Autodesk.Connectivity.WebServices.File> referencedFiles,
+            bool includeDrawing)
+        {
+            List<long> fileIds = new List<long>(referencedFiles.Count + (includeDrawing ? 1 : 0));
+
+            if (includeDrawing)
+                fileIds.Add(drawingFile.Id);
+
+            foreach (Autodesk.Connectivity.WebServices.File referencedFile in referencedFiles)
+                fileIds.Add(referencedFile.Id);
+
+            return fileIds.ToArray();
+        }
+
+        private bool mPromoteFilesToItem(IJobProcessorServices context, long[] mFileIds)
         {
             WebServiceManager serviceManager = context.Connection.WebServiceManager;
             ItemService mItemSvc = serviceManager.ItemService;
@@ -211,8 +267,9 @@ namespace adsk.ts.assignupdateitem
             try
             {
                 // Match UI behavior: respect server "Assign all" setting
-                mWriteLog("Adding file id " + mFileId + " to promote (ItemAssignAll.Default, autoAssignDuplicates=true)");
-                mItemSvc.AddFilesToPromote(new long[] { mFileId }, ItemAssignAll.Default, true);
+                mWriteLog("Adding " + mFileIds.Length + " file(s) to promote (ItemAssignAll.Default, autoAssignDuplicates=true): "
+                    + string.Join(", ", mFileIds));
+                mItemSvc.AddFilesToPromote(mFileIds, ItemAssignAll.Default, true);
 
                 DateTime timestamp;
                 GetPromoteOrderResults promoteOrderResults = mItemSvc.GetPromoteComponentOrder(out timestamp);
