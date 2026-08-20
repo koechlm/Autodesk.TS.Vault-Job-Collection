@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Threading;
 
 #nullable enable
 
@@ -9,8 +8,6 @@ namespace adsk.ts.pdf.create.office
 {
     internal sealed class LibreOfficePdfConverter : IOfficePdfConverter
     {
-        private static readonly SemaphoreSlim ConversionLock = new SemaphoreSlim(1, 1);
-
         private static readonly string[] DefaultSofficePaths =
         {
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "LibreOffice", "program", "soffice.exe"),
@@ -41,11 +38,8 @@ namespace adsk.ts.pdf.create.office
         public void ConvertToPdf(string sourcePath, string outputPdfPath)
         {
             ValidateAvailability();
-
-            if (!File.Exists(sourcePath))
-            {
-                throw new Exception("Source file does not exist: " + sourcePath);
-            }
+            OfficeFileHelper.ValidateSourceFileReadable(sourcePath);
+            OfficeFileHelper.ThrowIfPasswordProtected(sourcePath);
 
             string sourceExtension = Path.GetExtension(sourcePath);
             if (!TryGetPdfFilter(sourceExtension, out string pdfFilter))
@@ -55,15 +49,18 @@ namespace adsk.ts.pdf.create.office
 
             string outputDirectory = Path.GetDirectoryName(outputPdfPath)
                 ?? throw new Exception("Could not determine the output directory for " + outputPdfPath + ".");
-            Directory.CreateDirectory(outputDirectory);
+            OfficeFileHelper.EnsureWritableExportDirectory(outputDirectory);
 
             string profileDirectory = CreateIsolatedProfileDirectory();
             string userInstallation = ToLibreOfficeProfileUri(profileDirectory);
 
-            ConversionLock.Wait();
+            int[] sofficeBefore = ProcessCleanup.CaptureProcessIds("soffice");
+            int[] sofficeBinBefore = ProcessCleanup.CaptureProcessIds("soffice.bin");
+
+            OfficeConversionSync.Enter();
             try
             {
-                DeleteExistingOutput(outputPdfPath);
+                OfficeFileHelper.DeleteExistingOutputFile(outputPdfPath);
 
                 string arguments =
                     "--headless --nologo --norestore --nolockcheck " +
@@ -93,7 +90,7 @@ namespace adsk.ts.pdf.create.office
                         Path.GetFullPath(outputPdfPath),
                         StringComparison.OrdinalIgnoreCase))
                 {
-                    DeleteExistingOutput(outputPdfPath);
+                    OfficeFileHelper.DeleteExistingOutputFile(outputPdfPath);
                     File.Move(libreOfficeOutputPath, outputPdfPath);
                 }
 
@@ -107,7 +104,9 @@ namespace adsk.ts.pdf.create.office
             }
             finally
             {
-                ConversionLock.Release();
+                OfficeConversionSync.Exit();
+                ProcessCleanup.TerminateNewProcesses("soffice", sofficeBefore, _trace);
+                ProcessCleanup.TerminateNewProcesses("soffice.bin", sofficeBinBefore, _trace);
                 TryDeleteDirectory(profileDirectory);
             }
         }
@@ -192,33 +191,52 @@ namespace adsk.ts.pdf.create.office
                 throw new Exception("Failed to start LibreOffice process.");
             }
 
-            string standardOutput = process.StandardOutput.ReadToEnd();
-            string standardError = process.StandardError.ReadToEnd();
-
-            if (!process.WaitForExit(timeoutSeconds * 1000))
+            try
             {
-                TryKillProcessTree(process);
-                throw new Exception(
-                    "LibreOffice conversion timed out after " + timeoutSeconds +
-                    " seconds. stderr: " + standardError);
+                string standardOutput = process.StandardOutput.ReadToEnd();
+                string standardError = process.StandardError.ReadToEnd();
+
+                if (!process.WaitForExit(timeoutSeconds * 1000))
+                {
+                    ProcessCleanup.TerminateProcessTree(process, _trace);
+                    throw new Exception(
+                        "LibreOffice conversion timed out after " + timeoutSeconds +
+                        " seconds. stderr: " + standardError);
+                }
+
+                if (process.ExitCode != 0)
+                {
+                    throw CreateLibreOfficeFailureException(process.ExitCode, standardOutput, standardError);
+                }
+
+                if (!string.IsNullOrWhiteSpace(standardOutput))
+                {
+                    _trace.WriteLine("LibreOffice stdout: " + standardOutput.Trim());
+                }
+
+                if (!string.IsNullOrWhiteSpace(standardError))
+                {
+                    _trace.WriteLine("LibreOffice stderr: " + standardError.Trim());
+                }
+            }
+            finally
+            {
+                ProcessCleanup.TerminateProcessTree(process, _trace);
+            }
+        }
+
+        private static Exception CreateLibreOfficeFailureException(int exitCode, string standardOutput, string standardError)
+        {
+            string details = "stdout: " + standardOutput + " stderr: " + standardError;
+            if (standardError.Contains("password", StringComparison.OrdinalIgnoreCase) ||
+                standardOutput.Contains("password", StringComparison.OrdinalIgnoreCase))
+            {
+                return new Exception(
+                    "LibreOffice could not convert a password-protected file. Remove encryption before running this job. " +
+                    details);
             }
 
-            if (process.ExitCode != 0)
-            {
-                throw new Exception(
-                    "LibreOffice conversion failed with exit code " + process.ExitCode +
-                    ". stdout: " + standardOutput + " stderr: " + standardError);
-            }
-
-            if (!string.IsNullOrWhiteSpace(standardOutput))
-            {
-                _trace.WriteLine("LibreOffice stdout: " + standardOutput.Trim());
-            }
-
-            if (!string.IsNullOrWhiteSpace(standardError))
-            {
-                _trace.WriteLine("LibreOffice stderr: " + standardError.Trim());
-            }
+            return new Exception("LibreOffice conversion failed with exit code " + exitCode + ". " + details);
         }
 
         private static int ParseTimeoutSeconds(string? configuredTimeout)
@@ -239,32 +257,6 @@ namespace adsk.ts.pdf.create.office
             }
 
             return value;
-        }
-
-        private static void DeleteExistingOutput(string outputPdfPath)
-        {
-            if (!File.Exists(outputPdfPath))
-            {
-                return;
-            }
-
-            FileInfo fileInfo = new FileInfo(outputPdfPath);
-            fileInfo.IsReadOnly = false;
-            fileInfo.Delete();
-        }
-
-        private static void TryKillProcessTree(Process process)
-        {
-            try
-            {
-                if (!process.HasExited)
-                {
-                    process.Kill(entireProcessTree: true);
-                }
-            }
-            catch (Exception)
-            {
-            }
         }
 
         private static void TryDeleteDirectory(string directoryPath)

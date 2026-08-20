@@ -73,6 +73,9 @@
     <Compile Include="JobExtension.cs" />
     <Compile Include="LibreOfficePdfConverter.cs" />
     <Compile Include="MicrosoftOfficePdfConverter.cs" />
+    <Compile Include="OfficeConversionSync.cs" />
+    <Compile Include="OfficeFileHelper.cs" />
+    <Compile Include="ProcessCleanup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Util.cs" />

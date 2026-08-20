@@ -30,3 +30,17 @@ each job's Vault Job Processor registration expects the following per job:
 
 Refer to [docs/job-collection.md](job-collection.md) for a description of every
 job and its configuration files.
+
+## Job Processor prerequisites
+
+Some jobs require additional software on the machine running the Vault Job Processor:
+
+| Job | Default engine | Requirement |
+|---|---|---|
+| `adsk.ts.pdf.create.office` | LibreOffice | Install [LibreOffice](https://www.libreoffice.org/) and ensure `soffice.exe` is available. No Microsoft Office license required. |
+| `adsk.ts.pdf.create.office` | Microsoft Office | Install licensed Word, Excel, and PowerPoint desktop. Set `ConversionEngine=MicrosoftOffice` in `adsk.ts.pdf.create.office.settings.xml`. Review Microsoft's guidance on [server-side Office automation](https://support.microsoft.com/en-us/topic/considerations-for-server-side-automation-of-office-48bcfe93-8a89-47f1-0bce-017433ad79e2) before choosing this option. |
+| Inventor-based jobs | — | Autodesk Inventor / VaultInventorServer |
+| `adsk.ts.nwd.create.navisworks` | — | Autodesk Navisworks Manage |
+| `adsk.ts.pdf.create.slddrw` | — | Autodesk SolidWorks |
+
+When packaging the Office PDF job, include copy-local dependencies from `bin\Release\` (Office Interop assemblies) in addition to the job DLL, `.vcet.config`, and `.settings.xml`.

@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Threading;
 using Excel = Microsoft.Office.Interop.Excel;
 using PowerPoint = Microsoft.Office.Interop.PowerPoint;
 using Word = Microsoft.Office.Interop.Word;
@@ -13,8 +12,6 @@ namespace adsk.ts.pdf.create.office
 {
     internal sealed class MicrosoftOfficePdfConverter : IOfficePdfConverter
     {
-        private static readonly SemaphoreSlim ConversionLock = new SemaphoreSlim(1, 1);
-
         private readonly Settings _settings;
         private readonly TextWriterTraceListener _trace;
 
@@ -33,18 +30,16 @@ namespace adsk.ts.pdf.create.office
 
         public void ConvertToPdf(string sourcePath, string outputPdfPath)
         {
-            if (!File.Exists(sourcePath))
-            {
-                throw new Exception("Source file does not exist: " + sourcePath);
-            }
+            OfficeFileHelper.ValidateSourceFileReadable(sourcePath);
+            OfficeFileHelper.ThrowIfPasswordProtected(sourcePath);
 
             string outputDirectory = Path.GetDirectoryName(outputPdfPath)
                 ?? throw new Exception("Could not determine the output directory for " + outputPdfPath + ".");
-            Directory.CreateDirectory(outputDirectory);
-            DeleteExistingOutput(outputPdfPath);
+            OfficeFileHelper.EnsureWritableExportDirectory(outputDirectory);
+            OfficeFileHelper.DeleteExistingOutputFile(outputPdfPath);
 
             string sourceExtension = Path.GetExtension(sourcePath);
-            ConversionLock.Wait();
+            OfficeConversionSync.Enter();
             try
             {
                 _trace.WriteLine("Microsoft Office conversion starts: " + Path.GetFileName(sourcePath));
@@ -74,7 +69,7 @@ namespace adsk.ts.pdf.create.office
             }
             finally
             {
-                ConversionLock.Release();
+                OfficeConversionSync.Exit();
             }
         }
 
@@ -82,6 +77,7 @@ namespace adsk.ts.pdf.create.office
         {
             Word.Application? wordApp = null;
             Word.Document? document = null;
+            int[] processIdsBefore = ProcessCleanup.CaptureProcessIds("WINWORD");
 
             try
             {
@@ -114,12 +110,13 @@ namespace adsk.ts.pdf.create.office
             }
             catch (Exception ex)
             {
-                throw new Exception("Microsoft Word export failed: " + ex.Message, ex);
+                throw WrapOfficeExportException("Microsoft Word", ex);
             }
             finally
             {
                 CloseWordDocument(document);
                 QuitWordApplication(wordApp);
+                ProcessCleanup.TerminateNewProcesses("WINWORD", processIdsBefore, _trace);
             }
         }
 
@@ -127,6 +124,7 @@ namespace adsk.ts.pdf.create.office
         {
             Excel.Application? excelApp = null;
             Excel.Workbook? workbook = null;
+            int[] processIdsBefore = ProcessCleanup.CaptureProcessIds("EXCEL");
 
             try
             {
@@ -153,12 +151,13 @@ namespace adsk.ts.pdf.create.office
             }
             catch (Exception ex)
             {
-                throw new Exception("Microsoft Excel export failed: " + ex.Message, ex);
+                throw WrapOfficeExportException("Microsoft Excel", ex);
             }
             finally
             {
                 CloseExcelWorkbook(workbook);
                 QuitExcelApplication(excelApp);
+                ProcessCleanup.TerminateNewProcesses("EXCEL", processIdsBefore, _trace);
             }
         }
 
@@ -166,6 +165,7 @@ namespace adsk.ts.pdf.create.office
         {
             PowerPoint.Application? pptApp = null;
             PowerPoint.Presentation? presentation = null;
+            int[] processIdsBefore = ProcessCleanup.CaptureProcessIds("POWERPNT");
 
             try
             {
@@ -190,13 +190,27 @@ namespace adsk.ts.pdf.create.office
             }
             catch (Exception ex)
             {
-                throw new Exception("Microsoft PowerPoint export failed: " + ex.Message, ex);
+                throw WrapOfficeExportException("Microsoft PowerPoint", ex);
             }
             finally
             {
                 ClosePowerPointPresentation(presentation);
                 QuitPowerPointApplication(pptApp);
+                ProcessCleanup.TerminateNewProcesses("POWERPNT", processIdsBefore, _trace);
             }
+        }
+
+        private static Exception WrapOfficeExportException(string applicationName, Exception ex)
+        {
+            if (ex.Message.Contains("password", StringComparison.OrdinalIgnoreCase))
+            {
+                return new Exception(
+                    applicationName + " could not convert a password-protected file. Remove encryption before running this job. Details: " +
+                    ex.Message,
+                    ex);
+            }
+
+            return new Exception(applicationName + " export failed: " + ex.Message, ex);
         }
 
         private void ValidateWordAvailability()
@@ -430,18 +444,6 @@ namespace adsk.ts.pdf.create.office
         private static bool IsTrue(string? value)
         {
             return string.Equals(value, "True", StringComparison.OrdinalIgnoreCase);
-        }
-
-        private static void DeleteExistingOutput(string outputPdfPath)
-        {
-            if (!File.Exists(outputPdfPath))
-            {
-                return;
-            }
-
-            FileInfo fileInfo = new FileInfo(outputPdfPath);
-            fileInfo.IsReadOnly = false;
-            fileInfo.Delete();
         }
     }
 }

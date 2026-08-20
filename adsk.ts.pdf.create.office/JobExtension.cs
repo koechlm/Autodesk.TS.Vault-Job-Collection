@@ -31,6 +31,7 @@ namespace adsk.ts.pdf.create.office
         private Connection? _connection;
         private WebServiceManager? _wsMgr;
         private ACW.File? _file;
+        private IJobProcessorServices? _context;
 
         public bool CanProcess(string jobType)
         {
@@ -39,6 +40,8 @@ namespace adsk.ts.pdf.create.office
 
         public JobOutcome Execute(IJobProcessorServices context, IJob job)
         {
+            _context = context;
+
             try
             {
                 _connection = context.Connection;
@@ -98,11 +101,12 @@ namespace adsk.ts.pdf.create.office
             }
             catch (Exception ex)
             {
-                context.Log(ex, "Job " + JobType + " failed: " + ex);
+                context.Log(ex, "Job " + JobType + " failed: " + ex.Message);
                 if (_trace != null)
                 {
                     _trace.IndentLevel = 0;
                     _trace.WriteLine("... ending Job with failure.");
+                    _trace.WriteLine(ex.ToString());
                 }
 
                 return JobOutcome.Failure;
@@ -114,6 +118,8 @@ namespace adsk.ts.pdf.create.office
                     _trace.Flush();
                     _trace.Close();
                 }
+
+                _context = null;
             }
         }
 
@@ -124,9 +130,11 @@ namespace adsk.ts.pdf.create.office
             List<string> validExportFormats = new List<string> { "OFFICE.PDF" };
             List<string> supportedExtensions = new List<string> { ".docx", ".xlsx", ".pptx" };
             List<string> filesToUpload = new List<string>();
+            string conversionEngine = ResolveConversionEngineName(settings);
 
             _trace!.IndentLevel += 1;
             _trace.WriteLine("Translator job validates execution rules...");
+            _trace.WriteLine("Conversion engine: " + conversionEngine);
 
             if (!supportedExtensions.Any(ext => _file!.Name.EndsWith(ext, StringComparison.OrdinalIgnoreCase)))
             {
@@ -154,7 +162,12 @@ namespace adsk.ts.pdf.create.office
             string sourcePath = jobCommon.mDownloadFile(_file!);
             string exportDir = jobCommon.mResolveExportLocalDirectory(settings.ExportPath, _file!, sourcePath);
 
+            OfficeFileHelper.ValidateSourceFileReadable(sourcePath);
+            OfficeFileHelper.ThrowIfPasswordProtected(sourcePath);
+            OfficeFileHelper.EnsureWritableExportDirectory(exportDir);
+
             _trace.WriteLine("Job successfully downloaded source file(s) for translation.");
+            _trace.WriteLine("Export directory: " + exportDir);
 
             foreach (string exportFormat in exportFormats)
             {
@@ -164,12 +177,20 @@ namespace adsk.ts.pdf.create.office
                 }
 
                 string pdfPath = BuildOutputPdfPath(settings, exportDir, sourcePath);
-                DeleteExistingFile(pdfPath);
+                OfficeFileHelper.DeleteExistingOutputFile(pdfPath);
 
                 _trace.IndentLevel += 1;
-                _trace.WriteLine("Office -> PDF export starts...");
+                _trace.WriteLine("Office -> PDF export starts using " + conversionEngine + "...");
 
-                converter.ConvertToPdf(sourcePath, pdfPath);
+                try
+                {
+                    converter.ConvertToPdf(sourcePath, pdfPath);
+                }
+                catch (Exception ex)
+                {
+                    _context?.Log(ex, "Job " + JobType + " conversion failed for " + _file!.Name + ": " + ex.Message);
+                    throw;
+                }
 
                 FileInfo exportFileInfo = new FileInfo(pdfPath);
                 if (!exportFileInfo.Exists)
@@ -178,7 +199,13 @@ namespace adsk.ts.pdf.create.office
                 }
 
                 filesToUpload.Add(pdfPath);
+                _trace.WriteLine("Validated export file before upload: " + pdfPath + " (" + exportFileInfo.Length + " bytes).");
                 _trace.IndentLevel -= 1;
+            }
+
+            if (filesToUpload.Count < 1)
+            {
+                throw new Exception("Job completed conversion but no export files were queued for upload.");
             }
 
             jobCommon.mUploadFiles(
@@ -209,6 +236,17 @@ namespace adsk.ts.pdf.create.office
                 "Conversion engine '" + engine + "' is not supported. Use ConversionEngine=LibreOffice or ConversionEngine=MicrosoftOffice.");
         }
 
+        private static string ResolveConversionEngineName(Settings settings)
+        {
+            string engine = settings.ConversionEngine?.Trim() ?? string.Empty;
+            if (string.IsNullOrEmpty(engine))
+            {
+                return "LibreOffice";
+            }
+
+            return engine;
+        }
+
         private static List<string> ParseExportFormats(string? configuredFormats)
         {
             if (string.IsNullOrWhiteSpace(configuredFormats))
@@ -237,18 +275,6 @@ namespace adsk.ts.pdf.create.office
         private static bool IsTrue(string? value)
         {
             return string.Equals(value, "True", StringComparison.OrdinalIgnoreCase);
-        }
-
-        private static void DeleteExistingFile(string filePath)
-        {
-            if (!File.Exists(filePath))
-            {
-                return;
-            }
-
-            FileInfo fileInfo = new FileInfo(filePath);
-            fileInfo.IsReadOnly = false;
-            fileInfo.Delete();
         }
 
         public void OnJobProcessorShutdown(IJobProcessorServices context)

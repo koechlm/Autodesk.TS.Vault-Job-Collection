@@ -18,6 +18,7 @@ The shared library `adsk.ts.job.shared` is **not a job** — it is a common infr
 | `adsk.ts.nwd.create.navisworks` | `adsk.ts.nwd.create.navisworks` | Autodesk Navisworks Manage | NWD, DWF |
 | `adsk.ts.rvt.create.inventor` | `adsk.ts.rvt.create.inventor` | Autodesk Inventor / VaultInventorServer | RVT |
 | `adsk.ts.pdf.create.slddrw` | `adsk.ts.pdf.create.slddrw` | Autodesk SolidWorks | PDF, DXF |
+| `adsk.ts.pdf.create.office` | `adsk.ts.pdf.create.office` | LibreOffice *(default)* / Microsoft Office | PDF |
 | `adsk.ts.image.create.inventor` | `adsk.ts.image.create.inventor` | Autodesk Inventor / VaultInventorServer | BMP, PNG, GIF, JPG, TIFF |
 | `adsk.ts.job.shared` | *(shared library)* | — | — |
 
@@ -295,6 +296,69 @@ Launches SolidWorks via COM automation, opens a SolidWorks drawing (`.slddrw`) a
 
 ---
 
+## Job: PDF Export from Microsoft Office
+
+**Project:** `adsk.ts.pdf.create.office`  
+**Job type:** `adsk.ts.pdf.create.office`  
+**Application:** LibreOffice headless *(default)* or Microsoft Office desktop *(COM Interop)*  
+**Triggered on:** Vault file lifecycle event for Microsoft Office documents
+
+### What it does
+Downloads a Microsoft Office Open XML file (`.docx`, `.xlsx`, or `.pptx`) from Vault and converts it to PDF using the configured conversion engine. The resulting PDF is uploaded to Vault as a `DesignRepresentation` attachment on the source file.
+
+**Conversion engines:**
+
+| Engine setting | Requirement | Notes |
+|---|---|---|
+| `LibreOffice` *(default)* | [LibreOffice](https://www.libreoffice.org/) installed on the Job Processor | License-free (MPL 2.0). Uses headless `soffice.exe`. |
+| `MicrosoftOffice` | Licensed Word, Excel, and PowerPoint desktop installed | Highest fidelity. Microsoft does not support unattended server-side Office automation — use only when you accept that deployment model. |
+
+**Output filenames** depend on `IncludeSourceFileExtension`:
+- `True`: `report.docx.pdf`
+- `False`: `report.pdf`
+
+**Execution filters (hard-coded):**
+- Only `.docx`, `.xlsx`, and `.pptx` source files are processed.
+- Password-protected Office Open XML files are rejected before conversion begins.
+- The conversion engine is validated before download when `ValidateEngineOnStartup = True`.
+- Only one Office/LibreOffice conversion runs at a time on the Job Processor machine.
+
+**Suggested Vault job rule:**
+
+```
+Job type: adsk.ts.pdf.create.office
+Condition: File extension is .docx OR .xlsx OR .pptx
+           AND lifecycle state = Released
+```
+
+### Settings — `adsk.ts.pdf.create.office.settings.xml`
+
+| Setting | Type | Description |
+|---|---|---|
+| `LogFileLocation` | Path | Directory where the job writes its log file. |
+| `EnforceSubmittedFileVersion` | `True` / `False` | Same as the 2D DWG job — see above. |
+| `ExportFormats` | `OFFICE.PDF` | Currently only `OFFICE.PDF` is supported. |
+| `IncludeSourceFileExtension` | `True` / `False` | Controls whether the source file extension is included in the output filename. `True` (default): `report.docx.pdf`. `False`: `report.pdf`. |
+| `CopySystemComment` | `True` / `False` | See [CopySystemComment logic](#copysystemcomment-logic) below. |
+| `ExportPath` | Vault path | Optional export destination. See [Export Path Configuration](#export-path-configuration-exportpath). |
+| `OutputPath` | Path | Optional local folder for post-upload file copy. |
+| `ConversionEngine` | `LibreOffice` / `MicrosoftOffice` | Selects the PDF conversion backend. Default: `LibreOffice`. |
+| `LibreOfficePath` | Path | Full path to `soffice.exe`. Leave empty to auto-detect the default install location. |
+| `LibreOfficeProfileRoot` | Path | Base directory for isolated LibreOffice user profiles created per conversion. Leave empty for the default under `%ProgramData%`. |
+| `ConversionTimeoutSeconds` | Integer | Maximum seconds to wait for a LibreOffice conversion. Default: `180`. |
+| `ValidateEngineOnStartup` | `True` / `False` | When `True`, validates the configured engine before downloading the source file. |
+| `OfficeVisible` | `True` / `False` | Microsoft Office engine only. Shows Word/Excel/PowerPoint during conversion. Default: `False`. |
+| `PdfExportQuality` | `Standard` / `Minimum` | Microsoft Office engine only. Controls Word/Excel PDF export quality. Default: `Standard`. |
+
+### Deployment prerequisites
+
+| Engine | Job Processor requirements |
+|---|---|
+| **LibreOffice** | LibreOffice 7.x or later; writable profile temp directory; recommended: install common fonts used in source documents |
+| **Microsoft Office** | Licensed Word, Excel, and PowerPoint desktop; COM accessible to the Job Processor service account; may require an interactive desktop session |
+
+---
+
 ## Job: Image Export from Inventor
 
 **Project:** `adsk.ts.image.create.inventor`  
@@ -409,7 +473,8 @@ Export **filenames** are unchanged; only the **directory** changes. Each job bui
 | 2D DWG | `<source>.dwg` |
 | 3D | `<source>.dwg` / `.stp` / `.jt` |
 | Navisworks | `<source>.nwd` / `.dwf` / `.nwc` |
-| PDF | `<source>.pdf` / `.dxf` |
+| PDF (SolidWorks) | `<source>.pdf` / `.dxf` |
+| PDF (Office) | `<source>.pdf` *(e.g. `report.docx.pdf` or `report.pdf`)* |
 | Image | `<source>.<ImgFileType>` |
 
 ### Implementation scope
@@ -417,9 +482,9 @@ Export **filenames** are unchanged; only the **directory** changes. Each job bui
 | Component | Change |
 |---|---|
 | `adsk.ts.job.shared` — `JobCommon` | Add `mResolveExportVaultFolder`, `mResolveExportLocalDirectory`, `mEnsureVaultFolderExists`; update `mUploadFiles` to derive upload folder from local export path |
-| All 6 export jobs — `Settings.cs` | Add `[XmlElement("ExportPath")] public string ExportPath` |
-| All 6 export jobs — `*.settings.xml` | Add `<ExportPath></ExportPath>` with inline comments |
-| All 6 export jobs — `JobExtension.cs` | Resolve export directory after source download; write all export files there |
+| All 7 export jobs — `Settings.cs` | Add `[XmlElement("ExportPath")] public string ExportPath` |
+| All 7 export jobs — `*.settings.xml` | Add `<ExportPath></ExportPath>` with inline comments |
+| All 7 export jobs — `JobExtension.cs` | Resolve export directory after source download; write all export files there |
 | RVT — `JobExtension.cs` | Set `revitExportDef.Location` to resolved local directory |
 
 ### XML configuration example
