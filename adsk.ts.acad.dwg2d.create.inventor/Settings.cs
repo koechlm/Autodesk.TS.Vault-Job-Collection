@@ -34,6 +34,9 @@ namespace adsk.ts.acad.dwg2d.create.inventor
         [XmlElement("OutputPath")]
         public string OutPutPath;
 
+        [XmlElement("ExportPath")]
+        public string ExportPath;
+
         [XmlElement("DwgIniFile2D")]
         public string DwgIniFile2D;
 

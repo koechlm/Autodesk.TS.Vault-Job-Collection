@@ -189,6 +189,7 @@ namespace adsk.ts.nwd.create.navisworks
             // use shared code to download the file
             adsktsshared.JobCommon tsJobCommon = new(connection, mWsMgr, mTrace);
             string mDocPath = tsJobCommon.mDownloadFile(mFile);
+            string exportDir = tsJobCommon.mResolveExportLocalDirectory(settings.ExportPath, mFile, mDocPath);
             string mExt = System.IO.Path.GetExtension(mDocPath);
 
             mTrace.WriteLine("Job successfully downloaded source file(s) for translation.");
@@ -200,14 +201,14 @@ namespace adsk.ts.nwd.create.navisworks
                 if ((item == "NWD" || item == "NWD+DWF") && mNavisworksAutomation != null)
                 {
                     //delete existing export files; note the resulting file name is e.g. "Assembly.iam.nwd
-                    string mNwdName = mDocPath + ".nwd";
+                    string mNwdName = System.IO.Path.Combine(exportDir, System.IO.Path.GetFileName(mDocPath) + ".nwd");
                     if (System.IO.File.Exists(mNwdName))
                     {
                         System.IO.FileInfo fileInfo = new FileInfo(mNwdName);
                         fileInfo.IsReadOnly = false;
                         fileInfo.Delete();
                     }
-                    string mNWDWFName = mDocPath + ".dwf";
+                    string mNWDWFName = System.IO.Path.Combine(exportDir, System.IO.Path.GetFileName(mDocPath) + ".dwf");
                     if (item == "NWD+DWF")
                     {
                         if (System.IO.File.Exists(mNWDWFName))
@@ -298,7 +299,7 @@ namespace adsk.ts.nwd.create.navisworks
                         if (mDocInfo.Exists)
                         {
                             //align the file name according our convention
-                            string mNwcUpload = mDocPath + ".nwc";
+                            string mNwcUpload = System.IO.Path.Combine(exportDir, System.IO.Path.GetFileName(mDocPath) + ".nwc");
                             if (System.IO.File.Exists(mNwcUpload))
                             {
                                 System.IO.FileInfo fileInfo = new FileInfo(mNwcUpload);

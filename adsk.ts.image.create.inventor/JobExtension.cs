@@ -222,6 +222,7 @@ namespace adsk.ts.image.create.inventor
             // use shared code to download the file
             adsktsshared.JobCommon tsJobCommon = new(connection, mWsMgr, mTrace);
             string mDocPath = tsJobCommon.mDownloadFile(mFile);
+            string exportDir = tsJobCommon.mResolveExportLocalDirectory(settings.ExportPath, mFile, mDocPath);
             string mExt = System.IO.Path.GetExtension(mDocPath);
 
             mTrace.WriteLine("Job successfully downloaded source file(s) for translation.");
@@ -249,7 +250,7 @@ namespace adsk.ts.image.create.inventor
                     mDoc = mInv.Documents.Open(mDocPath);
 
                     //delete existing export file; note the resulting file name is e.g. "Drawing.idw.dwg
-                    string mExpFileName = mDocPath + "." + mSettings.ImgFileType.ToLower();
+                    string mExpFileName = System.IO.Path.Combine(exportDir, System.IO.Path.GetFileName(mDocPath) + "." + mSettings.ImgFileType.ToLower());
                     if (System.IO.File.Exists(mExpFileName))
                     {
                         System.IO.FileInfo fileInfo = new FileInfo(mExpFileName);

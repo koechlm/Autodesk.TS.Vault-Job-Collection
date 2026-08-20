@@ -256,6 +256,7 @@ namespace adsk.ts.export3d.create.inventor
             // use shared code to download the file
             adsktsshared.JobCommon tsJobCommon = new(connection, mWsMgr, mTrace);
             string mDocPath = tsJobCommon.mDownloadFile(mFile);
+            string exportDir = tsJobCommon.mResolveExportLocalDirectory(settings.ExportPath, mFile, mDocPath);
             string mExt = System.IO.Path.GetExtension(mDocPath);
 
             mTrace.WriteLine("Job successfully downloaded source file(s) for translation.");
@@ -291,7 +292,7 @@ namespace adsk.ts.export3d.create.inventor
                         }
 
                         //delete existing export file; note the resulting file name is e.g. "Drawing.idw.dwg
-                        string mExpFileName = mDocPath + ".dwg";
+                        string mExpFileName = System.IO.Path.Combine(exportDir, System.IO.Path.GetFileName(mDocPath) + ".dwg");
                         if (System.IO.File.Exists(mExpFileName))
                         {
                             System.IO.FileInfo fileInfo = new FileInfo(mExpFileName);
@@ -383,7 +384,7 @@ namespace adsk.ts.export3d.create.inventor
                             mTransOptions.Value["Description"] = "Sample-Job Step Translator using VaultInventorServer";
                             mTransContext.Type = IOMechanismEnum.kFileBrowseIOMechanism;
                             //delete local file if exists, as the export wouldn't overwrite
-                            string mExpFileName = mDocPath + ".stp";
+                            string mExpFileName = System.IO.Path.Combine(exportDir, System.IO.Path.GetFileName(mDocPath) + ".stp");
                             if (System.IO.File.Exists(mExpFileName))
                             {
                                 System.IO.File.SetAttributes(mExpFileName, System.IO.FileAttributes.Normal);
@@ -442,7 +443,7 @@ namespace adsk.ts.export3d.create.inventor
                             mTransOptions.Value["Version"] = 102; //default
                             mTransContext.Type = IOMechanismEnum.kFileBrowseIOMechanism;
                             //delete local file if exists, as the export wouldn't overwrite
-                            string mExpFileName = mDocPath + ".jt";
+                            string mExpFileName = System.IO.Path.Combine(exportDir, System.IO.Path.GetFileName(mDocPath) + ".jt");
                             if (System.IO.File.Exists(mExpFileName))
                             {
                                 System.IO.File.SetAttributes(mExpFileName, System.IO.FileAttributes.Normal);

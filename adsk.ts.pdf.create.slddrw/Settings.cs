@@ -46,6 +46,9 @@ namespace adsk.ts.pdf.create.slddrw
         [XmlElement("OutputPath")]
         public string OutPutPath;
 
+        [XmlElement("ExportPath")]
+        public string ExportPath;
+
         #region for future use
         //[XmlElement("OutputPath")]
         //public string mOutPutPath;

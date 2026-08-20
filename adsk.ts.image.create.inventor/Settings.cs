@@ -43,6 +43,9 @@ namespace adsk.ts.image.create.inventor
         [XmlElement("OutputPath")]
         public string OutPutPath;
 
+        [XmlElement("ExportPath")]
+        public string ExportPath;
+
         #region for future use
         //[XmlElement("OutputPath")]
         //public string mOutPutPath;
