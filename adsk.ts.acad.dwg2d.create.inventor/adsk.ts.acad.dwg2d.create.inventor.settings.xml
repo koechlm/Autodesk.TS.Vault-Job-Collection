@@ -20,6 +20,12 @@
   <!-- Copy source file's system comment to the export file's system comment; accepted values are True/False -->
   <CopySystemComment>False</CopySystemComment>
 
+  <!-- Export destination. Leave empty to export next to the source file. -->
+  <!-- Absolute:   $/Designs/Exports -->
+  <!-- Relative up:    ..\Exports  or  ..\..\Exports  (.. = one level up per segment) -->
+  <!-- Relative down:  Exports  (subfolder under the source file's folder) -->
+  <ExportPath></ExportPath>
+
   <!-- Output Path -->
   <!--  The job can copy the resulting file(s) to the given output path after check-in-->
   <OutputPath>C:\Temp\</OutputPath>

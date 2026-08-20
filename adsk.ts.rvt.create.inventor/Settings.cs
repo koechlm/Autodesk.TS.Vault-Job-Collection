@@ -37,6 +37,9 @@ namespace adsk.ts.rvt.create.inventor
         [XmlElement("OutputPath")]
         public string OutPutPath;
 
+        [XmlElement("ExportPath")]
+        public string ExportPath;
+
         [XmlElement("InventorPreset")]
         public string InventorPreset;
 

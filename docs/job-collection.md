@@ -35,13 +35,25 @@ Downloads a file from Vault to the local working folder, including all children 
 #### `mUploadFiles(mFile, filesToUpload, outPutPath?, copySourceComment?)`
 Uploads a list of local files back into Vault. For each file it:
 1. Optionally copies the file to a local output folder (if `OutputPath` is configured).
-2. Adds the file as a new Vault file if it does not yet exist, or checks it out and checks it back in as a new version if it does.
+2. Determines the target Vault folder from the export file's local path (via the working-folder mapping established during download). When `ExportPath` is empty, export files sit next to the source file locally and are uploaded to the source file's Vault folder — the existing default behaviour.
+3. Adds the file as a new Vault file if it does not yet exist, or checks it out and checks it back in as a new version if it does.
    - `.dwf` files are uploaded as `DesignVisualization` (hidden); all other files are uploaded as `DesignRepresentation`.
-3. Synchronises the revision label of the export file to match the source file's revision label.
-4. Synchronises all user-defined properties (UDPs) that are assigned to both the source file's category and the export file's category.
-5. Sets the system comment on the export file — see **CopySystemComment logic** below.
-6. For `DesignVisualization` files: synchronises the lifecycle state name from the source file.
-7. Attaches the export file to its source file using the appropriate attachment type (`DesignRepresentation` or `DesignVisualization`). Any pre-existing attachment with the same master ID is replaced.
+4. Synchronises the revision label of the export file to match the source file's revision label.
+5. Synchronises all user-defined properties (UDPs) that are assigned to both the source file's category and the export file's category.
+6. Sets the system comment on the export file — see **CopySystemComment logic** below.
+7. For `DesignVisualization` files: synchronises the lifecycle state name from the source file.
+8. Attaches the export file to its source file using the appropriate attachment type (`DesignRepresentation` or `DesignVisualization`). Any pre-existing attachment with the same master ID is replaced.
+
+#### Export path helpers
+
+Shared helpers on `JobCommon` resolve the `ExportPath` setting and prepare the local export directory before any host application (Inventor, Navisworks, SolidWorks) runs:
+
+| Helper | Purpose |
+|---|---|
+| `mResolveExportVaultFolder(exportPath, sourceFile)` | Resolves the configured path to a Vault folder path. Creates the folder (and any missing parent folders) in Vault when it does not yet exist. |
+| `mResolveExportLocalDirectory(exportPath, sourceFile)` | Maps the resolved Vault folder to a local working-folder path. Creates the local directory on the Job Processor machine if needed. Returns the directory where export files must be written. |
+
+See [Export Path Configuration (`ExportPath`)](#export-path-configuration-exportpath) for resolution rules and examples.
 
 #### `mGetSourceComment(mFile)` *(private)*
 Resolves the source file's system comment that will be written to the export file when `CopySystemComment = True`.
@@ -111,6 +123,7 @@ Opens an Inventor 2D drawing (`.idw` or `.dwg`) in VaultInventorServer and expor
 | `ExportFormats` | `2DDWG` | Currently only `2DDWG` is supported. Reserved for future additional formats. |
 | `DwgIniFile2D` | Path | Full local path to the Inventor DWG export configuration `.ini` file. This file controls layer mappings, DWG version, and all other translator-specific options. The file must be present on the Job Processor machine. |
 | `CopySystemComment` | `True` / `False` | See [CopySystemComment logic](#copysystemcomment-logic) below. |
+| `ExportPath` | Vault path | Optional export destination. Leave empty to export next to the source file (current default). See [Export Path Configuration](#export-path-configuration-exportpath). |
 | `OutputPath` | Path | Optional local folder to which the exported file is also copied after Vault check-in. Leave empty to disable the copy. |
 
 ---
@@ -150,6 +163,7 @@ Additional formats that Inventor supports (but are not yet wired up): `CATPart`,
 | `ExportFormats` | Comma-separated list | One or more format tokens from `3DDWG`, `STP`, `JT`. Example: `STP, JT`. Each token generates a separate output file. |
 | `ExcludeDesignSubstitute` | `True` / `False` | When `False` (default), files classified as `DesignSubstitute` are also exported. Set to `True` to skip them. |
 | `CopySystemComment` | `True` / `False` | See [CopySystemComment logic](#copysystemcomment-logic) below. |
+| `ExportPath` | Vault path | Optional export destination. See [Export Path Configuration](#export-path-configuration-exportpath). |
 | `OutputPath` | Path | Optional local folder for post-upload file copy. |
 
 ---
@@ -186,6 +200,7 @@ NWC files, when present, are uploaded as additional `DesignRepresentation` attac
 | `ExportFormats` | `NWD` or `NWD+DWF` | `NWD` creates only the NWD file. `NWD+DWF` additionally exports a DWF via the Navisworks `LcDwfExporterPlugin`. |
 | `NwdTemplate` | Vault path | Vault path to an NWD file to use as a base template (e.g. `$/Templates/Navisworks/Standard-Vertical-Z.nwd`). When set, Navisworks opens the template first and then appends the source file. Leave empty to open the source file directly. **Note:** using a template adds an additional Vault reference to the resulting NWD file. |
 | `CopySystemComment` | `True` / `False` | See [CopySystemComment logic](#copysystemcomment-logic) below. |
+| `ExportPath` | Vault path | Optional export destination. See [Export Path Configuration](#export-path-configuration-exportpath). |
 | `OutputPath` | Path | Optional local folder for post-upload file copy. |
 
 ---
@@ -238,6 +253,7 @@ Creates a simplified Revit (`.rvt`) file from an Inventor assembly using the Inv
 | `InventorPreset` | Vault path | Vault path to the Inventor simplification preset file (`.preset`), e.g. `$/Templates/Inventor/Presets/SimplifyCmd.preset`. This file contains the named simplification configurations. |
 | `InventorPresetName` | Comma-separated name(s) | One or more preset names defined inside the preset file, e.g. `RVT_Level_2` or `RVT_Level_1, RVT_Level_2`. All named `Preset` nodes in the preset file are loaded, so any custom preset name is supported alongside the built-in ones. Multiple values produce one output file per preset per Revit version. |
 | `CopySystemComment` | `True` / `False` | See [CopySystemComment logic](#copysystemcomment-logic) below. |
+| `ExportPath` | Vault path | Optional export destination. See [Export Path Configuration](#export-path-configuration-exportpath). |
 | `OutputPath` | Path | Optional local folder for post-upload file copy. |
 
 ---
@@ -274,6 +290,7 @@ Launches SolidWorks via COM automation, opens a SolidWorks drawing (`.slddrw`) a
 | `DxfSheetName` | String | Name of the drawing sheet that represents DXF content (e.g. `DXF`). Used in conjunction with `PdfIncludeDxfSheet`. |
 | `PdfIncludeDxfSheet` | `True` / `False` | When `False`, the sheet named by `DxfSheetName` is excluded from the PDF export and is instead saved as a separate `.dxf` file. When `True`, all sheets including the DXF sheet are included in the PDF and no separate DXF is created. |
 | `CopySystemComment` | `True` / `False` | See [CopySystemComment logic](#copysystemcomment-logic) below. |
+| `ExportPath` | Vault path | Optional export destination. See [Export Path Configuration](#export-path-configuration-exportpath). |
 | `OutputPath` | Path | Optional local folder for post-upload file copy. |
 
 ---
@@ -307,7 +324,113 @@ Opens an Inventor file in VaultInventorServer and renders a static image using a
 | `ExportFormats` | `IMAGE` | Currently only `IMAGE` is supported. The image file type is controlled separately by `ImgFileType`. |
 | `ImgFileType` | `BMP` / `PNG` / `GIF` / `JPG` / `TIFF` | File format for the rendered image. Passed directly to `Camera.SaveAsBitmap`. Default: `PNG`. |
 | `CopySystemComment` | `True` / `False` | See [CopySystemComment logic](#copysystemcomment-logic) below. |
+| `ExportPath` | Vault path | Optional export destination. See [Export Path Configuration](#export-path-configuration-exportpath). |
 | `OutputPath` | Path | Optional local folder for post-upload file copy. |
+
+---
+
+## Export Path Configuration (`ExportPath`)
+
+All export jobs share an optional `ExportPath` setting that controls **where export files are created locally** on the Job Processor machine. Because Vault downloads use `OrganizeFilesRelativeToCommonVaultRoot = true`, the local working-folder layout mirrors the Vault folder structure. Setting the correct local export directory therefore produces the expected Vault destination on upload — no separate Vault upload override is required.
+
+### Design principles
+
+| Principle | Detail |
+|---|---|
+| **Local path drives Vault path** | Jobs write export files to a resolved local directory. `mUploadFiles` derives the Vault upload folder from each file's local path via the working-folder mapping. |
+| **Admin-configured, auto-create** | The Job Processor admin sets `ExportPath` in the job settings XML. If the target Vault folder does not exist, the job creates it (and any missing intermediate folders) before export begins. |
+| **Backward compatible** | When `ExportPath` is empty, export files are written next to the downloaded source file and uploaded to the source file's Vault folder — identical to current behaviour. |
+| **Distinct from `OutputPath`** | `ExportPath` controls the primary export location. `OutputPath` remains an optional *additional* local copy made after Vault check-in. |
+
+### Setting values
+
+| Value | Type | Example | Result for source `$/Designs/P-00020/CAD/Assy.iam` |
+|---|---|---|---|
+| *(empty)* | Default | — | Local: next to source download. Vault: `$/Designs/P-00020/CAD/` |
+| Absolute Vault path | Starts with `$/` | `$/Designs/Revit Exports` | Vault: `$/Designs/Revit Exports/`. Local: mapped working-folder path. |
+| Relative — upward | Starts with `..` | `..\Revit Export` or `..\..\Common Exports` | Resolved from source folder; each `..` moves up one Vault folder level, then any remaining segments descend. |
+| Relative — downward | Does not start with `..` | `Revit Export` | Vault: `$/Designs/P-00020/CAD/Revit Export/` *(subfolder of source folder)* |
+
+### Path resolution rules
+
+1. **Empty or whitespace** → use the source file's Vault folder (current default).
+2. **Absolute** (starts with `$/`) → use the path as-is after normalising separators to `/`.
+3. **Relative** → resolve from the **source file's Vault folder** (`FindFoldersByIds` → `Folder.FullName`):
+   - If the path **starts with `..`**, apply standard `..` and `.` segment navigation from the source folder. Each `..` moves up one parent folder; any folder names after the `..` segments descend from the resulting location. Examples from `$/Designs/P-00020/CAD`: `..\Revit Export` → `$/Designs/P-00020/Revit Export`; `..\..\Common Exports` → `$/Designs/Common Exports`.
+   - If the path does **not** start with `..`, append it as a sub-path under the source folder. Example: `Revit Export` → `$/Designs/P-00020/CAD/Revit Export`. A leading `\` is stripped before appending.
+   - Normalise duplicate slashes; trim trailing `/`.
+4. **Folder creation** → walk the resolved Vault path segment by segment. Create any folder that does not exist using the Vault Document Service. Fail only if creation is denied by permissions.
+5. **Local mapping** → map the resolved Vault folder to a local directory via `WorkingFoldersManager` (same root used by `mDownloadFile`). Create the local directory if it does not exist.
+
+### Processing pipeline
+
+```mermaid
+flowchart TD
+    A[Settings.Load — ExportPath] --> B{ExportPath empty?}
+    B -->|Yes| C[Local dir = source file directory]
+    B -->|No| D[mResolveExportVaultFolder]
+    D --> E[Create missing Vault folders]
+    E --> F[mResolveExportLocalDirectory]
+    F --> G[Create local directory]
+    C --> H[Host app writes export files]
+    G --> H
+    H --> I[mUploadFiles]
+    I --> J[Derive Vault folder from local file path]
+    J --> K[Check-in + attach to source]
+```
+
+### Examples
+
+**Source file:** `$/Designs/P-00020/CAD/Assy.iam`
+
+| `ExportPath` | Resolved Vault folder | Export file |
+|---|---|---|
+| *(empty)* | `$/Designs/P-00020/CAD` | `Assy.iam.rvt` |
+| `$/Designs/Revit Exports` | `$/Designs/Revit Exports` | `Assy.iam.rvt` |
+| `..\Revit Export` | `$/Designs/P-00020/Revit Export` | `Assy.iam.rvt` |
+| `Revit Export` | `$/Designs/P-00020/CAD/Revit Export` | `Assy.iam.rvt` |
+| `..\..\Common Exports` | `$/Designs/Common Exports` | `Assy.iam.rvt` |
+
+**Source file:** `$/Designs/P-00020/CAD/Detail/Assy.iam`
+
+| `ExportPath` | Resolved Vault folder |
+|---|---|
+| `Revit Export` | `$/Designs/P-00020/CAD/Detail/Revit Export` *(subfolder of source folder)* |
+| `..\Revit Export` | `$/Designs/P-00020/CAD/Revit Export` *(one level up, then into `Revit Export`)* |
+| `..\..\Revit Export` | `$/Designs/P-00020/Revit Export` *(two levels up, then into `Revit Export`)* |
+
+### Per-job export file naming
+
+Export **filenames** are unchanged; only the **directory** changes. Each job builds the full export path as `Path.Combine(exportLocalDir, <existing filename logic>)`:
+
+| Job | Filename pattern (unchanged) |
+|---|---|
+| RVT | `<source>.iam.rvt` or `<source>.iam_<version>_<preset>.rvt` |
+| 2D DWG | `<source>.dwg` |
+| 3D | `<source>.dwg` / `.stp` / `.jt` |
+| Navisworks | `<source>.nwd` / `.dwf` / `.nwc` |
+| PDF | `<source>.pdf` / `.dxf` |
+| Image | `<source>.<ImgFileType>` |
+
+### Implementation scope
+
+| Component | Change |
+|---|---|
+| `adsk.ts.job.shared` — `JobCommon` | Add `mResolveExportVaultFolder`, `mResolveExportLocalDirectory`, `mEnsureVaultFolderExists`; update `mUploadFiles` to derive upload folder from local export path |
+| All 6 export jobs — `Settings.cs` | Add `[XmlElement("ExportPath")] public string ExportPath` |
+| All 6 export jobs — `*.settings.xml` | Add `<ExportPath></ExportPath>` with inline comments |
+| All 6 export jobs — `JobExtension.cs` | Resolve export directory after source download; write all export files there |
+| RVT — `JobExtension.cs` | Set `revitExportDef.Location` to resolved local directory |
+
+### XML configuration example
+
+```xml
+<!-- Export destination. Leave empty to export next to the source file. -->
+<!-- Absolute:        $/Designs/Revit Exports -->
+<!-- Relative up:     ..\Revit Export  or  ..\..\Common Exports  (.. = one level up per segment) -->
+<!-- Relative down:   Revit Export  (subfolder under the source file's folder) -->
+<ExportPath></ExportPath>
+```
 
 ---
 
@@ -358,4 +481,5 @@ The following settings appear in multiple jobs with identical meaning:
 | `AcceptLocalIpj` | Inventor-based jobs | When `True`, the job continues with a locally cached Inventor project file if the Vault download fails. |
 | `ExportFormats` | All export jobs | Selects the output format(s). Multiple values are comma-separated where supported. |
 | `CopySystemComment` | All export jobs | Controls whether the source file's comment is propagated to the export file. See the [CopySystemComment logic](#copysystemcomment-logic) section. |
-| `OutputPath` | All export jobs | When set, the job copies each exported file to this local path after uploading it to Vault. |
+| `ExportPath` | All export jobs | Optional Vault path (absolute or relative) for export file placement. Paths starting with `..` navigate upward from the source folder (multiple `..` segments supported); paths without a leading `..` resolve as subfolders of the source folder. Resolved to a local working-folder directory before export; uploaded to the matching Vault folder. Auto-creates missing Vault folders. See [Export Path Configuration](#export-path-configuration-exportpath). |
+| `OutputPath` | All export jobs | When set, the job copies each exported file to this local path after uploading it to Vault. Independent of `ExportPath`. |

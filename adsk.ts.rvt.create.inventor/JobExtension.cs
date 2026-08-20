@@ -130,7 +130,7 @@ namespace adsk.ts.rvt.create.inventor
             }
             finally
             {
-                // InventorServer is managed by the hosting context ó never call Quit() on it.
+                // InventorServer is managed by the hosting context ù never call Quit() on it.
                 // If we created an Inventor Application instance on our own, close it; otherwise only re-enable any addins we deactivated.
                 if (mInvApp != null)
                 {
@@ -404,6 +404,8 @@ namespace adsk.ts.rvt.create.inventor
                 mTrace.WriteLine("Job successfully downloaded source file(s) for translation.");
                 #endregion download source file(s)
 
+                string exportDir = tsJobCommon.mResolveExportLocalDirectory(settings.ExportPath, mFile, mDocPath);
+
                 // capture dependencies for upload later
                 #region capture dependencies
                 //we need to return all relationships during later check-in
@@ -441,7 +443,7 @@ namespace adsk.ts.rvt.create.inventor
 
                 Dictionary<string, object> mPresetObjects = mReadPresetMap();
 
-                // download the Revit template from Vault once; reused for all version ◊ preset iterations
+                // download the Revit template from Vault once; reused for all version ù preset iterations
                 string templateLocalPath = null;
                 if (mSettings.RevitTemplate != null && mSettings.RevitTemplate != "")
                 {
@@ -497,15 +499,15 @@ namespace adsk.ts.rvt.create.inventor
                     mAsmDoc.ComponentDefinition.ModelStates[1].Activate();
                 }
 
-                // run the version ◊ preset export loop; document stays open for all iterations
+                // run the version ù preset export loop; document stays open for all iterations
                 foreach (string rvtVersion in settings.TargetRevitVersions)
                 {
                     foreach (string presetName in settings.InventorPresetNames)
                     {
                         // compute unique output filename per iteration
                         string mExpFileName = isMultiExport
-                            ? mDocPath + "_" + rvtVersion + "_" + presetName + ".rvt"
-                            : mDocPath + ".rvt";
+                            ? System.IO.Path.Combine(exportDir, System.IO.Path.GetFileName(mDocPath) + "_" + rvtVersion + "_" + presetName + ".rvt")
+                            : System.IO.Path.Combine(exportDir, System.IO.Path.GetFileName(mDocPath) + ".rvt");
 
                         mTrace.WriteLine("Job processes export: Revit version=" + rvtVersion + ", preset=" + presetName + ", output=" + System.IO.Path.GetFileName(mExpFileName));
 
@@ -531,8 +533,8 @@ namespace adsk.ts.rvt.create.inventor
                             mNewExportDef = true;
                             revitExportDef = mAsmDoc.ComponentDefinition.RevitExports.CreateDefinition();
 
-                            // derive path and file name from source file mDoc
-                            revitExportDef.Location = System.IO.Path.GetDirectoryName(mDocPath);
+                            // derive path and file name from resolved export directory
+                            revitExportDef.Location = exportDir;
                             revitExportDef.FileName = mExpFileName;
 
                             // set the target Revit version for this iteration
@@ -680,7 +682,7 @@ namespace adsk.ts.rvt.create.inventor
                     mDoc.Save2(false);
                 }
 
-                // close the document once after all version ◊ preset exports complete
+                // close the document once after all version ù preset exports complete
                 mDoc.Close(true);
 
                 // Deactivate the RVT Translator addin so ATF releases the out-of-process
@@ -791,7 +793,7 @@ namespace adsk.ts.rvt.create.inventor
         }
 
 
-        // Unified accessors ó null-coalescing between the two Inventor application types; no per-call conditionals needed.
+        // Unified accessors ù null-coalescing between the two Inventor application types; no per-call conditionals needed.
         private Inventor.Documents             InvDocuments             => mInvApp?.Documents             ?? mInvSrv.Documents;
         private Inventor.FileManager           InvFileManager           => mInvApp?.FileManager           ?? mInvSrv.FileManager;
         private Inventor.TransientObjects      InvTransientObjects      => mInvApp?.TransientObjects      ?? mInvSrv.TransientObjects;
@@ -961,7 +963,7 @@ namespace adsk.ts.rvt.create.inventor
 
             // ATF process hierarchy: ATFRevitRCEHost is the actual Revit engine host spawned by
             // ATFRevitBroker. The broker only exits after the host releases it, so we must wait
-            // for them in dependency order. WaitForExit observes the natural exit ó it does not
+            // for them in dependency order. WaitForExit observes the natural exit ù it does not
             // kill anything.
             const int timeoutMs = 15_000;
             foreach (string procName in (string[])["ATFRevitRCEHost", "ATFRevitBroker"])

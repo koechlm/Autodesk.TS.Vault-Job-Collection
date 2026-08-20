@@ -10,6 +10,8 @@ using Inventor;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Text;
 using static System.Net.Mime.MediaTypeNames;
 using ACET = Autodesk.Connectivity.Explorer.ExtensibilityTools;
@@ -113,6 +115,236 @@ namespace adsk.ts.job.shared
         }
 
         /// <summary>
+        /// Resolves the configured ExportPath to a local working-folder directory, creating the
+        /// corresponding Vault folder (and local directory) when it does not yet exist.
+        /// Relative paths starting with <c>..</c> navigate upward from the source file's Vault
+        /// folder by one or more levels (<c>..\Exports</c>, <c>..\..\Exports</c>, etc.).
+        /// Paths without a leading <c>..</c> are appended as subfolders under the source folder.
+        /// </summary>
+        public string mResolveExportLocalDirectory(string? exportPath, ACW.File sourceFile, string sourceLocalPath)
+        {
+            ACW.Folder sourceFolder = mGetSourceFolder(sourceFile);
+            string sourceFolderVaultPath = mNormalizeVaultFolderPath(sourceFolder.FullName);
+
+            if (string.IsNullOrWhiteSpace(exportPath))
+            {
+                return System.IO.Path.GetDirectoryName(sourceLocalPath)
+                    ?? throw new Exception("Job could not determine the local directory for source file " + sourceFile.Name + ".");
+            }
+
+            string targetVaultFolderPath = mResolveExportVaultFolderPath(exportPath.Trim(), sourceFolderVaultPath);
+            ACW.Folder targetFolder = mEnsureVaultFolderExists(targetVaultFolderPath);
+            string localDirectory = mMapVaultFolderToLocalPath(targetFolder.FullName);
+
+            if (!Directory.Exists(localDirectory))
+            {
+                Directory.CreateDirectory(localDirectory);
+            }
+
+            _trace.WriteLine("Job resolved export folder: Vault=" + targetFolder.FullName + ", local=" + localDirectory + ".");
+            return localDirectory;
+        }
+
+        private ACW.Folder mGetSourceFolder(ACW.File sourceFile)
+        {
+            ACW.Folder? sourceFolder = _WebSrvMgr.DocumentService.FindFoldersByIds([sourceFile.FolderId]).FirstOrDefault();
+            if (sourceFolder == null || sourceFolder.Id == -1)
+            {
+                throw new Exception("Vault folder with Id=" + sourceFile.FolderId + " not found for source file " + sourceFile.Name + ".");
+            }
+
+            return sourceFolder;
+        }
+
+        private static string mNormalizeVaultFolderPath(string vaultFolderPath)
+        {
+            string normalizedPath = vaultFolderPath.Replace('\\', '/').Trim();
+            while (normalizedPath.Contains("//", StringComparison.Ordinal))
+            {
+                normalizedPath = normalizedPath.Replace("//", "/", StringComparison.Ordinal);
+            }
+
+            if (normalizedPath.Length > 1)
+            {
+                normalizedPath = normalizedPath.TrimEnd('/');
+            }
+
+            return normalizedPath;
+        }
+
+        private static string mResolveExportVaultFolderPath(string exportPath, string sourceFolderVaultPath)
+        {
+            exportPath = exportPath.Replace('\\', '/').Trim();
+            while (exportPath.StartsWith('/'))
+            {
+                exportPath = exportPath.Substring(1);
+            }
+
+            if (exportPath.StartsWith("$/", StringComparison.Ordinal))
+            {
+                return mNormalizeVaultFolderPath(exportPath);
+            }
+
+            // Relative upward paths: each ".." segment moves one level up from the source folder.
+            if (exportPath.StartsWith("..", StringComparison.Ordinal))
+            {
+                return mNormalizeVaultFolderPath(mApplyRelativeVaultPath(sourceFolderVaultPath, exportPath));
+            }
+
+            return mNormalizeVaultFolderPath(sourceFolderVaultPath + "/" + exportPath);
+        }
+
+        /// <summary>
+        /// Applies relative Vault path segments from a base folder. Supports multiple parent
+        /// traversals via repeated <c>..</c> segments before descending into child folders.
+        /// </summary>
+        private static string mApplyRelativeVaultPath(string baseVaultFolderPath, string relativePath)
+        {
+            List<string> segments = baseVaultFolderPath
+                .Split('/', StringSplitOptions.RemoveEmptyEntries)
+                .ToList();
+
+            if (segments.Count == 0 || segments[0] != "$")
+            {
+                throw new Exception("Invalid Vault folder path: " + baseVaultFolderPath + ".");
+            }
+
+            foreach (string part in relativePath.Split('/', '\\', StringSplitOptions.RemoveEmptyEntries))
+            {
+                if (part == ".")
+                {
+                    continue;
+                }
+
+                if (part == "..")
+                {
+                    if (segments.Count <= 1)
+                    {
+                        throw new Exception("Export path resolves above the Vault root: " + relativePath + ".");
+                    }
+
+                    segments.RemoveAt(segments.Count - 1);
+                    continue;
+                }
+
+                segments.Add(part);
+            }
+
+            if (segments.Count <= 1)
+            {
+                return "$/";
+            }
+
+            return "$/" + string.Join("/", segments.Skip(1));
+        }
+
+        private ACW.Folder mEnsureVaultFolderExists(string vaultFolderPath)
+        {
+            vaultFolderPath = mNormalizeVaultFolderPath(vaultFolderPath);
+            ACW.Folder? existingFolder = mGetFolderByPathOrNull(vaultFolderPath);
+            if (existingFolder != null)
+            {
+                return existingFolder;
+            }
+
+            if (vaultFolderPath == "$/" || vaultFolderPath == "$")
+            {
+                return _WebSrvMgr.DocumentService.GetFolderRoot();
+            }
+
+            if (!vaultFolderPath.StartsWith("$/", StringComparison.Ordinal))
+            {
+                throw new Exception("Invalid export Vault folder path: " + vaultFolderPath + ".");
+            }
+
+            string[] folderNames = vaultFolderPath.Substring(2).Split('/', StringSplitOptions.RemoveEmptyEntries);
+            ACW.Folder currentFolder = _WebSrvMgr.DocumentService.GetFolderRoot();
+            string currentVaultPath = "$/";
+
+            foreach (string folderName in folderNames)
+            {
+                currentVaultPath = currentVaultPath == "$/"
+                    ? "$/" + folderName
+                    : currentVaultPath + "/" + folderName;
+
+                ACW.Folder? nextFolder = mGetFolderByPathOrNull(currentVaultPath);
+                if (nextFolder == null)
+                {
+                    currentFolder = _WebSrvMgr.DocumentService.AddFolder(folderName, currentFolder.Id, false);
+                    _trace.WriteLine("Job created Vault folder: " + currentVaultPath + ".");
+                }
+                else
+                {
+                    currentFolder = nextFolder;
+                }
+            }
+
+            return currentFolder;
+        }
+
+        private ACW.Folder? mGetFolderByPathOrNull(string vaultFolderPath)
+        {
+            try
+            {
+                ACW.Folder folder = _WebSrvMgr.DocumentService.GetFolderByPath(vaultFolderPath);
+                if (folder != null && folder.Id > 0)
+                {
+                    return folder;
+                }
+            }
+            catch (Exception ex)
+            {
+                _trace.WriteLine("Vault folder lookup failed for " + vaultFolderPath + ": " + ex.Message);
+            }
+
+            return null;
+        }
+
+        private string mMapVaultFolderToLocalPath(string vaultFolderPath)
+        {
+            return _connection.WorkingFoldersManager.GetWorkingFolder(mNormalizeVaultFolderPath(vaultFolderPath)).FullPath;
+        }
+
+        private ACW.Folder mGetUploadFolderFromLocalPath(string localFilePath, ACW.File sourceFile)
+        {
+            string? localDirectory = System.IO.Path.GetDirectoryName(localFilePath);
+            if (localDirectory == null)
+            {
+                throw new Exception("Job could not determine the local directory for export file " + localFilePath + ".");
+            }
+
+            string vaultFolderPath = mMapLocalPathToVaultFolder(localDirectory);
+            ACW.Folder? uploadFolder = mGetFolderByPathOrNull(vaultFolderPath);
+            if (uploadFolder != null)
+            {
+                return uploadFolder;
+            }
+
+            // Fall back to the source folder when the export sits next to the downloaded source file.
+            return mGetSourceFolder(sourceFile);
+        }
+
+        private string mMapLocalPathToVaultFolder(string localDirectoryPath)
+        {
+            string workingFolderRoot = _connection.WorkingFoldersManager.GetWorkingFolder("$/").FullPath;
+            string normalizedLocalDirectory = System.IO.Path.GetFullPath(localDirectoryPath).TrimEnd(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
+            string normalizedWorkingFolderRoot = System.IO.Path.GetFullPath(workingFolderRoot).TrimEnd(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
+
+            if (!normalizedLocalDirectory.StartsWith(normalizedWorkingFolderRoot, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new Exception("Export file directory " + localDirectoryPath + " is outside the Vault working folder " + workingFolderRoot + ".");
+            }
+
+            string relativePath = normalizedLocalDirectory.Substring(normalizedWorkingFolderRoot.Length).TrimStart(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
+            if (string.IsNullOrEmpty(relativePath))
+            {
+                return "$/";
+            }
+
+            return "$/" + relativePath.Replace('\\', '/');
+        }
+
+        /// <summary>
         /// Resolves the system comment to use when updating the export file's properties.
         /// If the source file is in a consumable lifecycle state the comment of the first iteration
         /// that entered the current revision+state combination is returned, so that downstream
@@ -185,9 +417,7 @@ namespace adsk.ts.job.shared
 
                     //add resulting export file to Vault if it doesn't exist, otherwise update the existing one
 
-                    ACW.Folder? mFolder = _WebSrvMgr.DocumentService.FindFoldersByIds([mFile.FolderId]).FirstOrDefault();
-                    if (mFolder == null || mFolder.Id == -1)
-                        throw new Exception("Vault folder with Id=" + mFile.FolderId + " not found");
+                    ACW.Folder mFolder = mGetUploadFolderFromLocalPath(mExportFileInfo.FullName, mFile);
                     string vaultFilePath = System.IO.Path.Combine(mFolder.FullName, mExportFileInfo.Name).Replace("\\", "/");
 
                     ACW.File wsFile = _WebSrvMgr.DocumentService.FindLatestFilesByPaths(new string[] { vaultFilePath }).First();

@@ -40,6 +40,9 @@ namespace adsk.ts.nwd.create.navisworks
         [XmlElement("OutputPath")]
         public string OutPutPath;
 
+        [XmlElement("ExportPath")]
+        public string ExportPath;
+
         // added for future enhancement using Navisworks Plugins to export, instead of Automation
         //[XmlElement("NWDExcludeHiddenItems")]
         //public string NWDExcludeHiddenItems;

@@ -220,6 +220,7 @@ namespace adsk.ts.acad.dwg2d.create.inventor
             // use shared code to download the file
             adsktsshared.JobCommon tsJobCommon = new(connection, mWsMgr, mTrace);
             string mDocPath = tsJobCommon.mDownloadFile(mFile);
+            string exportDir = tsJobCommon.mResolveExportLocalDirectory(settings.ExportPath, mFile, mDocPath);
             string mExt = System.IO.Path.GetExtension(mDocPath);
 
             mTrace.WriteLine("Job successfully downloaded source file(s) for translation.");
@@ -255,7 +256,7 @@ namespace adsk.ts.acad.dwg2d.create.inventor
                         }
 
                         //delete existing export file; note the resulting file name is e.g. "Drawing.idw.dwg
-                        string mExpFileName = mDocPath + ".dwg";
+                        string mExpFileName = System.IO.Path.Combine(exportDir, System.IO.Path.GetFileName(mDocPath) + ".dwg");
                         if (System.IO.File.Exists(mExpFileName))
                         {
                             System.IO.FileInfo fileInfo = new FileInfo(mExpFileName);

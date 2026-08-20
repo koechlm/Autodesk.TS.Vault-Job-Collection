@@ -36,6 +36,12 @@
   <!-- Copy source file's system comment; accepted values are True/False -->
   <CopySystemComment>True</CopySystemComment>
 
+  <!-- Export destination. Leave empty to export next to the source file. -->
+  <!-- Absolute:   $/Designs/Revit Exports -->
+  <!-- Relative up:    ..\Revit Export  or  ..\..\Revit Export  (.. = one level up per segment) -->
+  <!-- Relative down:  Revit Export  (subfolder under the source file's folder) -->
+  <ExportPath></ExportPath>
+
   <!-- Output Path -->
   <!--  The job can copy the resulting file(s) to the given output path after check-in-->
   <OutputPath>C:\Temp\</OutputPath>

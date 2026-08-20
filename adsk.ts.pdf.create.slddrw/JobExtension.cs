@@ -203,6 +203,7 @@ namespace adsk.ts.pdf.create.slddrw
             // use shared code to download the file
             adsktsshared.JobCommon tsJobCommon = new adsktsshared.JobCommon(connection, mWsMgr, mTrace);
             string mDocPath = tsJobCommon.mDownloadFile(mFile);
+            string exportDir = tsJobCommon.mResolveExportLocalDirectory(settings.ExportPath, mFile, mDocPath);
             string mExt = System.IO.Path.GetExtension(mDocPath);
 
             mTrace.WriteLine("Job successfully downloaded source file(s) for translation.");
@@ -219,13 +220,13 @@ namespace adsk.ts.pdf.create.slddrw
                     // build the target PDF file name according the settings to include or exclude the source file extension
                     if (settings.IncludeSourceFileExtension.ToLower() == "true")
                     {
-                        mPDFName = mDocPath + ".pdf";
-                        mDXFName = mDocPath + ".dxf";
+                        mPDFName = System.IO.Path.Combine(exportDir, System.IO.Path.GetFileName(mDocPath) + ".pdf");
+                        mDXFName = System.IO.Path.Combine(exportDir, System.IO.Path.GetFileName(mDocPath) + ".dxf");
                     }
                     else
                     {
-                        mPDFName = mDocPath.ToLower().Replace(".slddrw", ".pdf");
-                        mDXFName = mDocPath.ToLower().Replace(".slddrw", ".dxf");
+                        mPDFName = System.IO.Path.Combine(exportDir, System.IO.Path.GetFileNameWithoutExtension(mDocPath) + ".pdf");
+                        mDXFName = System.IO.Path.Combine(exportDir, System.IO.Path.GetFileNameWithoutExtension(mDocPath) + ".dxf");
                     }
                     if (System.IO.File.Exists(mPDFName))
                     {
