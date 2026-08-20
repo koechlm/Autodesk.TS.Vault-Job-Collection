@@ -1,9 +1,14 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.3.11505.172
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.pdf.create.slddrw", "adsk.ts.pdf.create.slddrw\adsk.ts.pdf.create.slddrw.csproj", "{8BE623D4-CC6E-4F68-ADA6-E307EE73B80F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C0CC289B-C400-45D7-9E56-CA1FC935163C} = {C0CC289B-C400-45D7-9E56-CA1FC935163C}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.pdf.create.office", "adsk.ts.pdf.create.office\adsk.ts.pdf.create.office.csproj", "{C3D4E5F6-A7B8-4C9D-0E1F-2A3B4C5D6E7F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C0CC289B-C400-45D7-9E56-CA1FC935163C} = {C0CC289B-C400-45D7-9E56-CA1FC935163C}
 	EndProjectSection
@@ -60,6 +65,10 @@ Global
 		{8BE623D4-CC6E-4F68-ADA6-E307EE73B80F}.Debug|x64.Build.0 = Debug|x64
 		{8BE623D4-CC6E-4F68-ADA6-E307EE73B80F}.Release|x64.ActiveCfg = Release|x64
 		{8BE623D4-CC6E-4F68-ADA6-E307EE73B80F}.Release|x64.Build.0 = Release|x64
+		{C3D4E5F6-A7B8-4C9D-0E1F-2A3B4C5D6E7F}.Debug|x64.ActiveCfg = Debug|x64
+		{C3D4E5F6-A7B8-4C9D-0E1F-2A3B4C5D6E7F}.Debug|x64.Build.0 = Debug|x64
+		{C3D4E5F6-A7B8-4C9D-0E1F-2A3B4C5D6E7F}.Release|x64.ActiveCfg = Release|x64
+		{C3D4E5F6-A7B8-4C9D-0E1F-2A3B4C5D6E7F}.Release|x64.Build.0 = Release|x64
 		{A0574014-3E9A-4276-8DD8-2D54777A68D6}.Debug|x64.ActiveCfg = Debug|x64
 		{A0574014-3E9A-4276-8DD8-2D54777A68D6}.Debug|x64.Build.0 = Debug|x64
 		{A0574014-3E9A-4276-8DD8-2D54777A68D6}.Release|x64.ActiveCfg = Release|x64
@@ -78,8 +87,8 @@ Global
 		{8A697468-FED8-4719-A575-71225085EFAF}.Release|x64.Build.0 = Release|x64
 		{C0CC289B-C400-45D7-9E56-CA1FC935163C}.Debug|x64.ActiveCfg = Debug|x64
 		{C0CC289B-C400-45D7-9E56-CA1FC935163C}.Debug|x64.Build.0 = Debug|x64
-		{C0CC289B-C400-45D7-9E56-CA1FC935163C}.Release|x64.ActiveCfg = Release|Any CPU
-		{C0CC289B-C400-45D7-9E56-CA1FC935163C}.Release|x64.Build.0 = Release|Any CPU
+		{C0CC289B-C400-45D7-9E56-CA1FC935163C}.Release|x64.ActiveCfg = Release|x64
+		{C0CC289B-C400-45D7-9E56-CA1FC935163C}.Release|x64.Build.0 = Release|x64
 		{952D1405-BBD5-452C-9D85-E64CAB7BB48E}.Debug|x64.ActiveCfg = Debug|x64
 		{952D1405-BBD5-452C-9D85-E64CAB7BB48E}.Debug|x64.Build.0 = Debug|x64
 		{952D1405-BBD5-452C-9D85-E64CAB7BB48E}.Release|x64.ActiveCfg = Release|x64

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<settings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <!-- Logfile directory; validate for write access -->
+  <LogFileLocation>C:\Temp\</LogFileLocation>
+
+  <!-- Restrict job execution to transmitted file version. Set to False if a predecessor job synchronizes properties.-->
+  <EnforceSubmittedFileVersion>False</EnforceSubmittedFileVersion>
+
+  <!-- Export File Format(s) -->
+  <!-- Supported values: OFFICE.PDF -->
+  <ExportFormats>OFFICE.PDF</ExportFormats>
+
+  <!-- Include source file extension in export file name, e.g. true: report.docx.pdf, false: report.pdf -->
+  <IncludeSourceFileExtension>True</IncludeSourceFileExtension>
+
+  <!-- Copy source file's system comment to the export file's system comment; accepted values are True/False -->
+  <CopySystemComment>False</CopySystemComment>
+
+  <!-- Export destination. Leave empty to export next to the source file. -->
+  <!-- Absolute:        $/Designs/Exports -->
+  <!-- Relative up:      ..\Exports  or  ..\..\Exports  (.. = one level up per segment) -->
+  <!-- Relative down:    Exports  (subfolder under the source file's folder) -->
+  <ExportPath></ExportPath>
+
+  <!-- Optional local copy after Vault check-in -->
+  <OutputPath>C:\Temp\</OutputPath>
+
+  <!-- Conversion backend. Phase 2 supports LibreOffice only. -->
+  <ConversionEngine>LibreOffice</ConversionEngine>
+
+  <!-- Leave empty to auto-detect the default LibreOffice install path -->
+  <LibreOfficePath></LibreOfficePath>
+
+  <!-- Base directory for isolated LibreOffice user profiles created per conversion -->
+  <LibreOfficeProfileRoot></LibreOfficeProfileRoot>
+
+  <!-- Maximum seconds to wait for a LibreOffice conversion -->
+  <ConversionTimeoutSeconds>180</ConversionTimeoutSeconds>
+
+  <!-- Validate the conversion engine before downloading the source file -->
+  <ValidateEngineOnStartup>True</ValidateEngineOnStartup>
+
+</settings>
