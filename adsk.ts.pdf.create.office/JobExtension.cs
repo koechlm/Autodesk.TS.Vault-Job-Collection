@@ -200,8 +200,13 @@ namespace adsk.ts.pdf.create.office
                 return new LibreOfficePdfConverter(settings, _trace!);
             }
 
+            if (engine.Equals("MicrosoftOffice", StringComparison.OrdinalIgnoreCase))
+            {
+                return new MicrosoftOfficePdfConverter(settings, _trace!);
+            }
+
             throw new Exception(
-                "Conversion engine '" + engine + "' is not supported yet. Use ConversionEngine=LibreOffice.");
+                "Conversion engine '" + engine + "' is not supported. Use ConversionEngine=LibreOffice or ConversionEngine=MicrosoftOffice.");
         }
 
         private static List<string> ParseExportFormats(string? configuredFormats)

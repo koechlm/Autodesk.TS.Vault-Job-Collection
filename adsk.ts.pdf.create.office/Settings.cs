@@ -43,6 +43,12 @@ namespace adsk.ts.pdf.create.office
         [XmlElement("ValidateEngineOnStartup")]
         public string ValidateEngineOnStartup;
 
+        [XmlElement("OfficeVisible")]
+        public string OfficeVisible;
+
+        [XmlElement("PdfExportQuality")]
+        public string PdfExportQuality;
+
         private Settings()
         {
         }

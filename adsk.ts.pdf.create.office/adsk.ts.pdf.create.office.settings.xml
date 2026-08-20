@@ -26,7 +26,7 @@
   <!-- Optional local copy after Vault check-in -->
   <OutputPath>C:\Temp\</OutputPath>
 
-  <!-- Conversion backend. Phase 2 supports LibreOffice only. -->
+  <!-- Conversion backend: LibreOffice or MicrosoftOffice -->
   <ConversionEngine>LibreOffice</ConversionEngine>
 
   <!-- Leave empty to auto-detect the default LibreOffice install path -->
@@ -40,5 +40,11 @@
 
   <!-- Validate the conversion engine before downloading the source file -->
   <ValidateEngineOnStartup>True</ValidateEngineOnStartup>
+
+  <!-- Microsoft Office engine only: show Word/Excel/PowerPoint UI during conversion -->
+  <OfficeVisible>False</OfficeVisible>
+
+  <!-- Microsoft Office engine only: Standard or Minimum PDF quality -->
+  <PdfExportQuality>Standard</PdfExportQuality>
 
 </settings>
