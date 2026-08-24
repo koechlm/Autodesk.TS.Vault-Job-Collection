@@ -72,14 +72,19 @@ namespace adsk.ts.pdf.create.office
             }
 
             FileInfo sourceInfo = new FileInfo(filePath);
-            if (sourceInfo.IsReadOnly)
-            {
-                throw new Exception("Source file is read-only and cannot be converted: " + filePath);
-            }
-
             if (sourceInfo.Length <= 0)
             {
                 throw new Exception("Source file is empty: " + filePath);
+            }
+
+            // Vault working-folder downloads are commonly marked read-only; verify read access only.
+            try
+            {
+                using FileStream stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Source file cannot be opened for reading: " + filePath + ". Details: " + ex.Message, ex);
             }
         }
 
@@ -93,6 +98,36 @@ namespace adsk.ts.pdf.create.office
             throw new Exception(
                 "The source file appears to be password-protected (" + Path.GetFileName(filePath) +
                 "). Remove encryption before running this job.");
+        }
+
+        /// <summary>
+        /// Excel export can fail when the source workbook is opened from a read-only Vault download path.
+        /// Returns a writable temp copy when needed; otherwise returns the original full path.
+        /// </summary>
+        public static string PrepareWritableSourceCopy(string sourcePath, string tempFilePrefix)
+        {
+            string fullSourcePath = Path.GetFullPath(sourcePath);
+            FileInfo sourceInfo = new FileInfo(fullSourcePath);
+            if (!sourceInfo.IsReadOnly)
+            {
+                return fullSourcePath;
+            }
+
+            string tempSourcePath = Path.Combine(
+                Path.GetTempPath(),
+                tempFilePrefix + Guid.NewGuid().ToString("N") + sourceInfo.Extension);
+
+            File.Copy(fullSourcePath, tempSourcePath, true);
+            File.SetAttributes(tempSourcePath, FileAttributes.Normal);
+            return tempSourcePath;
+        }
+
+        public static bool IsDifferentPath(string leftPath, string rightPath)
+        {
+            return !string.Equals(
+                Path.GetFullPath(leftPath),
+                Path.GetFullPath(rightPath),
+                StringComparison.OrdinalIgnoreCase);
         }
 
         private static void TryDeleteFile(string filePath)

@@ -26,25 +26,27 @@
   <!-- Optional local copy after Vault check-in -->
   <OutputPath>C:\Temp\</OutputPath>
 
-  <!-- Conversion backend: LibreOffice or MicrosoftOffice -->
+  <!-- PDF conversion backend. Supported values: LibreOffice, MicrosoftOffice -->
+  <!-- LibreOffice (default): license-free; requires LibreOffice installed on the Job Processor -->
+  <!-- MicrosoftOffice: requires licensed Word, Excel, and PowerPoint desktop installed -->
   <ConversionEngine>LibreOffice</ConversionEngine>
 
-  <!-- Leave empty to auto-detect the default LibreOffice install path -->
+  <!-- LibreOffice engine: full path to soffice.exe; leave empty to auto-detect -->
   <LibreOfficePath></LibreOfficePath>
 
-  <!-- Base directory for isolated LibreOffice user profiles created per conversion -->
+  <!-- LibreOffice engine: base directory for isolated user profiles created per conversion -->
   <LibreOfficeProfileRoot></LibreOfficeProfileRoot>
 
-  <!-- Maximum seconds to wait for a LibreOffice conversion -->
+  <!-- LibreOffice engine: maximum seconds to wait for a conversion -->
   <ConversionTimeoutSeconds>180</ConversionTimeoutSeconds>
 
-  <!-- Validate the conversion engine before downloading the source file -->
+  <!-- Validate the configured conversion engine before downloading the source file -->
   <ValidateEngineOnStartup>True</ValidateEngineOnStartup>
 
-  <!-- Microsoft Office engine only: show Word/Excel/PowerPoint UI during conversion -->
+  <!-- MicrosoftOffice engine only: show Word/Excel UI during conversion; PowerPoint is minimized when False -->
   <OfficeVisible>False</OfficeVisible>
 
-  <!-- Microsoft Office engine only: Standard or Minimum PDF quality -->
+  <!-- MicrosoftOffice engine only: Standard (print quality) or Minimum (smaller file size) -->
   <PdfExportQuality>Standard</PdfExportQuality>
 
 </settings>

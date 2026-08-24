@@ -347,7 +347,7 @@ Condition: File extension is .docx OR .xlsx OR .pptx
 | `LibreOfficeProfileRoot` | Path | Base directory for isolated LibreOffice user profiles created per conversion. Leave empty for the default under `%ProgramData%`. |
 | `ConversionTimeoutSeconds` | Integer | Maximum seconds to wait for a LibreOffice conversion. Default: `180`. |
 | `ValidateEngineOnStartup` | `True` / `False` | When `True`, validates the configured engine before downloading the source file. |
-| `OfficeVisible` | `True` / `False` | Microsoft Office engine only. Shows Word/Excel/PowerPoint during conversion. Default: `False`. |
+| `OfficeVisible` | `True` / `False` | Microsoft Office engine only. Shows Word/Excel during conversion. PowerPoint cannot be fully hidden via COM; when `False`, PowerPoint stays visible but is minimized. Default: `False`. |
 | `PdfExportQuality` | `Standard` / `Minimum` | Microsoft Office engine only. Controls Word/Excel PDF export quality. Default: `Standard`. |
 
 ### Deployment prerequisites

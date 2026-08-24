@@ -2,9 +2,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
-using Excel = Microsoft.Office.Interop.Excel;
-using PowerPoint = Microsoft.Office.Interop.PowerPoint;
-using Word = Microsoft.Office.Interop.Word;
 
 #nullable enable
 
@@ -21,11 +18,33 @@ namespace adsk.ts.pdf.create.office
             _trace = trace;
         }
 
-        public void ValidateAvailability()
+        public void ValidateAvailability(string? sourceFileName = null)
         {
-            ValidateWordAvailability();
-            ValidateExcelAvailability();
-            ValidatePowerPointAvailability();
+            if (string.IsNullOrWhiteSpace(sourceFileName))
+            {
+                ValidateWordAvailability();
+                ValidateExcelAvailability();
+                ValidatePowerPointAvailability();
+                return;
+            }
+
+            switch (Path.GetExtension(sourceFileName).ToLowerInvariant())
+            {
+                case ".docx":
+                    ValidateWordAvailability();
+                    break;
+                case ".xlsx":
+                    ValidateExcelAvailability();
+                    break;
+                case ".pptx":
+                    ValidatePowerPointAvailability();
+                    break;
+                default:
+                    ValidateWordAvailability();
+                    ValidateExcelAvailability();
+                    ValidatePowerPointAvailability();
+                    break;
+            }
         }
 
         public void ConvertToPdf(string sourcePath, string outputPdfPath)
@@ -75,38 +94,37 @@ namespace adsk.ts.pdf.create.office
 
         private void ConvertWordDocument(string sourcePath, string outputPdfPath)
         {
-            Word.Application? wordApp = null;
-            Word.Document? document = null;
             int[] processIdsBefore = ProcessCleanup.CaptureProcessIds("WINWORD");
+            dynamic? wordApp = null;
+            dynamic? document = null;
 
             try
             {
-                wordApp = new Word.Application
-                {
-                    Visible = IsTrue(_settings.OfficeVisible),
-                    DisplayAlerts = Word.WdAlertLevel.wdAlertsNone,
-                };
+                wordApp = CreateComApplication("Word.Application", "Microsoft Word");
+                wordApp.Visible = IsTrue(_settings.OfficeVisible);
+                wordApp.DisplayAlerts = OfficeComConstants.WdAlertsNone;
 
                 document = wordApp.Documents.Open(
-                    FileName: sourcePath,
-                    ConfirmConversions: false,
-                    ReadOnly: true,
-                    AddToRecentFiles: false,
-                    Visible: false);
+                    sourcePath,
+                    false,
+                    true,
+                    false);
 
                 document.ExportAsFixedFormat(
-                    OutputFileName: outputPdfPath,
-                    ExportFormat: Word.WdExportFormat.wdExportFormatPDF,
-                    OpenAfterExport: false,
-                    OptimizeFor: GetWordOptimizeFor(),
-                    Range: Word.WdExportRange.wdExportAllDocument,
-                    Item: Word.WdExportItem.wdExportDocumentContent,
-                    IncludeDocProps: true,
-                    KeepIRM: true,
-                    CreateBookmarks: Word.WdExportCreateBookmarks.wdExportCreateNoBookmarks,
-                    DocStructureTags: true,
-                    BitmapMissingFonts: true,
-                    UseISO19005_1: false);
+                    outputPdfPath,
+                    OfficeComConstants.WdExportFormatPdf,
+                    false,
+                    GetWordOptimizeFor(),
+                    OfficeComConstants.WdExportAllDocument,
+                    1,
+                    1,
+                    OfficeComConstants.WdExportDocumentContent,
+                    true,
+                    true,
+                    OfficeComConstants.WdExportCreateNoBookmarks,
+                    true,
+                    true,
+                    false);
             }
             catch (Exception ex)
             {
@@ -114,40 +132,53 @@ namespace adsk.ts.pdf.create.office
             }
             finally
             {
-                CloseWordDocument(document);
-                QuitWordApplication(wordApp);
+                CloseDynamicComObject(document, false);
+                QuitDynamicComObject(wordApp, "Quit", false);
                 ProcessCleanup.TerminateNewProcesses("WINWORD", processIdsBefore, _trace);
             }
         }
 
         private void ConvertExcelWorkbook(string sourcePath, string outputPdfPath)
         {
-            Excel.Application? excelApp = null;
-            Excel.Workbook? workbook = null;
             int[] processIdsBefore = ProcessCleanup.CaptureProcessIds("EXCEL");
+            dynamic? excelApp = null;
+            dynamic? workbook = null;
+            string workingSourcePath = OfficeFileHelper.PrepareWritableSourceCopy(sourcePath, "adsk_office_xlsx_");
+            string normalizedOutputPath = Path.GetFullPath(outputPdfPath);
+            string tempPdfPath = Path.Combine(
+                Path.GetTempPath(),
+                "adsk_office_pdf_" + Guid.NewGuid().ToString("N") + ".pdf");
+            bool deleteTempSource = OfficeFileHelper.IsDifferentPath(workingSourcePath, sourcePath);
+            bool tempPdfMoved = false;
 
             try
             {
-                excelApp = new Excel.Application
-                {
-                    Visible = IsTrue(_settings.OfficeVisible),
-                    DisplayAlerts = false,
-                    ScreenUpdating = false,
-                };
+                _trace.WriteLine("Excel source path: " + workingSourcePath);
+                _trace.WriteLine("Excel temp PDF path: " + tempPdfPath);
+                _trace.WriteLine("Excel final PDF path: " + normalizedOutputPath);
+
+                excelApp = CreateComApplication("Excel.Application", "Microsoft Excel");
+                excelApp.Visible = IsTrue(_settings.OfficeVisible);
+                excelApp.DisplayAlerts = false;
+                excelApp.ScreenUpdating = false;
+                excelApp.EnableEvents = false;
+                excelApp.Interactive = false;
 
                 workbook = excelApp.Workbooks.Open(
-                    Filename: sourcePath,
-                    UpdateLinks: 0,
-                    ReadOnly: true,
-                    AddToMru: false);
+                    workingSourcePath,
+                    OfficeComConstants.XlUpdateLinksNever,
+                    false);
 
-                workbook.ExportAsFixedFormat(
-                    Type: Excel.XlFixedFormatType.xlTypePDF,
-                    Filename: outputPdfPath,
-                    Quality: GetExcelQuality(),
-                    IncludeDocProperties: true,
-                    IgnorePrintAreas: false,
-                    OpenAfterPublish: false);
+                ExportExcelWorkbookAsPdf(workbook, tempPdfPath, GetExcelQuality());
+
+                if (!File.Exists(tempPdfPath) || new FileInfo(tempPdfPath).Length <= 0)
+                {
+                    throw new Exception("Microsoft Excel did not create a PDF at " + tempPdfPath + ".");
+                }
+
+                OfficeFileHelper.DeleteExistingOutputFile(normalizedOutputPath);
+                File.Move(tempPdfPath, normalizedOutputPath);
+                tempPdfMoved = true;
             }
             catch (Exception ex)
             {
@@ -155,38 +186,64 @@ namespace adsk.ts.pdf.create.office
             }
             finally
             {
-                CloseExcelWorkbook(workbook);
-                QuitExcelApplication(excelApp);
+                CloseDynamicComObject(workbook, false);
+                QuitDynamicComObject(excelApp, "Quit");
                 ProcessCleanup.TerminateNewProcesses("EXCEL", processIdsBefore, _trace);
+
+                if (deleteTempSource)
+                {
+                    TryDeleteFile(workingSourcePath);
+                }
+
+                if (!tempPdfMoved)
+                {
+                    TryDeleteFile(tempPdfPath);
+                }
             }
         }
 
         private void ConvertPowerPointPresentation(string sourcePath, string outputPdfPath)
         {
-            PowerPoint.Application? pptApp = null;
-            PowerPoint.Presentation? presentation = null;
             int[] processIdsBefore = ProcessCleanup.CaptureProcessIds("POWERPNT");
+            object? pptApp = null;
+            object? presentation = null;
+            string workingSourcePath = OfficeFileHelper.PrepareWritableSourceCopy(sourcePath, "adsk_office_pptx_");
+            string normalizedOutputPath = Path.GetFullPath(outputPdfPath);
+            string tempPdfPath = Path.Combine(
+                Path.GetTempPath(),
+                "adsk_office_pdf_" + Guid.NewGuid().ToString("N") + ".pdf");
+            bool deleteTempSource = OfficeFileHelper.IsDifferentPath(workingSourcePath, sourcePath);
+            bool tempPdfMoved = false;
 
             try
             {
-                pptApp = new PowerPoint.Application
+                _trace.WriteLine("PowerPoint source path: " + workingSourcePath);
+                _trace.WriteLine("PowerPoint temp PDF path: " + tempPdfPath);
+                _trace.WriteLine("PowerPoint final PDF path: " + normalizedOutputPath);
+
+                pptApp = CreateComApplication("PowerPoint.Application", "Microsoft PowerPoint");
+                ConfigurePowerPointApplication(pptApp);
+                SetComProperty(pptApp, "DisplayAlerts", OfficeComConstants.PpAlertsNone);
+
+                object presentations = InvokeComGetProperty(pptApp, "Presentations");
+                presentation = InvokeComMethod(
+                    presentations,
+                    "Open",
+                    Path.GetFullPath(workingSourcePath),
+                    OfficeComConstants.MsoTrue,
+                    OfficeComConstants.MsoFalse,
+                    OfficeComConstants.MsoFalse);
+
+                ExportPowerPointPresentationAsPdf(presentation, tempPdfPath);
+
+                if (!File.Exists(tempPdfPath) || new FileInfo(tempPdfPath).Length <= 0)
                 {
-                    Visible = IsTrue(_settings.OfficeVisible)
-                        ? Microsoft.Office.Core.MsoTriState.msoTrue
-                        : Microsoft.Office.Core.MsoTriState.msoFalse,
-                };
+                    throw new Exception("Microsoft PowerPoint did not create a PDF at " + tempPdfPath + ".");
+                }
 
-                presentation = pptApp.Presentations.Open(
-                    FileName: sourcePath,
-                    ReadOnly: Microsoft.Office.Core.MsoTriState.msoTrue,
-                    Untitled: Microsoft.Office.Core.MsoTriState.msoFalse,
-                    WithWindow: Microsoft.Office.Core.MsoTriState.msoFalse);
-
-                presentation.ExportAsFixedFormat(
-                    Path: outputPdfPath,
-                    FixedFormatType: PowerPoint.PpFixedFormatType.ppFixedFormatTypePDF,
-                    Intent: PowerPoint.PpFixedFormatIntent.ppFixedFormatIntentPrint,
-                    FrameSlides: Microsoft.Office.Core.MsoTriState.msoFalse);
+                OfficeFileHelper.DeleteExistingOutputFile(normalizedOutputPath);
+                File.Move(tempPdfPath, normalizedOutputPath);
+                tempPdfMoved = true;
             }
             catch (Exception ex)
             {
@@ -194,10 +251,239 @@ namespace adsk.ts.pdf.create.office
             }
             finally
             {
-                ClosePowerPointPresentation(presentation);
-                QuitPowerPointApplication(pptApp);
+                CloseDynamicComObject(presentation);
+                QuitDynamicComObject(pptApp, "Quit");
                 ProcessCleanup.TerminateNewProcesses("POWERPNT", processIdsBefore, _trace);
+
+                if (deleteTempSource)
+                {
+                    TryDeleteFile(workingSourcePath);
+                }
+
+                if (!tempPdfMoved)
+                {
+                    TryDeleteFile(tempPdfPath);
+                }
             }
+        }
+
+        private void ValidateWordAvailability()
+        {
+            dynamic? wordApp = null;
+            try
+            {
+                wordApp = CreateComApplication("Word.Application", "Microsoft Word");
+                _trace.WriteLine("Microsoft Word validated successfully.");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(
+                    "Microsoft Word is required but could not be started. Install Microsoft Office desktop on the Job Processor machine. Details: " +
+                    ex.Message,
+                    ex);
+            }
+            finally
+            {
+                QuitDynamicComObject(wordApp, "Quit", false);
+            }
+        }
+
+        private void ValidateExcelAvailability()
+        {
+            dynamic? excelApp = null;
+            try
+            {
+                excelApp = CreateComApplication("Excel.Application", "Microsoft Excel");
+                _trace.WriteLine("Microsoft Excel validated successfully.");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(
+                    "Microsoft Excel is required but could not be started. Install Microsoft Office desktop on the Job Processor machine. Details: " +
+                    ex.Message,
+                    ex);
+            }
+            finally
+            {
+                QuitDynamicComObject(excelApp, "Quit");
+            }
+        }
+
+        private void ValidatePowerPointAvailability()
+        {
+            dynamic? pptApp = null;
+            try
+            {
+                pptApp = CreateComApplication("PowerPoint.Application", "Microsoft PowerPoint");
+                _trace.WriteLine("Microsoft PowerPoint validated successfully.");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(
+                    "Microsoft PowerPoint is required but could not be started. Install Microsoft Office desktop on the Job Processor machine. Details: " +
+                    ex.Message,
+                    ex);
+            }
+            finally
+            {
+                QuitDynamicComObject(pptApp, "Quit");
+            }
+        }
+
+        private void ConfigurePowerPointApplication(object pptApp)
+        {
+            // PowerPoint rejects Visible=msoFalse ("Hiding the application window is not allowed").
+            SetComProperty(pptApp, "Visible", OfficeComConstants.MsoTrue);
+
+            if (IsTrue(_settings.OfficeVisible))
+            {
+                return;
+            }
+
+            try
+            {
+                SetComProperty(pptApp, "WindowState", OfficeComConstants.PpWindowMinimized);
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        private static void ExportPowerPointPresentationAsPdf(object presentation, string outputPdfPath)
+        {
+            string fullPath = Path.GetFullPath(outputPdfPath);
+
+            // SaveAs is the most reliable late-bound PowerPoint PDF export (fewer COM parameters).
+            try
+            {
+                InvokeComMethod(
+                    presentation,
+                    "SaveAs",
+                    fullPath,
+                    OfficeComConstants.PpSaveAsPdf,
+                    OfficeComConstants.MsoFalse);
+                return;
+            }
+            catch (Exception saveAsEx)
+            {
+                try
+                {
+                    InvokeComMethod(
+                        presentation,
+                        "ExportAsFixedFormat",
+                        fullPath,
+                        OfficeComConstants.PpFixedFormatTypePdf,
+                        OfficeComConstants.PpFixedFormatIntentPrint,
+                        OfficeComConstants.MsoFalse,
+                        Type.Missing,
+                        Type.Missing,
+                        Type.Missing,
+                        Type.Missing,
+                        Type.Missing,
+                        Type.Missing,
+                        Type.Missing,
+                        Type.Missing,
+                        Type.Missing,
+                        Type.Missing,
+                        Type.Missing);
+                }
+                catch (Exception exportEx)
+                {
+                    throw new Exception(
+                        "SaveAs PDF failed: " + saveAsEx.Message +
+                        "; ExportAsFixedFormat failed: " + exportEx.Message,
+                        exportEx);
+                }
+            }
+        }
+
+        private static object InvokeComMethod(object comObject, string methodName, params object[] args)
+        {
+            return comObject.GetType().InvokeMember(
+                methodName,
+                System.Reflection.BindingFlags.InvokeMethod,
+                null,
+                comObject,
+                args);
+        }
+
+        private static object InvokeComGetProperty(object comObject, string propertyName)
+        {
+            return comObject.GetType().InvokeMember(
+                propertyName,
+                System.Reflection.BindingFlags.GetProperty,
+                null,
+                comObject,
+                null)!;
+        }
+
+        private static void SetComProperty(object comObject, string propertyName, object value)
+        {
+            comObject.GetType().InvokeMember(
+                propertyName,
+                System.Reflection.BindingFlags.SetProperty,
+                null,
+                comObject,
+                new object[] { value });
+        }
+
+        private static dynamic CreateComApplication(string progId, string displayName)
+        {
+            Type? appType = Type.GetTypeFromProgID(progId);
+            if (appType == null)
+            {
+                throw new Exception(displayName + " COM registration was not found for '" + progId + "'.");
+            }
+
+            object? app = Activator.CreateInstance(appType);
+            if (app == null)
+            {
+                throw new Exception("Failed to start " + displayName + ".");
+            }
+
+            return app;
+        }
+
+        private int GetWordOptimizeFor()
+        {
+            if (string.Equals(_settings.PdfExportQuality, "Minimum", StringComparison.OrdinalIgnoreCase))
+            {
+                return OfficeComConstants.WdExportOptimizeForOnScreen;
+            }
+
+            return OfficeComConstants.WdExportOptimizeForPrint;
+        }
+
+        private int GetExcelQuality()
+        {
+            if (string.Equals(_settings.PdfExportQuality, "Minimum", StringComparison.OrdinalIgnoreCase))
+            {
+                return OfficeComConstants.XlQualityMinimum;
+            }
+
+            return OfficeComConstants.XlQualityStandard;
+        }
+
+        private static void ExportExcelWorkbookAsPdf(object workbook, string outputPdfPath, int quality)
+        {
+            // Late-bound dynamic calls can misalign Excel's optional COM parameters and trigger error 1004.
+            workbook.GetType().InvokeMember(
+                "ExportAsFixedFormat",
+                System.Reflection.BindingFlags.InvokeMethod,
+                null,
+                workbook,
+                new object[]
+                {
+                    OfficeComConstants.XlTypePdf,
+                    outputPdfPath,
+                    quality,
+                    true,
+                    true,
+                    Type.Missing,
+                    Type.Missing,
+                    false,
+                    Type.Missing
+                });
         }
 
         private static Exception WrapOfficeExportException(string applicationName, Exception ex)
@@ -213,217 +499,53 @@ namespace adsk.ts.pdf.create.office
             return new Exception(applicationName + " export failed: " + ex.Message, ex);
         }
 
-        private void ValidateWordAvailability()
+        private static void CloseDynamicComObject(object? comObject, params object[]? closeArgs)
         {
-            Word.Application? wordApp = null;
-            try
-            {
-                wordApp = new Word.Application
-                {
-                    Visible = false,
-                    DisplayAlerts = Word.WdAlertLevel.wdAlertsNone,
-                };
-                _trace.WriteLine("Microsoft Word validated successfully.");
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(
-                    "Microsoft Word is required but could not be started. Install Microsoft Office desktop on the Job Processor machine. Details: " +
-                    ex.Message,
-                    ex);
-            }
-            finally
-            {
-                QuitWordApplication(wordApp);
-            }
-        }
-
-        private void ValidateExcelAvailability()
-        {
-            Excel.Application? excelApp = null;
-            try
-            {
-                excelApp = new Excel.Application
-                {
-                    Visible = false,
-                    DisplayAlerts = false,
-                };
-                _trace.WriteLine("Microsoft Excel validated successfully.");
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(
-                    "Microsoft Excel is required but could not be started. Install Microsoft Office desktop on the Job Processor machine. Details: " +
-                    ex.Message,
-                    ex);
-            }
-            finally
-            {
-                QuitExcelApplication(excelApp);
-            }
-        }
-
-        private void ValidatePowerPointAvailability()
-        {
-            PowerPoint.Application? pptApp = null;
-            try
-            {
-                pptApp = new PowerPoint.Application
-                {
-                    Visible = Microsoft.Office.Core.MsoTriState.msoFalse,
-                };
-                _trace.WriteLine("Microsoft PowerPoint validated successfully.");
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(
-                    "Microsoft PowerPoint is required but could not be started. Install Microsoft Office desktop on the Job Processor machine. Details: " +
-                    ex.Message,
-                    ex);
-            }
-            finally
-            {
-                QuitPowerPointApplication(pptApp);
-            }
-        }
-
-        private Word.WdExportOptimizeFor GetWordOptimizeFor()
-        {
-            if (string.Equals(_settings.PdfExportQuality, "Minimum", StringComparison.OrdinalIgnoreCase))
-            {
-                return Word.WdExportOptimizeFor.wdExportOptimizeForOnScreen;
-            }
-
-            return Word.WdExportOptimizeFor.wdExportOptimizeForPrint;
-        }
-
-        private Excel.XlFixedFormatQuality GetExcelQuality()
-        {
-            if (string.Equals(_settings.PdfExportQuality, "Minimum", StringComparison.OrdinalIgnoreCase))
-            {
-                return Excel.XlFixedFormatQuality.xlQualityMinimum;
-            }
-
-            return Excel.XlFixedFormatQuality.xlQualityStandard;
-        }
-
-        private static void CloseWordDocument(Word.Document? document)
-        {
-            if (document == null)
+            if (comObject == null)
             {
                 return;
             }
 
             try
             {
-                document.Close(SaveChanges: false);
+                comObject.GetType().InvokeMember(
+                    "Close",
+                    System.Reflection.BindingFlags.InvokeMethod,
+                    null,
+                    comObject,
+                    closeArgs ?? Array.Empty<object>());
             }
             catch (Exception)
             {
             }
             finally
             {
-                ReleaseComObject(document);
+                ReleaseComObject(comObject);
             }
         }
 
-        private static void QuitWordApplication(Word.Application? wordApp)
+        private static void QuitDynamicComObject(object? comObject, string quitMethodName, params object[]? quitArgs)
         {
-            if (wordApp == null)
+            if (comObject == null)
             {
                 return;
             }
 
             try
             {
-                wordApp.Quit(SaveChanges: false);
+                comObject.GetType().InvokeMember(
+                    quitMethodName,
+                    System.Reflection.BindingFlags.InvokeMethod,
+                    null,
+                    comObject,
+                    quitArgs ?? Array.Empty<object>());
             }
             catch (Exception)
             {
             }
             finally
             {
-                ReleaseComObject(wordApp);
-            }
-        }
-
-        private static void CloseExcelWorkbook(Excel.Workbook? workbook)
-        {
-            if (workbook == null)
-            {
-                return;
-            }
-
-            try
-            {
-                workbook.Close(SaveChanges: false);
-            }
-            catch (Exception)
-            {
-            }
-            finally
-            {
-                ReleaseComObject(workbook);
-            }
-        }
-
-        private static void QuitExcelApplication(Excel.Application? excelApp)
-        {
-            if (excelApp == null)
-            {
-                return;
-            }
-
-            try
-            {
-                excelApp.Quit();
-            }
-            catch (Exception)
-            {
-            }
-            finally
-            {
-                ReleaseComObject(excelApp);
-            }
-        }
-
-        private static void ClosePowerPointPresentation(PowerPoint.Presentation? presentation)
-        {
-            if (presentation == null)
-            {
-                return;
-            }
-
-            try
-            {
-                presentation.Close();
-            }
-            catch (Exception)
-            {
-            }
-            finally
-            {
-                ReleaseComObject(presentation);
-            }
-        }
-
-        private static void QuitPowerPointApplication(PowerPoint.Application? pptApp)
-        {
-            if (pptApp == null)
-            {
-                return;
-            }
-
-            try
-            {
-                pptApp.Quit();
-            }
-            catch (Exception)
-            {
-            }
-            finally
-            {
-                ReleaseComObject(pptApp);
+                ReleaseComObject(comObject);
             }
         }
 
@@ -444,6 +566,20 @@ namespace adsk.ts.pdf.create.office
         private static bool IsTrue(string? value)
         {
             return string.Equals(value, "True", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static void TryDeleteFile(string filePath)
+        {
+            try
+            {
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+            }
+            catch (Exception)
+            {
+            }
         }
     }
 }

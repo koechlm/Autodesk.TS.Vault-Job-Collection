@@ -25,7 +25,7 @@ namespace adsk.ts.pdf.create.office
             _sofficePath = ResolveSofficePath(settings.LibreOfficePath);
         }
 
-        public void ValidateAvailability()
+        public void ValidateAvailability(string? sourceFileName = null)
         {
             if (!File.Exists(_sofficePath))
             {

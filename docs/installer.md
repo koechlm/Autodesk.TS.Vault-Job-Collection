@@ -43,4 +43,12 @@ Some jobs require additional software on the machine running the Vault Job Proce
 | `adsk.ts.nwd.create.navisworks` | — | Autodesk Navisworks Manage |
 | `adsk.ts.pdf.create.slddrw` | — | Autodesk SolidWorks |
 
-When packaging the Office PDF job, include copy-local dependencies from `bin\Release\` (Office Interop assemblies) in addition to the job DLL, `.vcet.config`, and `.settings.xml`.
+When packaging the Office PDF job for `ConversionEngine=MicrosoftOffice`, copy the standard job output files only:
+
+- `adsk.ts.pdf.create.office.dll`
+- `adsk.ts.pdf.create.office.vcet.config`
+- `adsk.ts.pdf.create.office.settings.xml`
+
+No Office Primary Interop Assemblies are required at runtime; the job activates Word, Excel, and PowerPoint through COM ProgIDs.
+
+After deployment, set `ConversionEngine` to `MicrosoftOffice` in the **Job Processor** copy of `adsk.ts.pdf.create.office.settings.xml` and restart the Job Processor service. Confirm the new build is loaded by checking the job log for `Assembly version: 31.0.84.5` or later.

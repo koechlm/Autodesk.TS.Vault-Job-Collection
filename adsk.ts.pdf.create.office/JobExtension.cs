@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 using Autodesk.Connectivity.Extensibility.Framework;
 using Autodesk.Connectivity.JobProcessor.Extensibility;
@@ -89,6 +90,7 @@ namespace adsk.ts.pdf.create.office
 
                 _trace = new TextWriterTraceListener(Path.Combine(LogDirectory, _logFile), "mJobTrace");
                 _trace.WriteLine("Starting Job...");
+                _trace.WriteLine("Assembly version: " + Assembly.GetExecutingAssembly().GetName().Version);
 
                 CreateOfficePdfExport();
 
@@ -151,7 +153,7 @@ namespace adsk.ts.pdf.create.office
             IOfficePdfConverter converter = CreateConverter(settings);
             if (IsTrue(settings.ValidateEngineOnStartup))
             {
-                converter.ValidateAvailability();
+                converter.ValidateAvailability(_file!.Name);
                 _trace.WriteLine("Conversion engine validated successfully.");
             }
 
@@ -220,31 +222,23 @@ namespace adsk.ts.pdf.create.office
 
         private IOfficePdfConverter CreateConverter(Settings settings)
         {
-            string engine = settings.ConversionEngine?.Trim() ?? string.Empty;
-            if (string.IsNullOrEmpty(engine) ||
-                engine.Equals("LibreOffice", StringComparison.OrdinalIgnoreCase))
+            ConversionEngineType engineType = ConversionEngineHelper.Parse(settings.ConversionEngine);
+            switch (engineType)
             {
-                return new LibreOfficePdfConverter(settings, _trace!);
+                case ConversionEngineType.LibreOffice:
+                    return new LibreOfficePdfConverter(settings, _trace!);
+                case ConversionEngineType.MicrosoftOffice:
+                    return new MicrosoftOfficePdfConverter(settings, _trace!);
+                default:
+                    throw new Exception(
+                        "Conversion engine '" + settings.ConversionEngine + "' is not supported. " +
+                        "Supported values: " + ConversionEngineHelper.GetSupportedEngineList() + ".");
             }
-
-            if (engine.Equals("MicrosoftOffice", StringComparison.OrdinalIgnoreCase))
-            {
-                return new MicrosoftOfficePdfConverter(settings, _trace!);
-            }
-
-            throw new Exception(
-                "Conversion engine '" + engine + "' is not supported. Use ConversionEngine=LibreOffice or ConversionEngine=MicrosoftOffice.");
         }
 
         private static string ResolveConversionEngineName(Settings settings)
         {
-            string engine = settings.ConversionEngine?.Trim() ?? string.Empty;
-            if (string.IsNullOrEmpty(engine))
-            {
-                return "LibreOffice";
-            }
-
-            return engine;
+            return ConversionEngineHelper.GetDisplayName(ConversionEngineHelper.Parse(settings.ConversionEngine));
         }
 
         private static List<string> ParseExportFormats(string? configuredFormats)

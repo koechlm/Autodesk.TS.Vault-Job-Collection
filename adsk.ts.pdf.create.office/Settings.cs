@@ -76,7 +76,62 @@ namespace adsk.ts.pdf.create.office
 
             using StreamReader reader = new StreamReader(xmlPath);
             XmlSerializer serializer = new XmlSerializer(typeof(Settings));
-            return (Settings)serializer.Deserialize(reader);
+            Settings retVal = (Settings)serializer.Deserialize(reader);
+            retVal.ApplyDefaults();
+            return retVal;
+        }
+
+        public void ApplyDefaults()
+        {
+            if (string.IsNullOrWhiteSpace(LogFileLocation))
+            {
+                LogFileLocation = @"C:\Temp\";
+            }
+
+            if (string.IsNullOrWhiteSpace(EnforceSubmittedFileVersion))
+            {
+                EnforceSubmittedFileVersion = "False";
+            }
+
+            if (string.IsNullOrWhiteSpace(ExportFormats))
+            {
+                ExportFormats = "OFFICE.PDF";
+            }
+
+            if (string.IsNullOrWhiteSpace(IncludeSourceFileExtension))
+            {
+                IncludeSourceFileExtension = "True";
+            }
+
+            if (string.IsNullOrWhiteSpace(CopySystemComment))
+            {
+                CopySystemComment = "False";
+            }
+
+            if (string.IsNullOrWhiteSpace(ConversionEngine))
+            {
+                ConversionEngine = "LibreOffice";
+            }
+
+            if (string.IsNullOrWhiteSpace(ConversionTimeoutSeconds))
+            {
+                ConversionTimeoutSeconds = "180";
+            }
+
+            if (string.IsNullOrWhiteSpace(ValidateEngineOnStartup))
+            {
+                ValidateEngineOnStartup = "True";
+            }
+
+            if (string.IsNullOrWhiteSpace(OfficeVisible))
+            {
+                OfficeVisible = "False";
+            }
+
+            if (string.IsNullOrWhiteSpace(PdfExportQuality))
+            {
+                PdfExportQuality = "Standard";
+            }
         }
     }
 }
