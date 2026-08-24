@@ -37,7 +37,7 @@ Some jobs require additional software on the machine running the Vault Job Proce
 
 | Job | Default engine | Requirement |
 |---|---|---|
-| `adsk.ts.pdf.create.office` | LibreOffice | Install [LibreOffice](https://www.libreoffice.org/) and ensure `soffice.exe` is available. No Microsoft Office license required. |
+| `adsk.ts.pdf.create.office` | LibreOffice | Install [LibreOffice](https://www.libreoffice.org/) and ensure `soffice.exe` is available. Supports Microsoft Office Open XML (`.docx`, `.xlsx`, `.pptx`) and LibreOffice native formats (`.odt`, `.ods`, `.odp`, `.odg`, plus flat and template variants). No Microsoft Office license required. |
 | `adsk.ts.pdf.create.office` | Microsoft Office | Install licensed Word, Excel, and PowerPoint desktop. Set `ConversionEngine=MicrosoftOffice` in `adsk.ts.pdf.create.office.settings.xml`. Review Microsoft's guidance on [server-side Office automation](https://support.microsoft.com/en-us/topic/considerations-for-server-side-automation-of-office-48bcfe93-8a89-47f1-0bce-017433ad79e2) before choosing this option. |
 | Inventor-based jobs | — | Autodesk Inventor / VaultInventorServer |
 | `adsk.ts.nwd.create.navisworks` | — | Autodesk Navisworks Manage |

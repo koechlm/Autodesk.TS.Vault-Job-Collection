@@ -304,7 +304,14 @@ Launches SolidWorks via COM automation, opens a SolidWorks drawing (`.slddrw`) a
 **Triggered on:** Vault file lifecycle event for Microsoft Office documents
 
 ### What it does
-Downloads a Microsoft Office Open XML file (`.docx`, `.xlsx`, or `.pptx`) from Vault and converts it to PDF using the configured conversion engine. The resulting PDF is uploaded to Vault as a `DesignRepresentation` attachment on the source file.
+Downloads an office document from Vault and converts it to PDF using the configured conversion engine. The resulting PDF is uploaded to Vault as a `DesignRepresentation` attachment on the source file.
+
+Supported source formats depend on the conversion engine:
+
+| Engine | Supported extensions |
+|---|---|
+| `LibreOffice` | Microsoft Office Open XML (`.docx`, `.xlsx`, `.pptx`) and LibreOffice native formats — Writer (`.odt`, `.fodt`, `.ott`), Calc (`.ods`, `.fods`, `.ots`), Impress (`.odp`, `.fodp`, `.otp`), Draw (`.odg`, `.fodg`, `.otg`) |
+| `MicrosoftOffice` | `.docx`, `.xlsx`, `.pptx` only |
 
 **Conversion engines:**
 
@@ -318,12 +325,24 @@ Downloads a Microsoft Office Open XML file (`.docx`, `.xlsx`, or `.pptx`) from V
 - `False`: `report.pdf`
 
 **Execution filters (hard-coded):**
-- Only `.docx`, `.xlsx`, and `.pptx` source files are processed.
-- Password-protected Office Open XML files are rejected before conversion begins.
+- Supported extensions depend on `ConversionEngine` — see table above.
+- Password-protected Office Open XML files (`.docx`, `.xlsx`, `.pptx`) are rejected before conversion begins.
 - The conversion engine is validated before download when `ValidateEngineOnStartup = True`.
 - Only one Office/LibreOffice conversion runs at a time on the Job Processor machine.
 
-**Suggested Vault job rule:**
+**Suggested Vault job rule (LibreOffice engine):**
+
+```
+Job type: adsk.ts.pdf.create.office
+Condition: File extension is .docx OR .xlsx OR .pptx
+           OR .odt OR .fodt OR .ott
+           OR .ods OR .fods OR .ots
+           OR .odp OR .fodp OR .otp
+           OR .odg OR .fodg OR .otg
+           AND lifecycle state = Released
+```
+
+**Suggested Vault job rule (Microsoft Office engine):**
 
 ```
 Job type: adsk.ts.pdf.create.office

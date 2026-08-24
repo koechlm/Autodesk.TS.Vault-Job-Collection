@@ -130,7 +130,7 @@ namespace adsk.ts.pdf.create.office
             Settings settings = Settings.Load();
             List<string> exportFormats = ParseExportFormats(settings.ExportFormats);
             List<string> validExportFormats = new List<string> { "OFFICE.PDF" };
-            List<string> supportedExtensions = new List<string> { ".docx", ".xlsx", ".pptx" };
+            ConversionEngineType engineType = ConversionEngineHelper.Parse(settings.ConversionEngine);
             List<string> filesToUpload = new List<string>();
             string conversionEngine = ResolveConversionEngineName(settings);
 
@@ -138,7 +138,7 @@ namespace adsk.ts.pdf.create.office
             _trace.WriteLine("Translator job validates execution rules...");
             _trace.WriteLine("Conversion engine: " + conversionEngine);
 
-            if (!supportedExtensions.Any(ext => _file!.Name.EndsWith(ext, StringComparison.OrdinalIgnoreCase)))
+            if (!OfficeDocumentTypes.IsSupported(_file!.Name, engineType))
             {
                 _trace.WriteLine("Translator job exits: file extension is not supported.");
                 return;

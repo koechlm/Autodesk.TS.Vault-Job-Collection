@@ -42,7 +42,7 @@ namespace adsk.ts.pdf.create.office
             OfficeFileHelper.ThrowIfPasswordProtected(sourcePath);
 
             string sourceExtension = Path.GetExtension(sourcePath);
-            if (!TryGetPdfFilter(sourceExtension, out string pdfFilter))
+            if (!OfficeDocumentTypes.TryGetLibreOfficePdfFilter(sourceExtension, out string pdfFilter))
             {
                 throw new Exception("Unsupported source extension for LibreOffice conversion: " + sourceExtension);
             }
@@ -127,25 +127,6 @@ namespace adsk.ts.pdf.create.office
             }
 
             return DefaultSofficePaths[0];
-        }
-
-        private static bool TryGetPdfFilter(string sourceExtension, out string pdfFilter)
-        {
-            switch (sourceExtension.ToLowerInvariant())
-            {
-                case ".docx":
-                    pdfFilter = "pdf:writer_pdf_Export";
-                    return true;
-                case ".xlsx":
-                    pdfFilter = "pdf:calc_pdf_Export";
-                    return true;
-                case ".pptx":
-                    pdfFilter = "pdf:impress_pdf_Export";
-                    return true;
-                default:
-                    pdfFilter = string.Empty;
-                    return false;
-            }
         }
 
         private string CreateIsolatedProfileDirectory()
