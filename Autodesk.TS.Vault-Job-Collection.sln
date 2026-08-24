@@ -51,6 +51,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SDK References", "SDK Refer
 		SDK References\Autodesk.Navisworks.Resolver.xml = SDK References\Autodesk.Navisworks.Resolver.xml
 		SDK References\SolidWorks.Interop.sldworks.dll = SDK References\SolidWorks.Interop.sldworks.dll
 		SDK References\SolidWorks.Interop.swconst.dll = SDK References\SolidWorks.Interop.swconst.dll
+		SDK References\Microsoft.Office.Interop.Word.dll = SDK References\Microsoft.Office.Interop.Word.dll
+		SDK References\Microsoft.Office.Interop.Excel.dll = SDK References\Microsoft.Office.Interop.Excel.dll
+		SDK References\Microsoft.Office.Interop.PowerPoint.dll = SDK References\Microsoft.Office.Interop.PowerPoint.dll
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.assignupdateitem", "adsk.ts.AssignUpdateFmItem\adsk.ts.assignupdateitem.csproj", "{94809153-64B3-4EBB-A3ED-98FD1D38940C}"
