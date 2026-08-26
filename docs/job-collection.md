@@ -17,7 +17,7 @@ The shared library `adsk.ts.job.shared` is **not a job** — it is a common infr
 | `adsk.ts.export3d.create.inventor` | `adsk.ts.export3d.create.inventor` | Autodesk Inventor / VaultInventorServer | 3DDWG, STP, JT *(extensible)* |
 | `adsk.ts.nwd.create.navisworks` | `adsk.ts.nwd.create.navisworks` | Autodesk Navisworks Manage | NWD, DWF |
 | `adsk.ts.rvt.create.inventor` | `adsk.ts.rvt.create.inventor` | Autodesk Inventor / VaultInventorServer | RVT |
-| `adsk.ts.pdf.create.slddrw` | `adsk.ts.pdf.create.slddrw` | Autodesk SolidWorks | PDF, DXF |
+| `adsk.ts.pdf.create.slddrw` | `adsk.ts.pdf.create.slddrw` | SolidWorks | PDF, DXF |
 | `adsk.ts.pdf.create.office` | `adsk.ts.pdf.create.office` | LibreOffice *(default)* / Microsoft Office | PDF |
 | `adsk.ts.image.create.inventor` | `adsk.ts.image.create.inventor` | Autodesk Inventor / VaultInventorServer | BMP, PNG, GIF, JPG, TIFF |
 | `adsk.ts.job.shared` | *(shared library)* | — | — |
