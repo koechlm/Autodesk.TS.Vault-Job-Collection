@@ -7,7 +7,7 @@ distributed as public source. See [docs\installer.md](docs/installer.md) for det
 contact the maintainer for access.
 
 ## Export Jobs running VaultInventorServer, Inventor, Navisworks, Solidworks, and Office PDF
-<img width="2560" height="1439" alt="image" src="https://github.com/user-attachments/assets/80e38b20-26b4-45a1-82a4-cb2df4ba3aaa" />
+<img width="2560" height="1439" alt="image" src="https://github.com/user-attachments/assets/378e2993-4ebd-4359-9975-9f640d7c67b0" />
 <img width="1033" height="289" alt="image" src="https://github.com/user-attachments/assets/82b1c246-7efc-4130-86ea-8b31b06612a0" />
 
 ## Job projects
