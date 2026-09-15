@@ -1,10 +1,5 @@
 # Extended Vault API Samples - WiP
 ## Detailed Documentation: [docs\job-collection.md](docs/job-collection.md).
-## Installer
-
-An MSI installer for this job collection is maintained in a private repository and is not
-distributed as public source. See [docs\installer.md](docs/installer.md) for details, or
-contact the maintainer for access.
 
 ## Export Jobs running VaultInventorServer, Inventor, Navisworks, Solidworks, and Office PDF
 <img width="2560" height="1439" alt="image" src="https://github.com/user-attachments/assets/378e2993-4ebd-4359-9975-9f640d7c67b0" />
@@ -24,3 +19,10 @@ contact the maintainer for access.
 | `adsk.ts.AssignUpdateFmItem` | Item assignment / Fusion Manage sync | Vault API |
 
 See [docs/job-collection.md](docs/job-collection.md) for settings, lifecycle job rule examples, and deployment prerequisites.
+
+## Installer
+
+An MSI installer for this job collection is available in the Release section. 
+The installer's source is maintained in a private repository and is not
+distributed as public source. See [docs\installer.md](docs/installer.md) for details, or
+contact the maintainer for access.
