@@ -37,16 +37,22 @@
   <!-- LibreOffice engine: base directory for isolated user profiles created per conversion -->
   <LibreOfficeProfileRoot></LibreOfficeProfileRoot>
 
-  <!-- LibreOffice engine: maximum seconds to wait for a conversion -->
+  <!-- LibreOffice engine only: maximum seconds to wait for soffice.exe conversion -->
   <ConversionTimeoutSeconds>180</ConversionTimeoutSeconds>
+
+  <!-- MicrosoftOffice engine only: maximum seconds to wait for Word/Excel/PowerPoint COM conversion -->
+  <MicrosoftOfficeConversionTimeoutSeconds>180</MicrosoftOfficeConversionTimeoutSeconds>
 
   <!-- Validate the configured conversion engine before downloading the source file -->
   <ValidateEngineOnStartup>True</ValidateEngineOnStartup>
 
-  <!-- MicrosoftOffice engine only: show Word/Excel UI during conversion; PowerPoint is minimized when False -->
+  <!-- MicrosoftOffice engine only: show Word/Excel/PowerPoint UI during conversion (debug). PowerPoint stays headless when False. -->
   <OfficeVisible>False</OfficeVisible>
 
   <!-- MicrosoftOffice engine only: Standard (print quality) or Minimum (smaller file size) -->
   <PdfExportQuality>Standard</PdfExportQuality>
+
+  <!-- Both engines: export PDF bookmarks/outline and preserve document hyperlinks where supported -->
+  <PdfExportNavigation>True</PdfExportNavigation>
 
 </settings>

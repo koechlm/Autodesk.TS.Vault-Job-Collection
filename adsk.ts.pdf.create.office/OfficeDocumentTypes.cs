@@ -49,7 +49,19 @@ namespace adsk.ts.pdf.create.office
                 candidate => string.Equals(candidate, extension, StringComparison.OrdinalIgnoreCase));
         }
 
-        public static bool TryGetLibreOfficePdfFilter(string sourceExtension, out string pdfFilter)
+        public static bool TryGetLibreOfficePdfFilter(string sourceExtension, bool exportNavigation, out string pdfFilter)
+        {
+            if (!TryGetLibreOfficePdfFilterBase(sourceExtension, out string baseFilter))
+            {
+                pdfFilter = string.Empty;
+                return false;
+            }
+
+            pdfFilter = FormatLibreOfficePdfFilter(baseFilter, exportNavigation);
+            return true;
+        }
+
+        private static bool TryGetLibreOfficePdfFilterBase(string sourceExtension, out string baseFilter)
         {
             switch (sourceExtension.ToLowerInvariant())
             {
@@ -57,29 +69,38 @@ namespace adsk.ts.pdf.create.office
                 case ".odt":
                 case ".fodt":
                 case ".ott":
-                    pdfFilter = "pdf:writer_pdf_Export";
+                    baseFilter = "pdf:writer_pdf_Export";
                     return true;
                 case ".xlsx":
                 case ".ods":
                 case ".fods":
                 case ".ots":
-                    pdfFilter = "pdf:calc_pdf_Export";
+                    baseFilter = "pdf:calc_pdf_Export";
                     return true;
                 case ".pptx":
                 case ".odp":
                 case ".fodp":
                 case ".otp":
-                    pdfFilter = "pdf:impress_pdf_Export";
+                    baseFilter = "pdf:impress_pdf_Export";
                     return true;
                 case ".odg":
                 case ".fodg":
                 case ".otg":
-                    pdfFilter = "pdf:draw_pdf_Export";
+                    baseFilter = "pdf:draw_pdf_Export";
                     return true;
                 default:
-                    pdfFilter = string.Empty;
+                    baseFilter = string.Empty;
                     return false;
             }
+        }
+
+        /// <summary>
+        /// Appends LibreOffice 7.4+ PDF filter JSON (ExportBookmarks controls outline/navigation export).
+        /// </summary>
+        internal static string FormatLibreOfficePdfFilter(string baseFilter, bool exportNavigation)
+        {
+            string exportBookmarksValue = exportNavigation ? "true" : "false";
+            return baseFilter + ":{\"ExportBookmarks\":{\"type\":\"boolean\",\"value\":" + exportBookmarksValue + "}}";
         }
     }
 }

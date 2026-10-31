@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 #nullable enable
 
@@ -63,20 +64,32 @@ namespace adsk.ts.pdf.create.office
             {
                 _trace.WriteLine("Microsoft Office conversion starts: " + Path.GetFileName(sourcePath));
 
-                switch (sourceExtension.ToLowerInvariant())
-                {
-                    case ".docx":
-                        ConvertWordDocument(sourcePath, outputPdfPath);
-                        break;
-                    case ".xlsx":
-                        ConvertExcelWorkbook(sourcePath, outputPdfPath);
-                        break;
-                    case ".pptx":
-                        ConvertPowerPointPresentation(sourcePath, outputPdfPath);
-                        break;
-                    default:
-                        throw new Exception("Unsupported source extension for Microsoft Office conversion: " + sourceExtension);
-                }
+                string processName = GetProcessNameForExtension(sourceExtension);
+                int[] processIdsBefore = ProcessCleanup.CaptureProcessIds(processName);
+                int timeoutSeconds = ParseMicrosoftOfficeTimeoutSeconds(_settings.MicrosoftOfficeConversionTimeoutSeconds);
+                _trace.WriteLine("Microsoft Office conversion timeout: " + timeoutSeconds + " seconds.");
+
+                RunStaConversionWithTimeout(
+                    () =>
+                    {
+                        switch (sourceExtension.ToLowerInvariant())
+                        {
+                            case ".docx":
+                                ConvertWordDocument(sourcePath, outputPdfPath);
+                                break;
+                            case ".xlsx":
+                                ConvertExcelWorkbook(sourcePath, outputPdfPath);
+                                break;
+                            case ".pptx":
+                                ConvertPowerPointPresentation(sourcePath, outputPdfPath);
+                                break;
+                            default:
+                                throw new Exception("Unsupported source extension for Microsoft Office conversion: " + sourceExtension);
+                        }
+                    },
+                    processName,
+                    processIdsBefore,
+                    timeoutSeconds);
 
                 FileInfo outputInfo = new FileInfo(outputPdfPath);
                 if (!outputInfo.Exists || outputInfo.Length <= 0)
@@ -121,7 +134,7 @@ namespace adsk.ts.pdf.create.office
                     OfficeComConstants.WdExportDocumentContent,
                     true,
                     true,
-                    OfficeComConstants.WdExportCreateNoBookmarks,
+                    GetWordCreateBookmarks(),
                     true,
                     true,
                     false);
@@ -222,8 +235,13 @@ namespace adsk.ts.pdf.create.office
                 _trace.WriteLine("PowerPoint final PDF path: " + normalizedOutputPath);
 
                 pptApp = CreateComApplication("PowerPoint.Application", "Microsoft PowerPoint");
-                ConfigurePowerPointApplication(pptApp);
                 SetComProperty(pptApp, "DisplayAlerts", OfficeComConstants.PpAlertsNone);
+
+                // Do not set Application.Visible=false (PowerPoint rejects it). WithWindow=false on Open keeps PPT headless.
+                if (IsTrue(_settings.OfficeVisible))
+                {
+                    SetComProperty(pptApp, "Visible", OfficeComConstants.MsoTrue);
+                }
 
                 object presentations = InvokeComGetProperty(pptApp, "Presentations");
                 presentation = InvokeComMethod(
@@ -330,23 +348,72 @@ namespace adsk.ts.pdf.create.office
             }
         }
 
-        private void ConfigurePowerPointApplication(object pptApp)
+        private void RunStaConversionWithTimeout(
+            Action conversionAction,
+            string processName,
+            int[] processIdsBefore,
+            int timeoutSeconds)
         {
-            // PowerPoint rejects Visible=msoFalse ("Hiding the application window is not allowed").
-            SetComProperty(pptApp, "Visible", OfficeComConstants.MsoTrue);
+            Exception? capturedException = null;
 
-            if (IsTrue(_settings.OfficeVisible))
+            Thread conversionThread = new Thread(() =>
             {
-                return;
+                try
+                {
+                    conversionAction();
+                }
+                catch (Exception ex)
+                {
+                    capturedException = ex;
+                }
+            });
+
+            conversionThread.SetApartmentState(ApartmentState.STA);
+            conversionThread.IsBackground = true;
+            conversionThread.Start();
+
+            if (!conversionThread.Join(TimeSpan.FromSeconds(timeoutSeconds)))
+            {
+                _trace.WriteLine(
+                    "Microsoft Office conversion timed out after " + timeoutSeconds +
+                    " seconds. Terminating " + processName + " processes started by this job.");
+
+                ProcessCleanup.TerminateNewProcesses(processName, processIdsBefore, _trace);
+
+                throw new Exception(
+                    "Microsoft Office conversion timed out after " + timeoutSeconds +
+                    " seconds. A modal dialog in Word, Excel, or PowerPoint may be blocking automation.");
             }
 
-            try
+            if (capturedException != null)
             {
-                SetComProperty(pptApp, "WindowState", OfficeComConstants.PpWindowMinimized);
+                throw capturedException;
             }
-            catch (Exception)
+        }
+
+        private static string GetProcessNameForExtension(string sourceExtension)
+        {
+            switch (sourceExtension.ToLowerInvariant())
             {
+                case ".docx":
+                    return "WINWORD";
+                case ".xlsx":
+                    return "EXCEL";
+                case ".pptx":
+                    return "POWERPNT";
+                default:
+                    return "WINWORD";
             }
+        }
+
+        private static int ParseMicrosoftOfficeTimeoutSeconds(string? configuredTimeout)
+        {
+            if (int.TryParse(configuredTimeout, out int timeoutSeconds) && timeoutSeconds > 0)
+            {
+                return timeoutSeconds;
+            }
+
+            return 180;
         }
 
         private static void ExportPowerPointPresentationAsPdf(object presentation, string outputPdfPath)
@@ -452,6 +519,21 @@ namespace adsk.ts.pdf.create.office
             }
 
             return OfficeComConstants.WdExportOptimizeForPrint;
+        }
+
+        private int GetWordCreateBookmarks()
+        {
+            if (IsPdfExportNavigationEnabled())
+            {
+                return OfficeComConstants.WdExportCreateHeadingBookmarks;
+            }
+
+            return OfficeComConstants.WdExportCreateNoBookmarks;
+        }
+
+        private bool IsPdfExportNavigationEnabled()
+        {
+            return string.Equals(_settings.PdfExportNavigation, "True", StringComparison.OrdinalIgnoreCase);
         }
 
         private int GetExcelQuality()

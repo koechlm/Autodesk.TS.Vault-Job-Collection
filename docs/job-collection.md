@@ -329,6 +329,8 @@ Supported source formats depend on the conversion engine:
 - Password-protected Office Open XML files (`.docx`, `.xlsx`, `.pptx`) are rejected before conversion begins.
 - The conversion engine is validated before download when `ValidateEngineOnStartup = True`.
 - Only one Office/LibreOffice conversion runs at a time on the Job Processor machine.
+- **Microsoft Office:** COM conversion is limited by `MicrosoftOfficeConversionTimeoutSeconds`. Hidden modal dialogs (password prompts, repair questions, sign-in, file-in-use) can block automation until the timeout fires and Office processes are terminated.
+- **LibreOffice:** Process wait is limited by `ConversionTimeoutSeconds` (separate setting).
 
 **Suggested Vault job rule (LibreOffice engine):**
 
@@ -364,10 +366,12 @@ Condition: File extension is .docx OR .xlsx OR .pptx
 | `ConversionEngine` | `LibreOffice` / `MicrosoftOffice` | Selects the PDF conversion backend. Default: `LibreOffice`. |
 | `LibreOfficePath` | Path | Full path to `soffice.exe`. Leave empty to auto-detect the default install location. |
 | `LibreOfficeProfileRoot` | Path | Base directory for isolated LibreOffice user profiles created per conversion. Leave empty for the default under `%ProgramData%`. |
-| `ConversionTimeoutSeconds` | Integer | Maximum seconds to wait for a LibreOffice conversion. Default: `180`. |
+| `ConversionTimeoutSeconds` | Integer | **LibreOffice engine only.** Maximum seconds to wait for a headless `soffice.exe` conversion. Default: `180`. |
+| `MicrosoftOfficeConversionTimeoutSeconds` | Integer | **Microsoft Office engine only.** Maximum seconds to wait for Word/Excel/PowerPoint COM automation. On timeout, new Office processes started by the job are terminated. Default: `180`. |
 | `ValidateEngineOnStartup` | `True` / `False` | When `True`, validates the configured engine before downloading the source file. |
-| `OfficeVisible` | `True` / `False` | Microsoft Office engine only. Shows Word/Excel during conversion. PowerPoint cannot be fully hidden via COM; when `False`, PowerPoint stays visible but is minimized. Default: `False`. |
+| `OfficeVisible` | `True` / `False` | Microsoft Office engine only. When `True`, shows Word/Excel/PowerPoint UI during conversion (debug). When `False` (default), Word and Excel run hidden; PowerPoint stays headless via `Presentations.Open` with `WithWindow=false` — do not set `Application.Visible`. |
 | `PdfExportQuality` | `Standard` / `Minimum` | Microsoft Office engine only. Controls Word/Excel PDF export quality. Default: `Standard`. |
+| `PdfExportNavigation` | `True` / `False` | **Both engines.** When `True` (default), exports PDF bookmarks/outline for navigation and preserves hyperlinks where the engine supports them. Word uses heading bookmarks; LibreOffice sets `ExportBookmarks` in the PDF filter (requires LibreOffice 7.4+ for JSON filter options). Excel/PowerPoint hyperlinks are preserved by the Office PDF exporters when present in the source file. |
 
 ### Deployment prerequisites
 

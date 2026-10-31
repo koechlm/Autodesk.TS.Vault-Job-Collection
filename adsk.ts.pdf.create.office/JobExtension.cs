@@ -24,8 +24,6 @@ namespace adsk.ts.pdf.create.office
     public class JobExtension : IJobHandler
     {
         private const string JobType = "adsk.ts.pdf.create.office";
-        private static readonly Settings DefaultSettings = Settings.Load();
-        private static readonly string LogDirectory = DefaultSettings.LogFileLocation;
 
         private string _logFile = string.Empty;
         private TextWriterTraceListener? _trace;
@@ -64,9 +62,10 @@ namespace adsk.ts.pdf.create.office
                     return JobOutcome.Failure;
                 }
 
+                Settings settings = Settings.Load();
+
                 if (_file.FileRev.MaxFileId != entityId)
                 {
-                    Settings settings = Settings.Load();
                     if (settings.EnforceSubmittedFileVersion.ToLower() == "false")
                     {
                         _file = _wsMgr.DocumentService.GetFileById(_file.FileRev.MaxFileId);
@@ -82,17 +81,17 @@ namespace adsk.ts.pdf.create.office
                 }
 
                 _logFile = JobType + "_" + _file.Name + ".log";
-                FileInfo logFileInfo = new FileInfo(Path.Combine(LogDirectory, _logFile));
+                FileInfo logFileInfo = new FileInfo(Path.Combine(settings.LogFileLocation, _logFile));
                 if (logFileInfo.Exists)
                 {
                     logFileInfo.Delete();
                 }
 
-                _trace = new TextWriterTraceListener(Path.Combine(LogDirectory, _logFile), "mJobTrace");
+                _trace = new TextWriterTraceListener(Path.Combine(settings.LogFileLocation, _logFile), "mJobTrace");
                 _trace.WriteLine("Starting Job...");
                 _trace.WriteLine("Assembly version: " + Assembly.GetExecutingAssembly().GetName().Version);
 
-                CreateOfficePdfExport();
+                CreateOfficePdfExport(settings);
 
                 _trace.IndentLevel = 0;
                 _trace.WriteLine("... successfully ending Job.");
@@ -125,9 +124,8 @@ namespace adsk.ts.pdf.create.office
             }
         }
 
-        private void CreateOfficePdfExport()
+        private void CreateOfficePdfExport(Settings settings)
         {
-            Settings settings = Settings.Load();
             List<string> exportFormats = ParseExportFormats(settings.ExportFormats);
             List<string> validExportFormats = new List<string> { "OFFICE.PDF" };
             ConversionEngineType engineType = ConversionEngineHelper.Parse(settings.ConversionEngine);

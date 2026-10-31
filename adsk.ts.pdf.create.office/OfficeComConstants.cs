@@ -15,6 +15,7 @@ namespace adsk.ts.pdf.create.office
         internal const int WdExportAllDocument = 0;
         internal const int WdExportDocumentContent = 0;
         internal const int WdExportCreateNoBookmarks = 0;
+        internal const int WdExportCreateHeadingBookmarks = 1;
 
         internal const int XlTypePdf = 0;
         internal const int XlQualityStandard = 0;
@@ -23,7 +24,6 @@ namespace adsk.ts.pdf.create.office
 
         internal const int PpFixedFormatTypePdf = 2;
         internal const int PpFixedFormatIntentPrint = 2;
-        internal const int PpWindowMinimized = 2;
         internal const int PpSaveAsPdf = 32;
         internal const int PpAlertsNone = 1;
     }

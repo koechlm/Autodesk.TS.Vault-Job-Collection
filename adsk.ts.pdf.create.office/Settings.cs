@@ -40,6 +40,9 @@ namespace adsk.ts.pdf.create.office
         [XmlElement("ConversionTimeoutSeconds")]
         public string ConversionTimeoutSeconds;
 
+        [XmlElement("MicrosoftOfficeConversionTimeoutSeconds")]
+        public string MicrosoftOfficeConversionTimeoutSeconds;
+
         [XmlElement("ValidateEngineOnStartup")]
         public string ValidateEngineOnStartup;
 
@@ -48,6 +51,9 @@ namespace adsk.ts.pdf.create.office
 
         [XmlElement("PdfExportQuality")]
         public string PdfExportQuality;
+
+        [XmlElement("PdfExportNavigation")]
+        public string PdfExportNavigation;
 
         private Settings()
         {
@@ -118,6 +124,11 @@ namespace adsk.ts.pdf.create.office
                 ConversionTimeoutSeconds = "180";
             }
 
+            if (string.IsNullOrWhiteSpace(MicrosoftOfficeConversionTimeoutSeconds))
+            {
+                MicrosoftOfficeConversionTimeoutSeconds = "180";
+            }
+
             if (string.IsNullOrWhiteSpace(ValidateEngineOnStartup))
             {
                 ValidateEngineOnStartup = "True";
@@ -131,6 +142,11 @@ namespace adsk.ts.pdf.create.office
             if (string.IsNullOrWhiteSpace(PdfExportQuality))
             {
                 PdfExportQuality = "Standard";
+            }
+
+            if (string.IsNullOrWhiteSpace(PdfExportNavigation))
+            {
+                PdfExportNavigation = "True";
             }
         }
     }

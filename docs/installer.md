@@ -51,4 +51,4 @@ When packaging the Office PDF job for `ConversionEngine=MicrosoftOffice`, copy t
 
 No Office Primary Interop Assemblies are required at runtime; the job activates Word, Excel, and PowerPoint through COM ProgIDs.
 
-After deployment, set `ConversionEngine` to `MicrosoftOffice` in the **Job Processor** copy of `adsk.ts.pdf.create.office.settings.xml` and restart the Job Processor service. Confirm the new build is loaded by checking the job log for `Assembly version: 31.0.84.5` or later.
+After deployment, set `ConversionEngine` to `MicrosoftOffice` in the **Job Processor** copy of `adsk.ts.pdf.create.office.settings.xml`. Add `MicrosoftOfficeConversionTimeoutSeconds` if missing (default `180`). Restart the Job Processor service. Confirm the new build is loaded by checking the job log for `Assembly version: 31.0.85.1` or later.

@@ -42,7 +42,10 @@ namespace adsk.ts.pdf.create.office
             OfficeFileHelper.ThrowIfPasswordProtected(sourcePath);
 
             string sourceExtension = Path.GetExtension(sourcePath);
-            if (!OfficeDocumentTypes.TryGetLibreOfficePdfFilter(sourceExtension, out string pdfFilter))
+            if (!OfficeDocumentTypes.TryGetLibreOfficePdfFilter(
+                    sourceExtension,
+                    IsPdfExportNavigationEnabled(),
+                    out string pdfFilter))
             {
                 throw new Exception("Unsupported source extension for LibreOffice conversion: " + sourceExtension);
             }
@@ -238,6 +241,11 @@ namespace adsk.ts.pdf.create.office
             }
 
             return value;
+        }
+
+        private bool IsPdfExportNavigationEnabled()
+        {
+            return string.Equals(_settings.PdfExportNavigation, "True", StringComparison.OrdinalIgnoreCase);
         }
 
         private static void TryDeleteDirectory(string directoryPath)
