@@ -20,7 +20,71 @@ The shared library `adsk.ts.job.shared` is **not a job** — it is a common infr
 | `adsk.ts.pdf.create.slddrw` | `adsk.ts.pdf.create.slddrw` | Autodesk SolidWorks | PDF, DXF |
 | `adsk.ts.pdf.create.office` | `adsk.ts.pdf.create.office` | LibreOffice *(default)* / Microsoft Office | PDF |
 | `adsk.ts.image.create.inventor` | `adsk.ts.image.create.inventor` | Autodesk Inventor / VaultInventorServer | BMP, PNG, GIF, JPG, TIFF |
+| `adsk.ts.explorer.job.submit` | *(Vault Client extension)* | Vault Explorer | Queues registered job types manually |
 | `adsk.ts.job.shared` | *(shared library)* | — | — |
+
+---
+
+## Manual submission (Vault Explorer)
+
+**Project:** `adsk.ts.explorer.job.submit`  
+**Host:** Autodesk Vault Client (Explorer), not the Job Processor
+
+This client extension lets users queue Technical Sales jobs from the vault file grid without waiting for a lifecycle rule. It uses the same job parameters as lifecycle-triggered jobs: **`EntityId`** (file **iteration** ID) and **`EntityClassId=FILE`**. The extension resolves each grid selection to an iteration id (uses the selection id when it is already an iteration; otherwise resolves via `GetLatestFileByMasterId` when the grid exposes a master id). The Job Processor runs the registered handler and its existing `*.settings.xml` — no extra client-side parameters.
+
+### Where to find the commands
+
+| Location | Menu |
+|---|---|
+| **Actions** tab | **TS Job Submission** (pulldown) |
+| File grid **context menu** | **TS Job Submission** (pulldown) |
+
+Each submenu entry maps to one job type ID (see table below). **Multi-select** is supported: one job is queued per selected file.
+
+### Deployment (workstations)
+
+Copy the Debug/Release build outputs to the Vault **client** extensions folder on each user workstation (same collection folder used for this repository’s Debug builds):
+
+`%ProgramData%\Autodesk\Vault 2027\Extensions\adsk.ts.job.collection\`
+
+Required files:
+
+- `adsk.ts.explorer.job.submit.dll`
+- `adsk.ts.explorer.job.submit.vcet.config`
+
+Restart the Vault Client after deployment. Job Processor assemblies and settings remain on the Job Processor server as today — only this Explorer extension is needed on clients for manual queueing.
+
+Menu labels describe **output formats**; each command uses a single **format icon** (16×16, aspect ratio preserved). Icons are embedded as Light/Dark PNGs under `Resources/Icons/{Light,Dark}/`. File-type sources live in `Resources/Icons/_formats/` (capture on a workstation with `Sync-JobSubmissionIcons.ps1`; existing `_formats` files are never overwritten). Product icons in `Resources/Icons/_apps/` are kept for reference but are not shown on menus. Assign/Update uses the Vault depot `UpdateItem` icon.
+
+### Menu entries and enablement
+
+Commands require at least one selected **file** row. When a job defines extension filters, **all** selected files must match; otherwise the command shows a warning and does not queue jobs.
+
+| Menu label | Job type ID | Client extension filter |
+|---|---|---|
+| Assign / Update Items | `adsk.ts.assignupdateitem` | Any file |
+| Create Inventor 2D DWG | `adsk.ts.acad.dwg2d.create.inventor` | `.idw`, `.dwg` |
+| Create Inventor 3D DWG, JT, ... | `adsk.ts.export3d.create.inventor` | `.ipt`, `.iam` |
+| Create Inventor PNG | `adsk.ts.image.create.inventor` | `.ipt`, `.iam`, `.dwg`, `.idw` |
+| Create Revit RVT | `adsk.ts.rvt.create.inventor` | `.iam` |
+| Create NWD and DWF | `adsk.ts.nwd.create.navisworks` | Any file *(Navisworks job applies server-side skips)* |
+| Create SolidWorks PDF and DXF | `adsk.ts.pdf.create.slddrw` | `.slddrw` |
+| Create Office PDF | `adsk.ts.pdf.create.office` | Full LibreOffice extension list (OOXML + ODF) |
+
+Actual export files are always defined on the Job Processor (`ExportFormats`, `ImgFileType`, `PdfIncludeDxfSheet`, and related settings). Menu text matches the Technical Sales sample settings where applicable (for example NWD+DWF, PNG, JT in sample `*.settings.xml`).
+
+### Duplicate jobs
+
+If the same job is already queued for the same file, `JobService.AddJob` fails with Vault error **237**. The extension counts these as skipped duplicates, shows a **warning** summary (including when some files queued and others were duplicates), and lists the duplicate count.
+
+### Manual test checklist
+
+1. Deploy the extension; restart Vault Client.
+2. Select a single `.docx` → **Create Office PDF** → confirm job type and `EntityId` in the queue.
+3. Multi-select two `.ipt` files → **Create Inventor 3D DWG, JT, ...** → two jobs queued.
+4. Multi-select incompatible extensions for a filtered command → warning, no jobs queued.
+5. Queue the same job twice for the same file → duplicate handling (237).
+6. Job Processor picks up jobs using existing settings.
 
 ---
 

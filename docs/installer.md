@@ -20,8 +20,11 @@ Contact the maintainer for details.
 If you need to package these jobs yourself, each job project already produces a
 complete, self-contained `bin\Release\` output (main assembly, `.vcet.config`
 registration file, `.settings.xml` configuration, and all copy-local dependencies).
-You can author your own WiX (or other) packaging project against these outputs;
-each job's Vault Job Processor registration expects the following per job:
+You can author your own WiX (or other) packaging project against these outputs.
+
+### Job Processor (server)
+
+Each job's Vault Job Processor registration expects the following per job:
 
 - `<job>.dll` — main assembly
 - `<job>.vcet.config` — Job Processor registration/config
@@ -30,6 +33,17 @@ each job's Vault Job Processor registration expects the following per job:
 
 Refer to [docs/job-collection.md](job-collection.md) for a description of every
 job and its configuration files.
+
+### Vault Client (workstations)
+
+To allow manual job queueing from Vault Explorer, deploy the client extension on **user workstations** (in addition to Job Processor binaries on the server):
+
+| File | Purpose |
+|---|---|
+| `adsk.ts.explorer.job.submit.dll` | Explorer `IExplorerExtension` |
+| `adsk.ts.explorer.job.submit.vcet.config` | Client extension registration |
+
+Default folder: `%ProgramData%\Autodesk\Vault 2027\Extensions\adsk.ts.job.collection\`. See [Manual submission (Vault Explorer)](job-collection.md#manual-submission-vault-explorer) in `job-collection.md`.
 
 ## Job Processor prerequisites
 

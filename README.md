@@ -22,5 +22,6 @@ contact the maintainer for access.
 | `adsk.ts.pdf.create.slddrw` | PDF/DXF export | SolidWorks |
 | `adsk.ts.pdf.create.office` | Office PDF export | LibreOffice *(default)* or Microsoft Office |
 | `adsk.ts.AssignUpdateFmItem` | Item assignment / Fusion Manage sync | Vault API |
+| `adsk.ts.explorer.job.submit` | Manual queue from Vault Explorer | Vault Client |
 
-See [docs/job-collection.md](docs/job-collection.md) for settings, lifecycle job rule examples, and deployment prerequisites.
+See [docs/job-collection.md](docs/job-collection.md) for settings, lifecycle job rule examples, [manual submission from Vault Explorer](docs/job-collection.md#manual-submission-vault-explorer), and deployment prerequisites.

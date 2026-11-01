@@ -58,6 +58,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SDK References", "SDK Refer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.assignupdateitem", "adsk.ts.AssignUpdateFmItem\adsk.ts.assignupdateitem.csproj", "{94809153-64B3-4EBB-A3ED-98FD1D38940C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "adsk.ts.explorer.job.submit", "adsk.ts.explorer.job.submit\adsk.ts.explorer.job.submit.csproj", "{F1A2B3C4-D5E6-4F7A-8B9C-0D1E2F3A4B5D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -100,6 +102,10 @@ Global
 		{94809153-64B3-4EBB-A3ED-98FD1D38940C}.Debug|x64.Build.0 = Debug|x64
 		{94809153-64B3-4EBB-A3ED-98FD1D38940C}.Release|x64.ActiveCfg = Release|x64
 		{94809153-64B3-4EBB-A3ED-98FD1D38940C}.Release|x64.Build.0 = Release|x64
+		{F1A2B3C4-D5E6-4F7A-8B9C-0D1E2F3A4B5D}.Debug|x64.ActiveCfg = Debug|x64
+		{F1A2B3C4-D5E6-4F7A-8B9C-0D1E2F3A4B5D}.Debug|x64.Build.0 = Debug|x64
+		{F1A2B3C4-D5E6-4F7A-8B9C-0D1E2F3A4B5D}.Release|x64.ActiveCfg = Release|x64
+		{F1A2B3C4-D5E6-4F7A-8B9C-0D1E2F3A4B5D}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
