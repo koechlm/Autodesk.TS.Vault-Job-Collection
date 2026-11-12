@@ -84,4 +84,7 @@
       <Private>False</Private>
     </Reference>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\adsk.ts.job.shared\adsk.ts.job.shared.csproj" />
+  </ItemGroup>
 </Project>

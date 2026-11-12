@@ -47,6 +47,11 @@ namespace adsk.ts.image.create.inventor
                 //pick up this job's context
                 connection = context.Connection;
                 mWsMgr = connection.WebServiceManager;
+
+                // Vault option saved by the job administration overrides the local settings file
+                mSettings = Settings.Load(mWsMgr);
+                mLogDir = mSettings.LogFileLocation;
+
                 long mEntId = Convert.ToInt64(job.Params["EntityId"]);
                 string mEntClsId = job.Params["EntityClassId"];
 
@@ -120,7 +125,7 @@ namespace adsk.ts.image.create.inventor
             List<string> mFilesToUpload = new List<string>();
 
             // read target export formats from settings file
-            Settings settings = Settings.Load();
+            Settings settings = mSettings;
 
             // the job must not run, if the source file or target export formats are not supported
             #region validate execution rules

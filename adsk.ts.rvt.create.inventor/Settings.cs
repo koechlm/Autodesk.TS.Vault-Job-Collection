@@ -98,6 +98,30 @@ namespace adsk.ts.rvt.create.inventor
             { }
         }
 
+        /// <summary>
+        /// Loads the local settings file as default and fallback, then applies the values an administrator saved
+        /// as Vault option. The local file is never changed.
+        /// </summary>
+        public static Settings Load(Autodesk.Connectivity.WebServicesTools.WebServiceManager wsm)
+        {
+            Settings retVal;
+            try
+            {
+                retVal = Load();
+            }
+            catch (System.IO.FileNotFoundException)
+            {
+                retVal = new Settings();
+            }
+            catch (System.IO.DirectoryNotFoundException)
+            {
+                retVal = new Settings();
+            }
+
+            adsk.ts.job.shared.JobSettingsOption.Apply(wsm, "adsk.ts.rvt.create.inventor", retVal);
+            return retVal;
+        }
+
         public static Settings Load()
         {
             Settings retVal = new Settings();
