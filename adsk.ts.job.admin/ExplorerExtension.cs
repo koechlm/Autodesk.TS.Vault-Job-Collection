@@ -1,6 +1,7 @@
 ﻿using Autodesk.Connectivity.Explorer.Extensibility;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -44,6 +45,9 @@ namespace adsk.ts.job.admin
                 MultiSelectEnabled = false,
                 Hint = "Configure the settings of the Technical Sales Job Collection.",
             };
+
+            Image? menuIcon = JobAdminIcons.Get(JobAdminIcons.Options);
+            if (menuIcon != null) adminCommand.Image = menuIcon;
 
             adminCommand.Execute += (sender, args) =>
             {

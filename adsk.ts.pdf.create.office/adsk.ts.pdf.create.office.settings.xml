@@ -24,11 +24,14 @@
   <ExportPath></ExportPath>
 
   <!-- Optional local copy after Vault check-in -->
-  <OutputPath>C:\Temp\</OutputPath>
+  <!-- Leave the path empty, if no external copy is required; any valid path provided will initiate the copy. -->
+  <OutputPath></OutputPath>
 
   <!-- PDF conversion backend. Supported values: LibreOffice, MicrosoftOffice -->
   <!-- LibreOffice (default): license-free; requires LibreOffice installed on the Job Processor -->
+  <!--   Supported file types: .docx, .xlsx, .pptx, .odt, .fodt, .ott, .ods, .fods, .ots, .odp, .fodp, .otp, .odg, .fodg, .otg -->
   <!-- MicrosoftOffice: requires licensed Word, Excel, and PowerPoint desktop installed -->
+  <!--   Supported file types: .docx, .xlsx, .pptx -->
   <ConversionEngine>LibreOffice</ConversionEngine>
 
   <!-- LibreOffice engine: full path to soffice.exe; leave empty to auto-detect -->

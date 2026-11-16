@@ -14,7 +14,7 @@ The shared library `adsk.ts.job.shared` is **not a job** — it is a common infr
 |---|---|---|---|
 | `adsk.ts.AssignUpdateFmItem` | `adsk.ts.assignupdateitem` | Vault API / Fusion Manage | Vault Item/BOM assignment, Upload to Fusion Manage |
 | `adsk.ts.acad.dwg2d.create.inventor` | `adsk.ts.acad.dwg2d.create.inventor` | Autodesk Inventor / VaultInventorServer | DWG (2D) |
-| `adsk.ts.export3d.create.inventor` | `adsk.ts.export3d.create.inventor` | Autodesk Inventor / VaultInventorServer | 3DDWG, STP, JT *(extensible)* |
+| `adsk.ts.export3d.create.inventor` | `adsk.ts.export3d.create.inventor` | Autodesk Inventor / VaultInventorServer | 3DDWG, STEP, JT *(extensible)* |
 | `adsk.ts.nwd.create.navisworks` | `adsk.ts.nwd.create.navisworks` | Autodesk Navisworks Manage | NWD, DWF |
 | `adsk.ts.rvt.create.inventor` | `adsk.ts.rvt.create.inventor` | Autodesk Inventor / VaultInventorServer | RVT |
 | `adsk.ts.pdf.create.slddrw` | `adsk.ts.pdf.create.slddrw` | Autodesk SolidWorks | PDF, DXF |
@@ -208,7 +208,7 @@ Opens an Inventor part (`.ipt`) or assembly (`.iam`) in VaultInventorServer and 
 | Format token | Extension | Translator add-in GUID | Notes |
 |---|---|---|---|
 | `3DDWG` | `.dwg` | `{C24E3AC2-122E-11D5-8E91-0010B541CD80}` | 3D DWG with solids; DWG version R2013 (code 32) |
-| `STEP` / `STP` | `.stp` | `{90AF7F40-0C01-11D5-8E83-0010B541CD80}` | AP214 Automotive Design protocol |
+| `STEP` (`STP` accepted) | `.stp` | `{90AF7F40-0C01-11D5-8E83-0010B541CD80}` | AP214 Automotive Design protocol |
 | `JT` | `.jt` | `{16625A0E-F58C-4488-A969-E7EC4F99CACD}` | JT version 10.2 (code 102) |
 
 Additional formats that Inventor supports (but are not yet wired up): `CATPart`, `CATProduct`, `glTF`, `IGES`, `OBJ`, `X_B`, `X_T`, `ProE_G`, `ProE_N`, `QIF`, `SAT`, `SMT`, `STL`, `USDz`.
@@ -225,7 +225,7 @@ Additional formats that Inventor supports (but are not yet wired up): `CATPart`,
 | `LogFileLocation` | Path | Directory where the job writes its log file. |
 | `AcceptLocalIpj` | `True` / `False` | Same as the 2D DWG job — see above. |
 | `EnforceSubmittedFileVersion` | `True` / `False` | Same as the 2D DWG job — see above. |
-| `ExportFormats` | Comma-separated list | One or more format tokens from `3DDWG`, `STP`, `JT`. Example: `STP, JT`. Each token generates a separate output file. |
+| `ExportFormats` | Comma-separated list | One or more format tokens from `3DDWG`, `STEP`, `JT` (`STP` is accepted as `STEP`). Example: `STEP, JT`. Each token generates a separate output file. |
 | `ExcludeDesignSubstitute` | `True` / `False` | When `False` (default), files classified as `DesignSubstitute` are also exported. Set to `True` to skip them. |
 | `CopySystemComment` | `True` / `False` | See [CopySystemComment logic](#copysystemcomment-logic) below. |
 | `ExportPath` | Vault path | Optional export destination. See [Export Path Configuration](#export-path-configuration-exportpath). |
@@ -252,7 +252,8 @@ Launches a Navisworks Manage automation instance, opens the source file (or appe
 | Format token | Files created |
 |---|---|
 | `NWD` | `<source>.<ext>.nwd` + optionally `<source>.<ext>.nwc` |
-| `NWD+DWF` | `<source>.<ext>.nwd` + `<source>.<ext>.dwf` + optionally `<source>.<ext>.nwc` |
+| `NWD, DWF` (or `NWD+DWF`) | `<source>.<ext>.nwd` + `<source>.<ext>.dwf` + optionally `<source>.<ext>.nwc` |
+| `DWF` | `<source>.<ext>.dwf` only; the NWD and NWC are deleted and not uploaded |
 
 NWC files, when present, are uploaded as additional `DesignRepresentation` attachments.
 
@@ -262,7 +263,7 @@ NWC files, when present, are uploaded as additional `DesignRepresentation` attac
 |---|---|---|
 | `LogFileLocation` | Path | Directory where the job writes its log file. |
 | `EnforceSubmittedFileVersion` | `True` / `False` | Same as the 2D DWG job — see above. |
-| `ExportFormats` | `NWD` or `NWD+DWF` | `NWD` creates only the NWD file. `NWD+DWF` additionally exports a DWF via the Navisworks `LcDwfExporterPlugin`. |
+| `ExportFormats` | `NWD`, `DWF` | Comma-separated list. `NWD` creates the NWD file; `DWF` exports a DWF via the Navisworks `LcDwfExporterPlugin`. `NWD, DWF` creates both; `DWF` alone uploads only the DWF. The former value `NWD+DWF` is still accepted and equals `NWD, DWF`. |
 | `NwdTemplate` | Vault path | Vault path to an NWD file to use as a base template (e.g. `$/Templates/Navisworks/Standard-Vertical-Z.nwd`). When set, Navisworks opens the template first and then appends the source file. Leave empty to open the source file directly. **Note:** using a template adds an additional Vault reference to the resulting NWD file. |
 | `CopySystemComment` | `True` / `False` | See [CopySystemComment logic](#copysystemcomment-logic) below. |
 | `ExportPath` | Vault path | Optional export destination. See [Export Path Configuration](#export-path-configuration-exportpath). |
@@ -427,7 +428,7 @@ Condition: File extension is .docx OR .xlsx OR .pptx
 | `CopySystemComment` | `True` / `False` | See [CopySystemComment logic](#copysystemcomment-logic) below. |
 | `ExportPath` | Vault path | Optional export destination. See [Export Path Configuration](#export-path-configuration-exportpath). |
 | `OutputPath` | Path | Optional local folder for post-upload file copy. |
-| `ConversionEngine` | `LibreOffice` / `MicrosoftOffice` | Selects the PDF conversion backend. Default: `LibreOffice`. |
+| `ConversionEngine` | `LibreOffice` / `MicrosoftOffice` | Selects the PDF conversion backend. Default: `LibreOffice`. Supported file types: **LibreOffice** `.docx`, `.xlsx`, `.pptx`, `.odt`, `.fodt`, `.ott`, `.ods`, `.fods`, `.ots`, `.odp`, `.fodp`, `.otp`, `.odg`, `.fodg`, `.otg`; **MicrosoftOffice** `.docx`, `.xlsx`, `.pptx`. |
 | `LibreOfficePath` | Path | Full path to `soffice.exe`. Leave empty to auto-detect the default install location. |
 | `LibreOfficeProfileRoot` | Path | Base directory for isolated LibreOffice user profiles created per conversion. Leave empty for the default under `%ProgramData%`. |
 | `ConversionTimeoutSeconds` | Integer | **LibreOffice engine only.** Maximum seconds to wait for a headless `soffice.exe` conversion. Default: `180`. |

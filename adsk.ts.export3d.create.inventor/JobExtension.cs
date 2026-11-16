@@ -175,6 +175,9 @@ namespace adsk.ts.export3d.create.inventor
                 mExpFrmts.Add(settings.ExportFormats);
             }
 
+            // the STEP export is implemented as "STEP"; the settings documented it as "STP" as well
+            mExpFrmts = mExpFrmts.Select(fmt => fmt.Equals("STP", StringComparison.OrdinalIgnoreCase) ? "STEP" : fmt).ToList();
+
             //filter export formats according source file type
             if (mFile.Name.ToLower().EndsWith(".ipt"))
             {

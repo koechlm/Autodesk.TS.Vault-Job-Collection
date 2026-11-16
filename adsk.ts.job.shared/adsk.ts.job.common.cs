@@ -404,7 +404,7 @@ namespace adsk.ts.job.shared
                 if (mExportFileInfo.Exists)
                 {
                     //copy file to output location
-                    if (outPutPath != null)
+                    if (!string.IsNullOrWhiteSpace(outPutPath))
                     {
                         System.IO.FileInfo fileInfo = new FileInfo(outPutPath + "\\" + mExportFileInfo.Name);
                         if (fileInfo.Exists)

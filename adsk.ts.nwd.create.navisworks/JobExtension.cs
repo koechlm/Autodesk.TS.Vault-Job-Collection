@@ -136,7 +136,7 @@ namespace adsk.ts.nwd.create.navisworks
         private void mCreateNavisworksExport(IJobProcessorServices context, IJob job)
         {
             List<string> mExpFrmts = new List<string>();
-            List<string> mValidExpFrmts = new List<string> { "NWD", "NWD+DWF" };
+            List<string> mValidExpFrmts = new List<string> { "NWD", "DWF", "NWD+DWF" };
             List<string> mFilesToUpload = new List<string>();
 
             // read target export formats from settings file
@@ -169,6 +169,14 @@ namespace adsk.ts.nwd.create.navisworks
             {
                 mExpFrmts.Add(settings.ExportFormats);
             }
+
+            // "NWD, DWF" (job administration dialog) equals the former "NWD+DWF"; "DWF" alone exports the DWF only
+            bool mWantNwd = mExpFrmts.Any(fmt => fmt.Equals("NWD", StringComparison.OrdinalIgnoreCase) || fmt.Equals("NWD+DWF", StringComparison.OrdinalIgnoreCase));
+            bool mWantDwf = mExpFrmts.Any(fmt => fmt.Equals("DWF", StringComparison.OrdinalIgnoreCase) || fmt.Equals("NWD+DWF", StringComparison.OrdinalIgnoreCase));
+            mExpFrmts = new List<string>();
+            if (mWantNwd && mWantDwf) mExpFrmts.Add("NWD+DWF");
+            else if (mWantNwd) mExpFrmts.Add("NWD");
+            else if (mWantDwf) mExpFrmts.Add("DWF");
 
             // validate that at least one export format is in the list and that it matches supported formats
             if (mExpFrmts.Count < 1 && mExpFrmts.Any(fmt => mValidExpFrmts.Contains(fmt)))
@@ -203,8 +211,11 @@ namespace adsk.ts.nwd.create.navisworks
             // export the file into the requested format(s)
             foreach (string item in mExpFrmts)
             {
-                if ((item == "NWD" || item == "NWD+DWF") && mNavisworksAutomation != null)
+                if ((item == "NWD" || item == "NWD+DWF" || item == "DWF") && mNavisworksAutomation != null)
                 {
+                    bool withNwd = item != "DWF";
+                    bool withDwf = item != "NWD";
+
                     //delete existing export files; note the resulting file name is e.g. "Assembly.iam.nwd
                     string mNwdName = System.IO.Path.Combine(exportDir, System.IO.Path.GetFileName(mDocPath) + ".nwd");
                     if (System.IO.File.Exists(mNwdName))
@@ -214,7 +225,7 @@ namespace adsk.ts.nwd.create.navisworks
                         fileInfo.Delete();
                     }
                     string mNWDWFName = System.IO.Path.Combine(exportDir, System.IO.Path.GetFileName(mDocPath) + ".dwf");
-                    if (item == "NWD+DWF")
+                    if (withDwf)
                     {
                         if (System.IO.File.Exists(mNWDWFName))
                         {
@@ -263,7 +274,7 @@ namespace adsk.ts.nwd.create.navisworks
                         mNavisworksAutomation.SaveFile(mNwdName);
 
                         //export DWF
-                        if (item == "NWD+DWF")
+                        if (withDwf)
                         {
                             //export the DWF file
                             mNavisworksAutomation.ExecuteAddInPlugin("NativeExportPluginAdaptor_LcDwfExporterPlugin_Export.Navisworks", @mNWDWFName);
@@ -272,7 +283,16 @@ namespace adsk.ts.nwd.create.navisworks
 
                         //collect all export files for later upload                        
                         System.IO.FileInfo mExportFileInfo = new System.IO.FileInfo(mNwdName);
-                        if (mExportFileInfo.Exists)
+                        if (!withNwd)
+                        {
+                            // DWF only: the NWD is a by-product and is not uploaded
+                            if (mExportFileInfo.Exists)
+                            {
+                                mExportFileInfo.IsReadOnly = false;
+                                mExportFileInfo.Delete();
+                            }
+                        }
+                        else if (mExportFileInfo.Exists)
                         {
                             mFilesToUpload.Add(mNwdName);
                             mTrace.WriteLine("Navisworks created file: " + mFilesToUpload.LastOrDefault());
@@ -282,7 +302,7 @@ namespace adsk.ts.nwd.create.navisworks
                         {
                             throw new Exception("Validating the export file " + mNwdName + " before upload failed.");
                         }
-                        if (item == "NWD+DWF")
+                        if (withDwf)
                         {
                             System.IO.FileInfo mExportDwfFileInfo = new System.IO.FileInfo(mNWDWFName);
                             if (mExportDwfFileInfo.Exists)
@@ -297,11 +317,25 @@ namespace adsk.ts.nwd.create.navisworks
                             }
                         }
 
-                        //check if an NWC file has been created; if so, upload it                        
+                        //check if an NWC file has been created; if so, upload it (not for DWF only)                        
                         System.IO.FileInfo mDocInfo = new System.IO.FileInfo(mDocPath);
                         string mNWC = mDocPath.Replace(mDocInfo.Extension, ".nwc");
                         System.IO.FileInfo mNwcInfo = new System.IO.FileInfo(mNWC);
-                        if (mDocInfo.Exists)
+                        if (!withNwd)
+                        {
+                            // DWF only: the NWC is a by-product like the NWD and is neither kept nor uploaded
+                            string mNwcExport = System.IO.Path.Combine(exportDir, System.IO.Path.GetFileName(mDocPath) + ".nwc");
+                            foreach (string mNwcPath in new[] { mNWC, mNwcExport })
+                            {
+                                if (System.IO.File.Exists(mNwcPath))
+                                {
+                                    System.IO.FileInfo mNwcDelete = new FileInfo(mNwcPath);
+                                    mNwcDelete.IsReadOnly = false;
+                                    mNwcDelete.Delete();
+                                }
+                            }
+                        }
+                        else if (mDocInfo.Exists)
                         {
                             //align the file name according our convention
                             string mNwcUpload = System.IO.Path.Combine(exportDir, System.IO.Path.GetFileName(mDocPath) + ".nwc");

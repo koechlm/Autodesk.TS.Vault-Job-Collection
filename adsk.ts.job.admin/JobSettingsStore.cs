@@ -9,16 +9,15 @@ namespace adsk.ts.job.admin
     /// <summary>
     /// Reads job settings from the local settings file (names, defaults, comments) and reads/writes the edited
     /// values as one Vault option per job (KnowledgeVaultService Get/SetVaultOption). The option holds an envelope
-    /// { savedBy, savedUtc, settings }; the previous value is kept in a second option for a one-step revert.
+    /// { savedBy, savedUtc, settings }.
     /// </summary>
     internal static class JobSettingsStore
     {
         public const string OptionPrefix = "adsk.ts.job.settings.";
-        private const string BackupSuffix = ".Backup";
 
         public sealed record Info(string? SavedBy, string? SavedUtc);
 
-        public sealed record LoadResult(List<JobSettingRow> Rows, string Source, Info Info, bool HasBackup, string? Warning);
+        public sealed record LoadResult(List<JobSettingRow> Rows, string Source, Info Info, string? Warning);
 
         /// <summary>Local settings file: the Job Collection install folder first, then the folder next to this extension.</summary>
         public static string? FindLocalFile(JobDefinition job)
@@ -109,8 +108,7 @@ namespace adsk.ts.job.admin
                 }
             }
 
-            bool hasBackup = !string.IsNullOrWhiteSpace(wsm.KnowledgeVaultService.GetVaultOption(job.OptionName + BackupSuffix));
-            return new LoadResult(rows, source, info, hasBackup, warning);
+            return new LoadResult(rows, source, info, warning);
         }
 
         public static void Save(WebServiceManager wsm, JobDefinition job, IEnumerable<JobSettingRow> rows, string savedBy)
@@ -127,27 +125,23 @@ namespace adsk.ts.job.admin
                 ["savedUtc"] = DateTime.UtcNow.ToString("o"),
                 ["settings"] = settings,
             };
-            svc.SetVaultOption(job.OptionName, envelope.ToJsonString(new JsonSerializerOptions { WriteIndented = true }));
-            if (!string.IsNullOrWhiteSpace(previous)) svc.SetVaultOption(job.OptionName + BackupSuffix, previous);
-        }
 
-        /// <summary>Restores the previous value. Returns false when there is no backup.</summary>
-        public static bool Revert(WebServiceManager wsm, JobDefinition job)
-        {
-            var svc = wsm.KnowledgeVaultService;
-            string? backup = svc.GetVaultOption(job.OptionName + BackupSuffix);
-            if (string.IsNullOrWhiteSpace(backup)) return false;
-            svc.SetVaultOption(job.OptionName, backup);
-            svc.SetVaultOption(job.OptionName + BackupSuffix, null);
-            return true;
+            // replace an existing option instead of updating it
+            if (!string.IsNullOrWhiteSpace(previous)) svc.SetVaultOption(job.OptionName, null);
+
+            svc.SetVaultOption(job.OptionName, envelope.ToJsonString(new JsonSerializerOptions { WriteIndented = true }));
+
+            // never report a save that did not reach Vault
+            string? stored = svc.GetVaultOption(job.OptionName);
+            if (string.IsNullOrWhiteSpace(stored) || !JsonNode.DeepEquals(JsonNode.Parse(stored), envelope))
+                throw new InvalidOperationException(
+                    $"Vault did not store the values: reading the option '{job.OptionName}' back returned a different value.");
         }
 
         /// <summary>Deletes the option; the local settings file is used again.</summary>
         public static void Reset(WebServiceManager wsm, JobDefinition job)
         {
             var svc = wsm.KnowledgeVaultService;
-            string? current = svc.GetVaultOption(job.OptionName);
-            if (!string.IsNullOrWhiteSpace(current)) svc.SetVaultOption(job.OptionName + BackupSuffix, current);
             svc.SetVaultOption(job.OptionName, null);
         }
     }

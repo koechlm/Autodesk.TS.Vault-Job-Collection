@@ -56,10 +56,21 @@
       <HintPath>$(ProgramW6432)\Autodesk\Autodesk Vault 2027 SDK\bin\x64\core\Autodesk.DataManagement.Client.Framework.Forms.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Autodesk.DataManagement.Client.Framework.Vault.Forms">
+      <HintPath>$(ProgramW6432)\Autodesk\Autodesk Vault 2027 SDK\bin\x64\core\Autodesk.DataManagement.Client.Framework.Vault.Forms.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Autodesk.DataManagement.Client.Framework.Vault">
       <HintPath>$(ProgramW6432)\Autodesk\Autodesk Vault 2027 SDK\bin\x64\core\Autodesk.DataManagement.Client.Framework.Vault.dll</HintPath>
       <Private>False</Private>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\dark\CheckIn_16.png" />
+    <EmbeddedResource Include="Icons\dark\Options_16x16.png" />
+    <EmbeddedResource Include="Icons\light\CheckIn_16.png" />
+    <EmbeddedResource Include="Icons\light\Options_16x16.png" />
   </ItemGroup>
 
   <ItemGroup>

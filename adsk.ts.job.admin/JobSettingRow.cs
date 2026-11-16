@@ -7,9 +7,11 @@ namespace adsk.ts.job.admin
         Text,
         Check,
         Combo,
+        CheckedList,
         Number,
         FolderPath,
         FilePath,
+        VaultPath,
     }
 
     /// <summary>One option of a job: XML element name, current value and the comment shipped in the settings file.</summary>
@@ -23,8 +25,9 @@ namespace adsk.ts.job.admin
             _value = value;
             Description = description;
             OriginalValue = value;
-            Editor = JobSettingEditors.Resolve(key, value, out string[] choices);
-            Choices = choices;
+            VaultPath = JobSettingEditors.GetVaultPath(key);
+            Editor = VaultPath != null ? SettingEditor.VaultPath : JobSettingEditors.Resolve(key, value, out string[] choices);
+            Choices = VaultPath != null ? Array.Empty<string>() : JobSettingEditors.ResolveChoices(key);
         }
 
         /// <summary>Technical name: the XML element and Vault option key.</summary>
@@ -35,9 +38,28 @@ namespace adsk.ts.job.admin
 
         public string Description { get; }
 
-        public SettingEditor Editor { get; }
+        public SettingEditor Editor { get; private set; }
 
-        public string[] Choices { get; }
+        /// <summary>Set for options that hold a Vault path ($/...): what the Vault browser lets the user select.</summary>
+        public VaultPathInfo? VaultPath { get; }
+
+        public string[] Choices { get; private set; }
+
+        /// <summary>
+        /// Turns the option into a list with a check box per choice. The value becomes the checked choices in the
+        /// order of the choices ("NWD, DWF"); separators other than a comma, such as the former "NWD+DWF", and the token STP (STEP) are read too.
+        /// </summary>
+        public void UseCheckedList(string[] choices)
+        {
+            Editor = SettingEditor.CheckedList;
+            Choices = choices;
+
+            string[] tokens = Value.Split(new[] { ',', '+', ';' }, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+                .Select(t => t.Equals("STP", StringComparison.OrdinalIgnoreCase) ? "STEP" : t).ToArray();
+            string normalized = string.Join(", ", choices.Where(c => tokens.Contains(c, StringComparer.OrdinalIgnoreCase)));
+            Value = normalized;
+            OriginalValue = normalized;
+        }
 
         /// <summary>Value as loaded or last saved; used to detect edits.</summary>
         public string OriginalValue { get; set; }
@@ -59,8 +81,31 @@ namespace adsk.ts.job.admin
         public event PropertyChangedEventHandler? PropertyChanged;
     }
 
+    /// <summary>A Vault folder, or a Vault file of one extension (for example ".preset" with "Inventor preset").</summary>
+    internal sealed record VaultPathInfo(string Caption, string? Extension)
+    {
+        public bool IsFolder => Extension == null;
+    }
+
     internal static class JobSettingEditors
     {
+        private static readonly Dictionary<string, VaultPathInfo> VaultPathKeys = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ["ExportPath"] = new VaultPathInfo("Export folder", null),
+            ["NwdTemplate"] = new VaultPathInfo("Navisworks template (*.nwd)", ".nwd"),
+            ["RevitTemplate"] = new VaultPathInfo("Revit template (*.rte)", ".rte"),
+            ["InventorPreset"] = new VaultPathInfo("Inventor preset (*.preset)", ".preset"),
+        };
+
+        public static VaultPathInfo? GetVaultPath(string key) =>
+            VaultPathKeys.TryGetValue(key, out VaultPathInfo? info) ? info : null;
+
+        public static string[] ResolveChoices(string key)
+        {
+            Resolve(key, "", out string[] choices);
+            return choices;
+        }
+
         private static readonly string[] FolderKeys = { "LogFileLocation", "OutputPath", "LibreOfficeProfileRoot" };
         private static readonly string[] FileKeys = { "LibreOfficePath", "DwgIniFile2D" };
 

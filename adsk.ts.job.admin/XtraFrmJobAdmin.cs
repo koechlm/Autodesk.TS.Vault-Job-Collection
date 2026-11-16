@@ -53,6 +53,10 @@ namespace adsk.ts.job.admin
                 LookAndFeel.SetSkinStyle(VDF.Forms.SkinUtils.CustomThemeSkins.LightThemeName);
             else
                 LookAndFeel.SetSkinStyle(VDF.Forms.SkinUtils.CustomThemeSkins.DefaultThemeName);
+
+            foreach (XtraTabPage page in xtraTabControl1.TabPages)
+                foreach (JobSettingsPanel panel in page.Controls.OfType<JobSettingsPanel>())
+                    panel.RefreshIcons();
         }
     }
 }
