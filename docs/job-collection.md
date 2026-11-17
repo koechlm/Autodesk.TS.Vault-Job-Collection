@@ -89,6 +89,49 @@ If the same job is already queued for the same file, `JobService.AddJob` fails w
 
 ---
 
+## Job configuration (Vault Explorer)
+
+**Project:** `adsk.ts.job.admin`
+**Application:** Vault Explorer (Vault Client extension)
+
+Administrators configure all jobs in one dialog instead of editing `*.settings.xml` files on each Job Processor.
+
+### Open the dialog
+
+**Tools > Job Collection Configuration...** opens the dialog with one tab per job.
+
+| Vault permission | Effect |
+|---|---|
+| *Vault Get Options* | Required to open the dialog. Without it, a message explains the missing permission. |
+| *Vault Set Options* | Required to change and save. Without it, the dialog opens read-only. |
+
+### Edit settings
+
+- Each tab lists the options of the job as **Option** and **Value**. The description of the selected option (taken from the comments in the settings XML) is shown below the grid, together with the name of the setting in the XML.
+- The editor of a value matches the option: check box, pulldown, check-box list (for example the export formats), text with a folder or file browse button for local paths, and a **...** button for Vault paths. The Vault button opens the Vault folder or file selection, preset to the expected file type (for example `*.preset`, `*.rte`, `*.nwd`), and starts at the path already entered.
+- On the **Office PDF** tab, select the conversion engine at the top; the grid lists the general options plus those of the selected engine.
+- **Save to Vault** stores the values of the tab. **Use local file** deletes the stored values of the tab, so the job uses its settings XML again.
+
+### Vault options and the settings XML
+
+| | |
+|---|---|
+| **Settings XML** | Default and fallback. It lists the available options with their default values and descriptions. The dialog never writes it. |
+| **Vault option** | Saved by **Save to Vault** as `adsk.ts.job.settings.<job assembly name>`. Each value in the option takes precedence over the same setting in the XML. |
+
+Rules:
+
+1. A job reads its settings XML first, then applies the values saved in the Vault option on top of it. This happens each time the job runs; no restart of the Job Processor is required.
+2. A setting that is not saved in Vault keeps the value of the XML.
+3. If the Vault option cannot be read, for example because of missing permissions, the job runs with the XML values.
+4. An upgrade replaces the XML files with the packaged defaults; settings saved in Vault are not affected.
+
+### Deployment
+
+Deploy `adsk.ts.job.admin.dll`, `adsk.ts.job.admin.deps.json` and `adsk.ts.job.admin.vcet.config` to the **administrator workstations** (feature *Job Collection Configuration (Vault Explorer)* of the installer). The Job Processor machines need the job assemblies and the updated `adsk.ts.job.shared.dll`, which applies the Vault option.
+
+---
+
 ## Shared Library — `adsk.ts.job.shared`
 
 This project is a **common infrastructure library**, not a job. It is referenced by every export job and provides:
