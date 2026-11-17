@@ -21,6 +21,7 @@ The shared library `adsk.ts.job.shared` is **not a job** — it is a common infr
 | `adsk.ts.pdf.create.office` | `adsk.ts.pdf.create.office` | LibreOffice *(default)* / Microsoft Office | PDF |
 | `adsk.ts.image.create.inventor` | `adsk.ts.image.create.inventor` | Autodesk Inventor / VaultInventorServer | BMP, PNG, GIF, JPG, TIFF |
 | `adsk.ts.explorer.job.submit` | *(Vault Client extension)* | Vault Explorer | Queues registered job types manually |
+| `adsk.ts.job.admin` | *(Vault Client extension)* | Vault Explorer | Configuration dialog (Tools menu) that saves job settings as Vault options |
 | `adsk.ts.job.shared` | *(shared library)* | — | — |
 
 ---
