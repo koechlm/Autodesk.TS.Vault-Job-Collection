@@ -12,8 +12,8 @@
 
   <!-- Export File Format(s)-->
   <!-- Inventor Supports more than the current implementation covers: 3DDWG, CATPart (IPT only), CATProduct (IAM only), glTF, IGES, JT, OBJ, X_B, X_T, ProE_G, ProE_N, QIF (IPT only), SAT, SMT, STEP, STL, USDz -->
-  <!-- Implemented Export formats, valid to list below: 3DDWG, STP, JT -->
-  <!-- Multiple Outputs per jobs are supported, list all required formats comma separated, e.g., STP, JT,  -->  
+  <!-- Implemented Export formats, valid to list below: 3DDWG, STEP, JT (STP is accepted as STEP) -->
+  <!-- Multiple Outputs per jobs are supported, list all required formats comma separated, e.g., STEP, JT -->  
   <ExportFormats>JT</ExportFormats>
   
   <!-- Exclude/include export for design substitute classified files; ; accepted values are True/False-->
@@ -30,6 +30,7 @@
 
   <!-- Output Path -->
   <!--  The job can copy the resulting file(s) to the given output path after check-in-->
-  <OutputPath>C:\Temp\</OutputPath>
+  <!-- Leave the path empty, if no external copy is required; any valid path provided will initiate the copy. -->
+  <OutputPath></OutputPath>
 
 </settings>

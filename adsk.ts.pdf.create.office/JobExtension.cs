@@ -62,7 +62,7 @@ namespace adsk.ts.pdf.create.office
                     return JobOutcome.Failure;
                 }
 
-                Settings settings = Settings.Load();
+                Settings settings = Settings.Load(_wsMgr);
 
                 if (_file.FileRev.MaxFileId != entityId)
                 {
