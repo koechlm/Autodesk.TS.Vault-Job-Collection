@@ -70,7 +70,7 @@ Commands require at least one selected **file** row. When a job defines extensio
 | Create Revit RVT | `adsk.ts.rvt.create.inventor` | `.iam` |
 | Create NWD and DWF | `adsk.ts.nwd.create.navisworks` | Any file *(Navisworks job applies server-side skips)* |
 | Create SolidWorks PDF and DXF | `adsk.ts.pdf.create.slddrw` | `.slddrw` |
-| Create Office PDF | `adsk.ts.pdf.create.office` | Full LibreOffice extension list (OOXML + ODF) |
+| Create Office PDF | `adsk.ts.pdf.create.office` | Microsoft Office (supported by both engines): `.docx`, `.xlsx`, `.pptx`; OpenDocument (LibreOffice engine only): `.odt`, `.fodt`, `.ott`, `.ods`, `.fods`, `.ots`, `.odp`, `.fodp`, `.otp`, `.odg`, `.fodg`, `.otg` |
 
 Actual export files are always defined on the Job Processor (`ExportFormats`, `ImgFileType`, `PdfIncludeDxfSheet`, and related settings). Menu text matches the Technical Sales sample settings where applicable (for example NWD+DWF, PNG, JT in sample `*.settings.xml`).
 
