@@ -378,14 +378,34 @@ namespace adsk.ts.job.admin
             return null;
         }
 
-        private static string? ToVaultPath(VDFVF.Results.SelectEntityResults? result)
+        /// <summary>
+        /// The full Vault path of the selected file ($/folder/name.ext). The Parent of the returned file iteration is
+        /// not always loaded, so the folder is looked up by its id; the dialog's selection text is the fallback.
+        /// </summary>
+        private string? ToVaultPath(VDFVF.Results.SelectEntityResults? result)
         {
-            object? entity = result?.SelectedEntities?.FirstOrDefault();
-            return entity switch
+            if (result == null) return null;
+
+            if (result.SelectedEntities?.FirstOrDefault() is VDFV.Currency.Entities.FileIteration file)
             {
-                VDFV.Currency.Entities.FileIteration file => file.Parent.FullName.TrimEnd('/') + "/" + file.EntityName,
-                _ => result?.SelectionText,
-            };
+                string? folderPath = file.Parent?.FullName;
+                if (string.IsNullOrEmpty(folderPath))
+                {
+                    try
+                    {
+                        folderPath = _application.Connection.WebServiceManager.DocumentService.GetFolderById(file.FolderId)?.FullName;
+                    }
+                    catch
+                    {
+                        // fall through to the selection text
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(folderPath)) return folderPath.TrimEnd('/') + "/" + file.EntityName;
+            }
+
+            string? text = result.SelectionText;
+            return string.IsNullOrWhiteSpace(text) ? null : text.Trim().Replace('\\', '/');
         }
 
         private static void BrowseFolder(ButtonEdit edit)
